@@ -21,9 +21,15 @@
     <ClCompile Include="matching.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="node_functions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="matching.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="node_functions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

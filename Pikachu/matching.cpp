@@ -1,6 +1,7 @@
 #include "matching.h"
-// 1: available
-// other: unavailable
+#include "node_functions.h"
+
+//Checking functions
 void swap_2int(int& a, int& b) {
 	a = a + b;
 	b = a - b;
@@ -167,21 +168,47 @@ int matching_Z_U(int** isOktogo, int row, int col, Point a, Point b) {
 	return 0;
 }
 bool matching_check(int** isOktogo, int row, int col, Point a, Point b) {
-	if (isOktogo[a.x][a.y] != isOktogo[b.x][b.y]) {
+	if (isOktogo[a.x][a.y] != isOktogo[b.x][b.y]) {//Check the similarity between a and b
 		return 0;
 	}
-	if (a.x == b.x || a.y == b.y) {
+	if (a.x == b.x || a.y == b.y) { //If they are on the same column or row => Check I-shaped first
 		if (matching_I(isOktogo, a, b)) {
 			return 1;
 		}
 	}
-	if (matching_L(isOktogo, a, b) && a.x != b.x && a.y != b.y) {
+	if (matching_L(isOktogo, a, b) && a.x != b.x && a.y != b.y) {//Then check L-shaped if they are not on the same row or column
 		return 1;
 	}
-	int condition = matching_Z_U(isOktogo, row, col, a, b);
+	int condition = matching_Z_U(isOktogo, row, col, a, b);//Lastly, check the U or Z shaped
 	if (condition == 1 || condition == 2) {
 		return 1;
 	}
 	return 0;
+}
+//Finding all of the points in the path functions:
+Node* path_I(int** isOktogo, Point a, Point b) {
+	Node* pHead = NULL;
+	if (a.x == b.x) { //Check horizontally
+		if (b.y < a.y) {
+			swap_2int(b.y, a.y);
+		}
+		for (int i = 1; i < b.y - a.y; i++) {
+			if (isOktogo[a.x][a.y + i] != 1) {
+				return 0;
+			}
+		}
+		return 1;
+	}
+	else if (a.y == b.y) { //Check vertically
+		if (b.x < a.x) {
+			swap_2int(b.x, a.x);
+		}
+		for (int i = 1; i < b.x - a.x; i++) {
+			if (isOktogo[a.x + i][a.y] != 1) {
+				return 0;
+			}
+		}
+		return 1;
+	}
 }
 

@@ -184,9 +184,11 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="matching.cpp" />
+    <ClCompile Include="node_functions.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="matching.h" />
+    <ClInclude Include="node_functions.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
