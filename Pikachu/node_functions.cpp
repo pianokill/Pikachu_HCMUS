@@ -1,6 +1,6 @@
 #include "node_functions.h"
 
-int addHead(Node*& pHead, Point data) {
+void addHead(Node*& pHead, Point data) {
 	Node* pTemp = pHead;
 	pHead = new Node;
 	pHead->data.x = data.x;
@@ -12,7 +12,29 @@ int addHead(Node*& pHead, Point data) {
 		pHead->pNext = pTemp;
 	}
 }
-int removeHead(Node*& pHead) {
+void addTail(Node*& pHead, Point data) {
+	Node* pCurrent = pHead;
+	while (pCurrent->pNext != NULL) {
+		pCurrent = pCurrent->pNext;
+	}
+	Node* pTemp = new Node;
+	pTemp->data.x = data.x;
+	pTemp->data.y = data.y;
+	if (pCurrent != NULL) {
+		pCurrent->pNext = pTemp;
+	}
+	else {
+		addHead(pHead, data);
+	}
+}
+void insertTail(Node*& pHead, Node* test) {
+	Node* pCurrent = pHead;
+	while (pCurrent->pNext != NULL) {
+		pCurrent = pCurrent->pNext;
+	}
+	pCurrent->pNext = test;
+}
+int removeHead(Node*& pHead) { 
 	if (pHead == NULL) {
 		return 1;
 	}
