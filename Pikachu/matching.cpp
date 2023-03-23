@@ -6,12 +6,6 @@ void swap_2int(int& a, int& b) {
 	b = a - b;
 	a = a - b;
 }
-bool mathching_check(int** isOktogo, int row, int col, Point a, Point b) {
-	if (a.x == b.x || a.y == b.y) {
-		matching_I(isOktogo, row, col, a, b);
-	}
-	return 0;
-}
 bool matching_I(int** isOktogo, Point a, Point b) {
 	if (a.x == b.x) { //Check horizontally
 		if (b.y < a.y) {
@@ -159,7 +153,7 @@ int matching_Z_U(int** isOktogo, int row, int col, Point a, Point b) {
 		while (isOktogo[a.x - i][a.y] != 0 && a.x - i >= 0) { //Continue moving upward
 			c.x = a.x - i;
 			c.y = a.y;
-			if (matching_L(isOktogo, row, col, c, b)) { //Check if at that point c, is there a L-shaped path to b
+			if (matching_L(isOktogo, c, b)) { //Check if at that point c, is there a L-shaped path to b
 				if (c.x > b.x) { 
 					return 1; //Z matching
 				}
@@ -172,3 +166,22 @@ int matching_Z_U(int** isOktogo, int row, int col, Point a, Point b) {
 	}
 	return 0;
 }
+bool matching_check(int** isOktogo, int row, int col, Point a, Point b) {
+	if (isOktogo[a.x][a.y] != isOktogo[b.x][b.y]) {
+		return 0;
+	}
+	if (a.x == b.x || a.y == b.y) {
+		if (matching_I(isOktogo, a, b)) {
+			return 1;
+		}
+	}
+	if (matching_L(isOktogo, a, b) && a.x != b.x && a.y != b.y) {
+		return 1;
+	}
+	int condition = matching_Z_U(isOktogo, row, col, a, b);
+	if (condition == 1 || condition == 2) {
+		return 1;
+	}
+	return 0;
+}
+
