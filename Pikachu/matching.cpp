@@ -57,6 +57,7 @@ bool matching_L(int** matrix, int row, int col, Point a, Point b) {
 				return 1;
 			}
 		}
+	}
 		if (b.x > a.x) { //Check vertically downward			
 			if (matrix[a.x - 1][a.y] != 0) {
 				valid = 1;
@@ -95,5 +96,4 @@ bool matching_L(int** matrix, int row, int col, Point a, Point b) {
 				}
 			}
 		}
-	}
 }
