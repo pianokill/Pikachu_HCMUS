@@ -1,5 +1,6 @@
 #include "matching.h"
-
+// 1: available
+// other: unavailable
 void swap_2int(int& a, int& b) {
 	a = a + b;
 	b = a - b;
@@ -11,40 +12,40 @@ bool mathching_check(int** isOktogo, int row, int col, Point a, Point b) {
 	}
 	return 0;
 }
-bool matching_I(int** isOktogo, int row, int col, Point a, Point b) {
-	if (a.x == b.x) {
+bool matching_I(int** isOktogo, Point a, Point b) {
+	if (a.x == b.x) { //Check horizontally
 		if (b.y < a.y) {
 			swap_2int(b.y, a.y);
 		}
 		for (int i = 1; i < b.y - a.y; i++) {
-			if (!isOktogo[a.x][a.y + i]) {
+			if (isOktogo[a.x][a.y + i] != 1) {
 				return 0;
 			}
 		}
 		return 1;
 	}
-	if (a.y == b.y) {
+	else if (a.y == b.y) { //Check vertically
 		if (b.x < a.x) {
 			swap_2int(b.x, a.x);
 		}
 		for (int i = 1; i < b.x - a.x; i++) {
-			if (!isOktogo[a.x + i][a.y]) {
+			if (isOktogo[a.x + i][a.y] != 1) {
 				return 0;
 			}
 		}
 		return 1;
 	}
 }
-bool matching_L(int** isOktogo, int row, int col, Point a, Point b) {
+bool matching_L(int** isOktogo, Point a, Point b) {
 	bool valid;
-	if (b.y < a.y) {
+	if (b.y < a.y) { //The point a must be on the left side of the point b
 		swap_2int(b.y, a.y);
 		swap_2int(b.x, a.x);
 	}
-	if (isOktogo[a.x][a.y + 1]) { //Check horizontally
+	if (isOktogo[a.x][a.y + 1] == 1) { //Check horizontally to the right
 		valid = 1;
-		for (int i = 1; i < b.y - a.y; i++) {
-			if (!isOktogo[a.x][a.y + 1 + i]) {
+		for (int i = 2; i <= b.y - a.y; i++) {
+			if (isOktogo[a.x][a.y + i] != 1) {
 				valid = 0;
 				break;
 			}
@@ -52,36 +53,36 @@ bool matching_L(int** isOktogo, int row, int col, Point a, Point b) {
 		if (valid) {
 			Point c;
 			c.x = a.x;
-			c.y = a.y + 1 + (b.y - a.y - 1);
-			if (matching_I(isOktogo, row, col, c, b)) {
-				return true;
+			c.y = b.y;
+			if (matching_I(isOktogo, c, b)) {
+				return 1;
 			}
 		}
 	}
 	if (b.x > a.x) { //Check vertically downward			
-		if (isOktogo[a.x - 1][a.y]) {
+		if (isOktogo[a.x + 1][a.y] == 1) {
 			valid = 1;
-			for (int i = 1; i < b.x - a.x; i++) {
-				if (!isOktogo[a.x - 1 - i][a.y]) {
+			for (int i = 2; i <= b.x - a.x; i++) {
+				if (isOktogo[a.x + i][a.y] != 1) {
 					valid = 0;
 					break;
 				}
 			}
 			if (valid) {
 				Point c;
-				c.x = a.x - 1 - (b.x - a.x - 1);
+				c.x = b.x;
 				c.y = a.y;
-				if (matching_I(isOktogo, row, col, c, b)) {
+				if (matching_I(isOktogo, c, b)) {
 					return true;
 				}
 			}
 		}
 	}
 	else { //Check vertically upward
-		if (isOktogo[a.x + 1][a.y]) {
+		if (isOktogo[a.x - 1][a.y] == 1) {
 			valid = 1;
-			for (int i = 1; i < b.x - a.x; i++) {
-				if (!isOktogo[a.x + 1 + i][a.y]) {
+			for (int i = 2; i <= a.x - b.x; i++) {
+				if (isOktogo[a.x - i][a.y] != 1) {
 					valid = 0;
 					break;
 				}
@@ -89,9 +90,9 @@ bool matching_L(int** isOktogo, int row, int col, Point a, Point b) {
 		}
 		if (valid) {
 			Point c;
-			c.x = a.x + 1 + (b.x - a.x - 1);
+			c.x = b.x;
 			c.y = a.y;
-			if (matching_I(isOktogo, row, col, c, b)) {
+			if (matching_I(isOktogo, c, b)) {
 				return true;
 			}
 		}
@@ -99,62 +100,75 @@ bool matching_L(int** isOktogo, int row, int col, Point a, Point b) {
 	return false;
 }
 int matching_Z_U(int** isOktogo, int row, int col, Point a, Point b) {
-	if (b.y < a.y) {
+	if (b.y < a.y) { //The point a must be on the left side of the point b
 		swap_2int(a.x, b.x);
 		swap_2int(a.y, b.y); 
 	}
 	Point c;
-	if (isOktogo[a.x][a.y + 1]) {
-		int i = 2;
-		while (isOktogo[a.x][a.y + i]) {
-			i++;
-			c.x = a.x;
-			c.y = a.y + i - 1;
-			if (matching_L(isOktogo, row, col, c, b)) {
-				if (c.y < b.y) { //Z matching
-					return 1;
+	int i;
+	if (isOktogo[a.x][a.y + 1]) { //Check horizontally to the right
+		i = 1;
+		while (isOktogo[a.x][a.y + i] == 1 && a.y + i < col) { //Continue moving to the right
+			c.x = a.x; 
+			c.y = a.y + i;
+			if (matching_L(isOktogo, c, b)) { //Check if at that point c, is there a L-shaped path to b
+				if (c.y < b.y) { 
+					return 1; //Z matching
 				}
 				else {
 					return 2; //U matching
 				}
 			}
+			i++;
 		}
 	}
-	else if (b.x > a.x) {
-		if (isOktogo[a.x + 1][a.y]) {
-			int i = 2;
-			while (isOktogo[a.x + i][a.y]) {
-				i++;
-				c.x = a.x + i - 1;
-				c.y = a.y;
-				if (matching_L(isOktogo, row, col, c, b)) {
-						if (c.x < b.x) { //Z matching
-						return 1;
-					}
-					else { //U matching
-						return 2;
-					}
+	if (isOktogo[a.x][a.y - 1]) { //Check horizontally to the left
+		i = 1;
+		while (isOktogo[a.x][a.y - i] == 1 && a.y - i >= 0) { //Continue moving to the left
+			c.x = a.x;
+			c.y = a.y - i;
+			if (matching_L(isOktogo, c, b)) { //Check if at that point c, is there a L-shaped path to b
+				if (c.y > b.y) {
+					return 1; //Z matching
+				}
+				else {
+					return 2; //U matching
 				}
 			}
+			i++;
 		}
 	}
-	else {
-		if (isOktogo[a.x - 1][a.y] != 0) {
-			int i = 2;
-			while (isOktogo[a.x - i][a.y] != 0) {
-				i++;
-				c.x = a.x - i + 1;
-				c.y = a.y;
-				if (matching_L(isOktogo, row, col, c, b)) {
-					if (c.x > b.x) { //Z matching
-					return 1;
-					}
-					else {
-						return 2; //U matching
-					}
+	if (isOktogo[a.x + 1][a.y] == 1) { //Check vertically downward
+		i = 1;
+		while (isOktogo[a.x + i][a.y] && a.x + i < row) { //Continue moving downward
+			c.x = a.x + i;
+			c.y = a.y;
+			if (matching_L(isOktogo, c, b)) { 
+					if (c.x < b.x) { 
+					return 1; //Z matching
+				}
+					else { 
+					return 2; //U matching
 				}
 			}
+			i++;
 		}
 	}
-	return false;
+	if(isOktogo[a.x - 1][a.y] == 1) { //Check vertically upward
+		i = 1;
+		while (isOktogo[a.x - i][a.y] != 0 && a.x - i >= 0) { //Continue moving upward
+			c.x = a.x - i;
+			c.y = a.y;
+			if (matching_L(isOktogo, row, col, c, b)) { //Check if at that point c, is there a L-shaped path to b
+				if (c.x > b.x) { 
+					return 1; //Z matching
+				}
+				else {
+					return 2; //U matching
+				}
+			}
+			i++;
+		}
+	}
+	return 0;
 }
