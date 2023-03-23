@@ -166,7 +166,7 @@ int matching_Z_U(int** isOktogo, int row, int col, Point a, Point b) {
 	}
 	return 0;
 }
-bool matching_check(int** isOktogo, int row, int col, Point a, Point b) {
+int matching_check(int** isOktogo, int row, int col, Point a, Point b) {
 	if (isOktogo[a.x][a.y] != isOktogo[b.x][b.y]) {//Check the similarity between a and b
 		return 0;
 	}
@@ -176,11 +176,14 @@ bool matching_check(int** isOktogo, int row, int col, Point a, Point b) {
 		}
 	}
 	if (matching_L(isOktogo, a, b) && a.x != b.x && a.y != b.y) {//Then check L-shaped if they are not on the same row or column
-		return 1;
+		return 2;
 	}
 	int condition = matching_Z_U(isOktogo, row, col, a, b);//Lastly, check the U or Z shaped
-	if (condition == 1 || condition == 2) {
-		return 1;
+	if (condition == 1) {
+		return 3;
+	}
+	if (condition == 2) {
+		return 4;
 	}
 	return 0;
 }
@@ -410,4 +413,24 @@ Node* path_U_Z(int** isOktogo, int row, int col, Point a, Point b) {
 	}
 	return 0;
 }
-
+Node* path_finding(int** isOktogo, int row, int col, Point a, Point b) {
+	int type;
+	type = matching_check(isOktogo, row, col, a, b);
+	if (type == 0) {
+		return NULL;
+	}
+	switch(type) {
+		case 1: 
+			return path_I(isOktogo, a, b);
+			break;
+		case 2:
+			return path_L(isOktogo, a, b);
+			break;
+		case 3:
+			return path_U_Z(isOktogo, row, col, a, b);
+			break;
+		case 4:
+			return path_U_Z(isOktogo, row, col, a, b);
+			break;
+	}
+}

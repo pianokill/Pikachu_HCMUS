@@ -1,5 +1,5 @@
 #include "matching.h"
-
+#include "node_functions.h"
 int main() {
 	int** ptr = new int*[5];  
 	//1 1 1 1 1
@@ -28,8 +28,11 @@ int main() {
 	Point b;
 	b.x = 1;
 	b.y = 3;
-	if (matching_check(ptr, 6, 6, a, b)) {
+	Node* pHead = NULL;
+	if (matching_check(ptr, 6, 6, a, b) != 0) {
 		cout << "YES";
+		pHead = path_finding(ptr, 6, 6, a, b);
+		printList(pHead);
 	}
 	return 0;
 }

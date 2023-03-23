@@ -34,7 +34,7 @@ void insertTail(Node*& pHead, Node* test) {
 	}
 	pCurrent->pNext = test;
 }
-int removeHead(Node*& pHead) { 
+void removeHead(Node*& pHead) { 
 	if (pHead == NULL) {
 		return 1;
 	}
@@ -43,7 +43,7 @@ int removeHead(Node*& pHead) {
 	delete pCurrent;
 	return 1;
 }
-int removeAll(Node*& pHead) {
+void removeAll(Node*& pHead) {
 	if (pHead == NULL) {
 		return 1;
 	}
@@ -56,4 +56,16 @@ int removeAll(Node*& pHead) {
 	delete pHead;
 	pHead = NULL;
 	return 1;
+}
+void printList(Node* pHead) {
+	if (pHead == NULL) {
+		return;
+	}
+	Node* pCurrent = pHead;
+	while (pCurrent != NULL) {
+		cout << "[" << pCurrent->data.x << "][" << pCurrent->data.y << "] ";
+		pCurrent = pCurrent->pNext;
+	}
+	cout << endl;
+	return;
 }
