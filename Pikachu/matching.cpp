@@ -1,7 +1,6 @@
 #include "matching.h"
 #include "node_functions.h"
 
-//Checking functions
 void swap_2int(int& a, int& b) {
 	a = a + b;
 	b = a - b;
@@ -10,6 +9,8 @@ void swap_2int(int& a, int& b) {
 //move variable definition:
 //1: Move to the left or the righ
 //2: Move to the top or the bottom
+
+//Checking functions
 bool matching_I(int** isOktogo, Point a, Point b) {
 	if (a.x == b.x) { //Check horizontally
 		if (b.y < a.y) {
@@ -246,7 +247,7 @@ int matching_check(int** isOktogo, int row, int col, Point a, Point b) {
 	}
 	return 0;
 }
-//Finding all of the points in the path functions:
+//Finding all of the points on the path
 Node* path_I(int** isOktogo, Point a, Point b) {
 	Node* pHead = NULL;
 	Point temp;
@@ -606,4 +607,25 @@ Node* path_finding(int** isOktogo, int type, int row, int col, Point a, Point b)
 			break;
 	}
 	return NULL;
+}
+//Automatically finding 2 valid points
+bool automatically_finding(int** isOktogo, int row, int col, Point &a, Point &b) {
+	for (int i = 1; i < row - 1; i++) {
+		a.x = i;
+		for (int j = 1; j < col - 1; j++) {
+			a.y = j;
+			for (int m = 1; m < row - 1; m++) {
+				b.x = m;
+				for (int n = 1; n < col - 1; n++) {
+					b.y = n;
+					if(a.x != b.x || a.y != b.y) {
+						if (matching_check(isOktogo, row, col, a, b) != 0) {
+							return 1;
+						}
+					}
+				}
+			}
+		}
+	}
+	return 0;
 }

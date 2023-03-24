@@ -20,7 +20,7 @@ int main() {
 		} 
 		cout << endl;
 	}
-
+	/*
 	Point a;
 	a.x = 3;
 	a.y = 5;
@@ -32,6 +32,32 @@ int main() {
 	if (num != 0) {
 		cout << num << endl;
 		cout << "YES";
+		pHead = path_finding(ptr, num, 10, 10, a, b);
+		printList(pHead);
+	}*/
+	Point a;
+	Point b;
+	Node* pHead;
+	if (automatically_finding(ptr, 10, 10, a, b)){
+		int num = matching_check(ptr, 10, 10, a, b);
+		switch (num) {
+			case 1:
+				cout << "I matching";
+				break;
+			case 2:
+				cout << "L matching";
+				break;
+			case 3:
+				cout << "Z matching";
+				break;
+			case 4:
+				cout << "U matching";
+				break;
+		}
+		cout << endl;
+		cout << "Point a: [" << a.x << "][" << a.y << "]" << endl;
+		cout << "Point b: [" << b.x << "][" << b.y << "]" << endl;
+		cout << "The path is: ";
 		pHead = path_finding(ptr, num, 10, 10, a, b);
 		printList(pHead);
 	}
