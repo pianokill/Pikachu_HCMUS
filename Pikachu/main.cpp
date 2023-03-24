@@ -32,7 +32,7 @@ int main() {
 	if (num != 0) {
 		cout << num << endl;
 		cout << "YES";
-		pHead = path_finding(ptr, 10, 10, a, b);
+		pHead = path_finding(ptr, num, 10, 10, a, b);
 		printList(pHead);
 	}
 	return 0;

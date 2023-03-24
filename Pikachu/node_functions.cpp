@@ -49,8 +49,8 @@ void removeAll(Node*& pHead) {
 	}
 	Node* temp = pHead;
 	while (pHead->pNext != NULL) {
-		delete temp;
 		pHead = pHead->pNext;
+		delete temp;
 		temp = pHead;
 	}
 	delete pHead;

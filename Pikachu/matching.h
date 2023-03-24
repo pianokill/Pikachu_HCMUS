@@ -20,4 +20,4 @@ int matching_check(int** isOktogo, int row, int col, Point a, Point b);
 Node* path_I(int** isOktogo, Point a, Point b);
 Node* path_L(int** isOktogo, Point a, Point b);
 Node* path_U_Z(int** isOktogo, int row, int col, Point a, Point b);
-Node* path_finding(int** isOktogo, int row, int col, Point a, Point b);
+Node* path_finding(int** isOktogo, int type, int row, int col, Point a, Point b);

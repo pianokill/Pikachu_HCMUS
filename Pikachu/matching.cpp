@@ -8,7 +8,7 @@ void swap_2int(int& a, int& b) {
 	a = a - b;
 }
 bool matching_I(int** isOktogo, Point a, Point b) {
-	if (a.x == b.x) { //Check horizontally
+	if (a.x == b.x && isOktogo[a.x][a.y + 1] == 1) { //Check horizontally
 		if (b.y < a.y) {
 			swap_2int(b.y, a.y);
 		}
@@ -23,12 +23,14 @@ bool matching_I(int** isOktogo, Point a, Point b) {
 		if (b.x < a.x) {
 			swap_2int(b.x, a.x);
 		}
-		for (int i = 1; i < b.x - a.x; i++) {
-			if (isOktogo[a.x + i][a.y] != 1) {
-				return 0;
+		if (isOktogo[a.x + 1][a.y] == 1) {
+			for (int i = 1; i < b.x - a.x; i++) {
+				if (isOktogo[a.x + i][a.y] != 1) {
+					return 0;
+				}
 			}
+			return 1;
 		}
-		return 1;
 	}
 	return 0;
 }
@@ -85,12 +87,12 @@ bool matching_L(int** isOktogo, Point a, Point b) {
 					break;
 				}
 			}
-		}
-		if (valid) {
-			c.x = b.x;
-			c.y = a.y;
-			if (matching_I(isOktogo, c, b)) {
-				return true;
+			if (valid) {
+				c.x = b.x;
+				c.y = a.y;
+				if (matching_I(isOktogo, c, b)) {
+					return true;
+				}
 			}
 		}
 	}
@@ -194,7 +196,7 @@ int matching_check(int** isOktogo, int row, int col, Point a, Point b) {
 Node* path_I(int** isOktogo, Point a, Point b) {
 	Node* pHead = NULL;
 	Point temp;
-	if (a.x == b.x) { //Check horizontally
+	if (a.x == b.x && isOktogo[a.x][a.y + 1] == 1) { //Check horizontally
 		if (b.y < a.y) {
 			swap_2int(b.y, a.y);
 		}
@@ -214,19 +216,31 @@ Node* path_I(int** isOktogo, Point a, Point b) {
 		return pHead;
 	}
 	else if (a.y == b.y) { //Check vertically
-		if (b.x < a.x) {
-			swap_2int(b.x, a.x);
-		}
-		temp.x = a.x;
-		temp.y = a.y;
-		addHead(pHead, temp);
-		for (int i = 1; i < b.x - a.x; i++) {
-			if (isOktogo[a.x + i][a.y] != 1) {
-				removeAll(pHead);
-				return NULL;
-			}
-			temp.y = a.y + i;
+		if (b.x > a.x && isOktogo[a.x + 1][a.y] == 1) { //Downward
+			temp.x = a.x;
+			temp.y = a.y;
 			addHead(pHead, temp);
+			for (int i = 1; i < b.x - a.x; i++) {
+				if (isOktogo[a.x + i][a.y] != 1) {
+					removeAll(pHead);
+					return NULL;
+				}
+				temp.x = a.x + i;
+				addHead(pHead, temp);
+			}
+		}
+		else if(isOktogo[a.x - 1][a.y] == 1) {
+			temp.x = a.x;
+			temp.y = a.y;
+			addHead(pHead, temp);
+			for (int i = 1; i < a.x - b.x; i++) {
+				if (isOktogo[a.x - i][a.y] != 1) {
+					removeAll(pHead);
+					return NULL;
+				}
+				temp.x = a.x - i;
+				addHead(pHead, temp);
+			}
 		}
 		addHead(pHead, b);
 		//pHead = reverseList(pHead);
@@ -240,6 +254,7 @@ Node* path_L(int** isOktogo, Point a, Point b) {
 		return NULL;
 	}
 	Node* pHead = NULL;
+	Node* test = NULL;
 	Point temp;
 	Point c;
 	bool valid;
@@ -267,14 +282,14 @@ Node* path_L(int** isOktogo, Point a, Point b) {
 		if (valid) {
 			c.x = a.x;
 			c.y = b.y;
-			Node* test = path_I(isOktogo, c, b);
+			test = path_I(isOktogo, c, b);
 			if (test != NULL) {
 				insertTail(test, pHead);
 				return test;
 			}
 		}
+		removeAll(pHead);
 	}
-	removeAll(pHead);
 	if (b.x > a.x) { //Check vertically downward	
 		if (isOktogo[a.x + 1][a.y] == 1) {
 			valid = 1;
@@ -296,7 +311,7 @@ Node* path_L(int** isOktogo, Point a, Point b) {
 			if (valid) {
 				c.x = b.x;
 				c.y = a.y;
-				Node* test = path_I(isOktogo, c, b);
+				test = path_I(isOktogo, c, b);
 				if (test != NULL) {
 					insertTail(test, pHead);
 					return test;
@@ -326,13 +341,14 @@ Node* path_L(int** isOktogo, Point a, Point b) {
 		if (valid) {
 			c.x = b.x;
 			c.y = a.y;
-			Node* test = path_I(isOktogo, c, b);
+			test = path_I(isOktogo, c, b);
 			if (test != NULL) {
 				insertTail(test, pHead);
 				return test;
 			}
 		}
 	}
+	removeAll(pHead);
 	return NULL;
 }
 Node* path_U_Z(int** isOktogo, int row, int col, Point a, Point b) {
@@ -340,12 +356,12 @@ Node* path_U_Z(int** isOktogo, int row, int col, Point a, Point b) {
 		swap_2int(a.x, b.x);
 		swap_2int(a.y, b.y);
 	}
-	Node* pHead;
+	Node* pHead = NULL;
 	Point temp;
-	Node* test;
+	Node* test = NULL;
 	Point c;
 	int i;
-	if (isOktogo[a.x][a.y + 1]) { //Check horizontally to the right
+	if (isOktogo[a.x][a.y + 1] == 1) { //Check horizontally to the right
 		temp.x = a.x;
 		temp.y = a.y;
 		addHead(pHead, temp);
@@ -357,14 +373,14 @@ Node* path_U_Z(int** isOktogo, int row, int col, Point a, Point b) {
 			test = path_L(isOktogo, c, b);
 			if (test != NULL) { 
 				removeHead(pHead);
-				insertTail(pHead, test);
-				return pHead;
+				insertTail(test, pHead);
+				return test;
 			}
 			i++;
 		}
+		removeAll(pHead);
 	}
-	removeAll(pHead);
-	if (isOktogo[a.x][a.y - 1]) { //Check horizontally to the left
+	if (isOktogo[a.x][a.y - 1] == 1) { //Check horizontally to the left
 		temp.x = a.x;
 		temp.y = a.y;
 		addHead(pHead, temp);
@@ -376,11 +392,12 @@ Node* path_U_Z(int** isOktogo, int row, int col, Point a, Point b) {
 			test = path_L(isOktogo, c, b);
 			if (test != NULL) {
 				removeHead(pHead);
-				insertTail(pHead, test);
-				return pHead;
+				insertTail(test, pHead);
+				return test;
 			}
 			i++;
 		}
+		removeAll(pHead);
 	}
 	if (isOktogo[a.x + 1][a.y] == 1) { //Check vertically downward
 		temp.x = a.x;
@@ -395,18 +412,19 @@ Node* path_U_Z(int** isOktogo, int row, int col, Point a, Point b) {
 			test = path_L(isOktogo, c, b);
 			if (test != NULL) {
 				removeHead(pHead);
-				insertTail(pHead, test);
-				return pHead;
+				insertTail(test, pHead);
+				return test;
 			}
 			i++;
 		}
+		removeAll(pHead);
 	}
 	if (isOktogo[a.x - 1][a.y] == 1) { //Check vertically upward
 		temp.x = a.x;
 		temp.y = a.y;
 		addHead(pHead, temp);
 		i = 1;
-		while (isOktogo[a.x - i][a.y] != 0 && a.x - i >= 0) { //Continue moving upward
+		while (isOktogo[a.x - i][a.y] == 1 && a.x - i >= 0) { //Continue moving upward
 			temp.x = a.x - i;
 			addHead(pHead, temp);
 			c.x = a.x - i;
@@ -414,17 +432,16 @@ Node* path_U_Z(int** isOktogo, int row, int col, Point a, Point b) {
 			test = path_L(isOktogo, c, b);
 			if (test != NULL) {
 				removeHead(pHead);
-				insertTail(pHead, test);
-				return pHead;
+				insertTail(test, pHead);
+				return test;
 			}
 			i++;
 		}
+		removeAll(pHead);
 	}
 	return 0;
 }
-Node* path_finding(int** isOktogo, int row, int col, Point a, Point b) {
-	int type;
-	type = matching_check(isOktogo, row, col, a, b);
+Node* path_finding(int** isOktogo, int type, int row, int col, Point a, Point b) {
 	if (type == 0) {
 		return NULL;
 	}
