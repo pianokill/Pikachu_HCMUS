@@ -6,7 +6,7 @@ void addHead(Node*& pHead, Point data) {
 	pHead->data.x = data.x;
 	pHead->data.y = data.y;
 	if (pTemp == NULL) {
-		pHead->pNext == NULL;
+		pHead->pNext = NULL;
 	}
 	else {
 		pHead->pNext = pTemp;
@@ -36,26 +36,26 @@ void insertTail(Node*& pHead, Node* test) {
 }
 void removeHead(Node*& pHead) { 
 	if (pHead == NULL) {
-		return 1;
+		return;
 	}
 	Node* pCurrent = pHead;
 	pHead = pHead->pNext;
 	delete pCurrent;
-	return 1;
+	return;
 }
 void removeAll(Node*& pHead) {
 	if (pHead == NULL) {
-		return 1;
+		return;
 	}
 	Node* temp = pHead;
-	while (pHead->pNext == NULL) {
+	while (pHead->pNext != NULL) {
 		delete temp;
 		pHead = pHead->pNext;
 		temp = pHead;
 	}
 	delete pHead;
 	pHead = NULL;
-	return 1;
+	return;
 }
 void printList(Node* pHead) {
 	if (pHead == NULL) {

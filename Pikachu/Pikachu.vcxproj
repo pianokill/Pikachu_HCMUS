@@ -190,6 +190,9 @@
     <ClInclude Include="matching.h" />
     <ClInclude Include="node_functions.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="matrix.txt" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

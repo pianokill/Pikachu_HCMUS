@@ -33,6 +33,9 @@ bool matching_I(int** isOktogo, Point a, Point b) {
 	return 0;
 }
 bool matching_L(int** isOktogo, Point a, Point b) {
+	if (a.x == b.x || a.y == b.y) {
+		return 0;
+	}
 	bool valid;
 	Point c;
 	if (b.y < a.y) { //The point a must be on the left side of the point b
@@ -68,7 +71,7 @@ bool matching_L(int** isOktogo, Point a, Point b) {
 				c.x = b.x;
 				c.y = a.y;
 				if (matching_I(isOktogo, c, b)) {
-					return true;
+					return 1;
 				}
 			}
 		}
@@ -100,7 +103,7 @@ int matching_Z_U(int** isOktogo, int row, int col, Point a, Point b) {
 	}
 	Point c;
 	int i;
-	if (isOktogo[a.x][a.y + 1]) { //Check horizontally to the right
+	if (isOktogo[a.x][a.y + 1] == 1) { //Check horizontally to the right
 		i = 1;
 		while (isOktogo[a.x][a.y + i] == 1 && a.y + i < col) { //Continue moving to the right
 			c.x = a.x; 
@@ -116,7 +119,7 @@ int matching_Z_U(int** isOktogo, int row, int col, Point a, Point b) {
 			i++;
 		}
 	}
-	if (isOktogo[a.x][a.y - 1]) { //Check horizontally to the left
+	if (isOktogo[a.x][a.y - 1] == 1) { //Check horizontally to the left
 		i = 1;
 		while (isOktogo[a.x][a.y - i] == 1 && a.y - i >= 0) { //Continue moving to the left
 			c.x = a.x;
@@ -134,7 +137,7 @@ int matching_Z_U(int** isOktogo, int row, int col, Point a, Point b) {
 	}
 	if (isOktogo[a.x + 1][a.y] == 1) { //Check vertically downward
 		i = 1;
-		while (isOktogo[a.x + i][a.y] && a.x + i < row) { //Continue moving downward
+		while (isOktogo[a.x + i][a.y] == 1&& a.x + i < row) { //Continue moving downward
 			c.x = a.x + i;
 			c.y = a.y;
 			if (matching_L(isOktogo, c, b)) { 
@@ -150,7 +153,7 @@ int matching_Z_U(int** isOktogo, int row, int col, Point a, Point b) {
 	}
 	if(isOktogo[a.x - 1][a.y] == 1) { //Check vertically upward
 		i = 1;
-		while (isOktogo[a.x - i][a.y] != 0 && a.x - i >= 0) { //Continue moving upward
+		while (isOktogo[a.x - i][a.y] == 1 && a.x - i >= 0) { //Continue moving upward
 			c.x = a.x - i;
 			c.y = a.y;
 			if (matching_L(isOktogo, c, b)) { //Check if at that point c, is there a L-shaped path to b
@@ -175,7 +178,7 @@ int matching_check(int** isOktogo, int row, int col, Point a, Point b) {
 			return 1;
 		}
 	}
-	if (matching_L(isOktogo, a, b) && a.x != b.x && a.y != b.y) {//Then check L-shaped if they are not on the same row or column
+	if (matching_L(isOktogo, a, b)) {//Then check L-shaped if they are not on the same row or column
 		return 2;
 	}
 	int condition = matching_Z_U(isOktogo, row, col, a, b);//Lastly, check the U or Z shaped
@@ -201,7 +204,7 @@ Node* path_I(int** isOktogo, Point a, Point b) {
 		for (int i = 1; i < b.y - a.y; i++) {
 			if (isOktogo[a.x][a.y + i] != 1) {
 				removeAll(pHead);
-				return 0;
+				return NULL;
 			}
 			temp.y = a.y + i;
 			addHead(pHead, temp);
@@ -219,7 +222,7 @@ Node* path_I(int** isOktogo, Point a, Point b) {
 		for (int i = 1; i < b.x - a.x; i++) {
 			if (isOktogo[a.x + i][a.y] != 1) {
 				removeAll(pHead);
-				return 0;
+				return NULL;
 			}
 			temp.y = a.y + i;
 			addHead(pHead, temp);
@@ -227,9 +230,13 @@ Node* path_I(int** isOktogo, Point a, Point b) {
 		addHead(pHead, b);
 		return pHead;
 	}
+	removeAll(pHead);
 	return NULL;
 }
 Node* path_L(int** isOktogo, Point a, Point b) {
+	if (a.x == b.x || a.y == b.y) {
+		return NULL;
+	}
 	Node* pHead = NULL;
 	Point temp;
 	Point c;
