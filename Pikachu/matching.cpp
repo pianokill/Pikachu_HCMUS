@@ -437,7 +437,7 @@ Node* path_L(int** isOktogo, int move, Point a, Point b) {
 		}
 		//The way of creating list under is the same as above
 		if (b.x > a.x) { //Check vertically downward	
-			if (isOktogo[a.x + 1][a.y] == 1 && move != 4) {
+			if (isOktogo[a.x + 1][a.y] == 1 && move != 2) {
 				valid = 1;
 				temp.x = a.x;
 				temp.y = a.y;
@@ -466,7 +466,7 @@ Node* path_L(int** isOktogo, int move, Point a, Point b) {
 			}
 		}
 		else { //Check vertically upward
-			if (isOktogo[a.x - 1][a.y] == 1 && move != 3) {
+			if (isOktogo[a.x - 1][a.y] == 1 && move != 2) {
 				valid = 1;
 				temp.x = a.x;
 				temp.y = a.y;
