@@ -100,7 +100,7 @@ bool matching_L(int** isOktogo, int move, Point a, Point b) {
 		}
 	}
 	else if(b.y < a.y) { //If the point b is on the left side of the point a
-		if (isOktogo[a.x][a.y - 1] && move != 1) { //Check horizontally to the left
+		if (isOktogo[a.x][a.y - 1] == 1 && move != 1) { //Check horizontally to the left
 			valid = 1;
 			for (int i = 2; i <= a.y - b.y; i++) {
 				if (isOktogo[a.x][a.y - i] != 1) {
@@ -162,7 +162,7 @@ int matching_Z_U(int** isOktogo, int row, int col, Point a, Point b) {
 	int i;
 	if (isOktogo[a.x][a.y + 1] == 1) { //Check horizontally to the right
 		i = 1;
-		while (isOktogo[a.x][a.y + i] == 1 && a.y + i < col) { //Continue moving to the right
+		while (a.y + i < col && isOktogo[a.x][a.y + i] == 1 ) { //Continue moving to the right
 			c.x = a.x; 
 			c.y = a.y + i;
 			if (matching_L(isOktogo, 1, c, b)) { //Check if at that point c, is there a L-shaped path to b(L-shaped path do not go to the right or left again)
@@ -178,7 +178,7 @@ int matching_Z_U(int** isOktogo, int row, int col, Point a, Point b) {
 	}
 	if (isOktogo[a.x][a.y - 1] == 1) { //Check horizontally to the left
 		i = 1;
-		while (isOktogo[a.x][a.y - i] == 1 && a.y - i >= 0) { //Continue moving to the left
+		while (a.y - i >= 0 && isOktogo[a.x][a.y - i] == 1) { //Continue moving to the left
 			c.x = a.x;
 			c.y = a.y - i;
 			if (matching_L(isOktogo, 1, c, b)) { //Check if at that point c, is there a L-shaped path to b
@@ -194,7 +194,7 @@ int matching_Z_U(int** isOktogo, int row, int col, Point a, Point b) {
 	}
 	if (isOktogo[a.x + 1][a.y] == 1) { //Check vertically downward
 		i = 1;
-		while (isOktogo[a.x + i][a.y] == 1 && a.x + i < row) { //Continue moving downward
+		while (a.x + i < row && isOktogo[a.x + i][a.y] == 1) { //Continue moving downward
 			c.x = a.x + i;
 			c.y = a.y;
 			if (matching_L(isOktogo, 2, c, b)) { 
@@ -210,7 +210,7 @@ int matching_Z_U(int** isOktogo, int row, int col, Point a, Point b) {
 	}
 	if(isOktogo[a.x - 1][a.y] == 1) { //Check vertically upward
 		i = 1;
-		while (isOktogo[a.x - i][a.y] == 1 && a.x - i >= 0) { //Continue moving upward
+		while (a.x - i >= 0 && isOktogo[a.x - i][a.y] == 1) { //Continue moving upward
 			c.x = a.x - i;
 			c.y = a.y;
 			if (matching_L(isOktogo, 2, c, b)) { //Check if at that point c, is there a L-shaped path to b
@@ -510,7 +510,7 @@ Node* path_U_Z(int** isOktogo, int row, int col, Point a, Point b) {
 		temp.y = a.y;
 		addHead(pHead, temp); //Adding point a to the list first
 		i = 1;
-		while (isOktogo[a.x][a.y + i] == 1 && a.y + i < col) { 
+		while (a.y + i < col && isOktogo[a.x][a.y + i] == 1 ) {
 			temp.y = a.y + i;
 			addHead(pHead, temp); //Adding the considered point to the list
 			c.x = a.x;
@@ -531,7 +531,7 @@ Node* path_U_Z(int** isOktogo, int row, int col, Point a, Point b) {
 		temp.y = a.y;
 		addHead(pHead, temp);
 		i = 1;
-		while (isOktogo[a.x][a.y - i] == 1 && a.y - i >= 0) {
+		while (a.y - i >= 0 && isOktogo[a.x][a.y - i] == 1) {
 			temp.y = a.y - i;
 			addHead(pHead, temp);
 			c.x = a.x;
@@ -551,7 +551,7 @@ Node* path_U_Z(int** isOktogo, int row, int col, Point a, Point b) {
 		temp.y = a.y;
 		addHead(pHead, temp);
 		i = 1;
-		while (isOktogo[a.x + i][a.y] && a.x + i < row) { //Continue moving downward
+		while (a.x + i < row && isOktogo[a.x + i][a.y] ) { //Continue moving downward
 			temp.x = a.x + i;
 			addHead(pHead, temp);
 			c.x = a.x + i;
@@ -571,7 +571,7 @@ Node* path_U_Z(int** isOktogo, int row, int col, Point a, Point b) {
 		temp.y = a.y;
 		addHead(pHead, temp);
 		i = 1;
-		while (isOktogo[a.x - i][a.y] == 1 && a.x - i >= 0) { //Continue moving upward
+		while (a.x - i >= 0 && isOktogo[a.x - i][a.y] == 1 ) { //Continue moving upward
 			temp.x = a.x - i;
 			addHead(pHead, temp);
 			c.x = a.x - i;
@@ -618,7 +618,7 @@ bool automatically_finding(int** isOktogo, int row, int col, Point &a, Point &b)
 				b.x = m;
 				for (int n = 1; n < col - 1; n++) {
 					b.y = n;
-					if(a.x != b.x || a.y != b.y) {
+					if((a.x != b.x || a.y != b.y) && isOktogo[a.x][a.y] == isOktogo[b.x][b.y]) {
 						if (matching_check(isOktogo, row, col, a, b) != 0) {
 							return 1;
 						}
