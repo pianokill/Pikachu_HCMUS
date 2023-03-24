@@ -200,16 +200,17 @@ Node* path_I(int** isOktogo, Point a, Point b) {
 		}
 		temp.x = a.x;
 		temp.y = a.y;
-		addHead(pHead, temp);
+		addHead (pHead, temp);
 		for (int i = 1; i < b.y - a.y; i++) {
 			if (isOktogo[a.x][a.y + i] != 1) {
 				removeAll(pHead);
 				return NULL;
 			}
 			temp.y = a.y + i;
-			addHead(pHead, temp);
+			addHead (pHead, temp);
 		}
 		addHead(pHead, b);
+		//pHead = reverseList(pHead);
 		return pHead;
 	}
 	else if (a.y == b.y) { //Check vertically
@@ -228,6 +229,7 @@ Node* path_I(int** isOktogo, Point a, Point b) {
 			addHead(pHead, temp);
 		}
 		addHead(pHead, b);
+		//pHead = reverseList(pHead);
 		return pHead;
 	}
 	removeAll(pHead);
@@ -267,8 +269,8 @@ Node* path_L(int** isOktogo, Point a, Point b) {
 			c.y = b.y;
 			Node* test = path_I(isOktogo, c, b);
 			if (test != NULL) {
-				insertTail(pHead, test);
-				return pHead;
+				insertTail(test, pHead);
+				return test;
 			}
 		}
 	}
@@ -296,8 +298,8 @@ Node* path_L(int** isOktogo, Point a, Point b) {
 				c.y = a.y;
 				Node* test = path_I(isOktogo, c, b);
 				if (test != NULL) {
-					insertTail(pHead, test);
-					return pHead;
+					insertTail(test, pHead);
+					return test;
 				}
 			}
 		}
@@ -308,7 +310,7 @@ Node* path_L(int** isOktogo, Point a, Point b) {
 			temp.x = a.x;
 			temp.y = a.y;
 			addHead(pHead, temp);
-			temp.y = a.x - 1;
+			temp.x = a.x - 1;
 			addHead(pHead, temp);
 			for (int i = 2; i <= a.x - b.x; i++) {
 				if (isOktogo[a.x - i][a.y] != 1) {
@@ -316,7 +318,7 @@ Node* path_L(int** isOktogo, Point a, Point b) {
 					break;
 				}
 				if (i < a.x - b.x) {
-					temp.y = a.x - i;
+					temp.x = a.x - i;
 					addHead(pHead, temp);
 				}
 			}
@@ -326,8 +328,8 @@ Node* path_L(int** isOktogo, Point a, Point b) {
 			c.y = a.y;
 			Node* test = path_I(isOktogo, c, b);
 			if (test != NULL) {
-				insertTail(pHead, test);
-				return pHead;
+				insertTail(test, pHead);
+				return test;
 			}
 		}
 	}

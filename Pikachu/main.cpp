@@ -22,16 +22,18 @@ int main() {
 	}
 
 	Point a;
-	a.x = 4;
+	a.x = 3;
 	a.y = 1;
 	Point b;
-	b.x = 8;
-	b.y = 6;
+	b.x = 1;
+	b.y = 5;
 	Node* pHead = NULL;
 	int num = matching_check(ptr, 10, 10, a, b);
 	if (num != 0) {
 		cout << num << endl;
 		cout << "YES";
+		pHead = path_finding(ptr, 10, 10, a, b);
+		printList(pHead);
 	}
 	return 0;
 }

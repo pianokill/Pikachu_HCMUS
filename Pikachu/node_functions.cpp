@@ -61,11 +61,16 @@ void printList(Node* pHead) {
 	if (pHead == NULL) {
 		return;
 	}
+	cout << "[" << pHead->data.x << "][" << pHead->data.y << "] ";
+	printList(pHead->pNext);
+	return;
+}
+Node* reverseList(Node* pHead) {
+	Node* temp = NULL;
 	Node* pCurrent = pHead;
 	while (pCurrent != NULL) {
-		cout << "[" << pCurrent->data.x << "][" << pCurrent->data.y << "] ";
+		addHead(temp, pCurrent->data);
 		pCurrent = pCurrent->pNext;
 	}
-	cout << endl;
-	return;
+	return temp;
 }

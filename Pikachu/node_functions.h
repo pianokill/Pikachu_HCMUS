@@ -7,3 +7,4 @@ void insertTail(Node*& pHead, Node* test);
 void removeHead(Node*& pHead);
 void removeAll(Node*& pHead);
 void printList(Node* pHead);
+Node* reverseList(Node* pHead);
