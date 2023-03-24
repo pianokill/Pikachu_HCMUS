@@ -23,7 +23,7 @@ int main() {
 
 	Point a;
 	a.x = 3;
-	a.y = 3;
+	a.y = 5;
 	Point b;
 	b.x = 7;
 	b.y = 6;
@@ -32,8 +32,8 @@ int main() {
 	if (num != 0) {
 		cout << num << endl;
 		cout << "YES";
-		//pHead = path_finding(ptr, num, 10, 10, a, b);
-		//printList(pHead);
+		pHead = path_finding(ptr, num, 10, 10, a, b);
+		printList(pHead);
 	}
 	return 0;
 }

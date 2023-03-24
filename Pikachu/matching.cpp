@@ -15,11 +15,8 @@ bool matching_I(int** isOktogo, Point a, Point b) {
 		if (b.y < a.y) {
 			swap_2int(b.y, a.y);
 		}
-		if (isOktogo[a.x][a.y + 1] != 1) {
-			return 0;
-		}
 		for (int i = 1; i < b.y - a.y; i++) {
-			if (isOktogo[a.x][a.y + i] != 1) {
+			if (isOktogo[a.x][a.y + i] != 1) { //If there is an invalid point => no path
 				return 0;
 			}
 		}
@@ -29,27 +26,26 @@ bool matching_I(int** isOktogo, Point a, Point b) {
 		if (b.x < a.x) {
 			swap_2int(b.x, a.x);
 		}
-		if (isOktogo[a.x + 1][a.y] == 1) {
-			for (int i = 1; i < b.x - a.x; i++) {
-				if (isOktogo[a.x + i][a.y] != 1) {
-					return 0;
-				}
+		for (int i = 1; i < b.x - a.x; i++) {
+			if (isOktogo[a.x + i][a.y] != 1) {	//Same as above		
+				return 0;
 			}
-			return 1;
 		}
+		return 1;
 	}
 	return 0;
 }
 bool matching_L(int** isOktogo, int move, Point a, Point b) { 
+	//If the move variable appears, it means that the U or Z path is considered => Do not want the L path go on the same way
 	if (a.x == b.x || a.y == b.y) {
 		return 0;
 	}
 	bool valid;
 	Point c;
-	if (b.y > a.y) {
-		if (isOktogo[a.x][a.y + 1] == 1 && move != 1) { //Check horizontally to the right
+	if (b.y > a.y) { //If the point b is on the right side of the point a
+		if (isOktogo[a.x][a.y + 1] == 1 && move != 1) { //Check horizontally to the right 
 			valid = 1;
-			for (int i = 2; i <= b.y - a.y; i++) {
+			for (int i = 2; i <= b.y - a.y; i++) { 
 				if (isOktogo[a.x][a.y + i] != 1) {
 					valid = 0;
 					break;
@@ -102,8 +98,8 @@ bool matching_L(int** isOktogo, int move, Point a, Point b) {
 			}
 		}
 	}
-	else if(b.y < a.y) {
-		if (isOktogo[a.x][a.y - 1] && move != 1) {
+	else if(b.y < a.y) { //If the point b is on the left side of the point a
+		if (isOktogo[a.x][a.y - 1] && move != 1) { //Check horizontally to the left
 			valid = 1;
 			for (int i = 2; i <= a.y - b.y; i++) {
 				if (isOktogo[a.x][a.y - i] != 1) {
@@ -168,7 +164,7 @@ int matching_Z_U(int** isOktogo, int row, int col, Point a, Point b) {
 		while (isOktogo[a.x][a.y + i] == 1 && a.y + i < col) { //Continue moving to the right
 			c.x = a.x; 
 			c.y = a.y + i;
-			if (matching_L(isOktogo, 1, c, b)) { //Check if at that point c, is there a L-shaped path to b
+			if (matching_L(isOktogo, 1, c, b)) { //Check if at that point c, is there a L-shaped path to b(L-shaped path do not go to the right or left again)
 				if (c.y < b.y) { 
 					return 1; //Z matching
 				}
@@ -255,32 +251,38 @@ Node* path_I(int** isOktogo, Point a, Point b) {
 	Node* pHead = NULL;
 	Point temp;
 	if (a.x == b.x) { //Check horizontally
-		if (b.y < a.y) {
-			swap_2int(b.y, a.y);
-		}
-		if (isOktogo[a.x][a.y + 1] != 1) {
-			return NULL;
-		}
 		temp.x = a.x;
 		temp.y = a.y;
-		addHead (pHead, temp); //Adding the point a first
-		for (int i = 1; i < b.y - a.y; i++) {
-			if (isOktogo[a.x][a.y + i] != 1) {
-				removeAll(pHead); //If the path is invalid, delete the list
-				return NULL;
+		addHead(pHead, temp);
+		if (b.y < a.y) {
+			for (int i = 1; i < a.y - b.y; i++) {
+				if (isOktogo[a.x][a.y - i] != 1) {
+					removeAll(pHead); //If the path is invalid, delete the list
+					return NULL;
+				}
+				temp.y = a.y - i;
+				addHead(pHead, temp); //If valid, add the point into the list
 			}
-			temp.y = a.y + i;
-			addHead (pHead, temp); //If valid, add the point into the list
+		}
+		else if(b.y > a.y){
+			for (int i = 1; i < b.y - a.y; i++) {
+				if (isOktogo[a.x][a.y + i] != 1) {
+					removeAll(pHead); //If the path is invalid, delete the list
+					return NULL;
+				}
+				temp.y = a.y + i;
+				addHead(pHead, temp); //If valid, add the point into the list
+			}
 		}
 		addHead(pHead, b);  //Lastly, add the point b
 		return pHead;
 	}
 	else if (a.y == b.y) { //Check vertically(Must divined into 2 situations in order to find the accurate path)
 		//The list is created exactly the same as the horizontal one
-		if (b.x > a.x && isOktogo[a.x + 1][a.y] == 1) { //Downward
-			temp.x = a.x;
-			temp.y = a.y;
-			addHead(pHead, temp);
+		temp.x = a.x;
+		temp.y = a.y;
+		addHead(pHead, temp);
+		if (b.x > a.x) { //Downward
 			for (int i = 1; i < b.x - a.x; i++) {
 				if (isOktogo[a.x + i][a.y] != 1) {
 					removeAll(pHead);
@@ -290,10 +292,7 @@ Node* path_I(int** isOktogo, Point a, Point b) {
 				addHead(pHead, temp);
 			}
 		}
-		else if(isOktogo[a.x - 1][a.y] == 1) { //Upward
-			temp.x = a.x;
-			temp.y = a.y;
-			addHead(pHead, temp);
+		else if(b.x < a.x) { //Upward
 			for (int i = 1; i < a.x - b.x; i++) {
 				if (isOktogo[a.x - i][a.y] != 1) {
 					removeAll(pHead);
@@ -318,55 +317,82 @@ Node* path_L(int** isOktogo, int move, Point a, Point b) {
 	Point temp;
 	Point c;
 	bool valid;
-	if (b.y < a.y) { //The point a must be on the left side of the point b
-		swap_2int(b.y, a.y);
-		swap_2int(b.x, a.x);
-	}
-	if (isOktogo[a.x][a.y + 1] == 1 && move != 2) { //Check horizontally to the right
-		valid = 1;
-		temp.x = a.x;
-		temp.y = a.y;
-		addHead(pHead, temp); //Adding the point a to the list first
-		temp.y = a.y + 1;
-		addHead(pHead, temp);
-		for (int i = 2; i <= b.y - a.y; i++) {
-			if (isOktogo[a.x][a.y + i] != 1) {
-				valid = 0;
-				break;
-			}
-			if (i < b.y - a.y) {
-				temp.y = a.y + i; //If the path is valid, add the considered point into the list
-				addHead(pHead, temp);
-			}
-		}
-		if (valid) { //At this point, the path is a straight line
-			c.x = a.x;
-			c.y = b.y;
-			test = path_I(isOktogo, c, b); //If at point c, there is a I-shaped path => combining 2 lines into an L-shaped path
-			if (test != NULL) {
-				insertTail(test, pHead); //The linked list of the I-shaped path is from b to c => put the current pHead to the tail of I-shaped path(from b to a)
-				return test;
-			}
-		}
-		removeAll(pHead); //If the path is not valid => delete the list
-	}
-	//The way of creating list under is the same as above
-	if (b.x > a.x) { //Check vertically downward	
-		if (isOktogo[a.x + 1][a.y] == 1 && move != 4) {
+	if (b.y < a.y) { 
+		if (isOktogo[a.x][a.y - 1] == 1 && move != 1) { //Check horizontally to the left
 			valid = 1;
 			temp.x = a.x;
 			temp.y = a.y;
+			addHead(pHead, temp); //Adding the point a to the list first
+			temp.y = a.y - 1;
 			addHead(pHead, temp);
-			temp.x = a.x + 1;
-			addHead(pHead, temp);
-			for (int i = 2; i <= b.x - a.x; i++) {
-				if (isOktogo[a.x + i][a.y] != 1) {
+			for (int i = 2; i <= a.y - b.y; i++) {
+				if (isOktogo[a.x][a.y - i] != 1) {
 					valid = 0;
 					break;
 				}
-				if (i < b.x - a.x) {
-					temp.x = a.x + i;
+				if (i < a.y - b.y) {
+					temp.y = a.y - i; //If the path is valid, add the considered point into the list
 					addHead(pHead, temp);
+				}
+			}
+			if (valid) { //At this point, the path is a straight line
+				c.x = a.x;
+				c.y = b.y;
+				test = path_I(isOktogo, c, b); //If at point c, there is a I-shaped path => combining 2 lines into an L-shaped path
+				if (test != NULL) {
+					insertTail(test, pHead); //The linked list of the I-shaped path is from b to c => put the current pHead to the tail of I-shaped path(from b to a)
+					return test;
+				}
+			}
+			removeAll(pHead); //If the path is not valid => delete the list
+		}
+		//The way of creating list under is the same as above
+		if (b.x > a.x) { //Check vertically downward	
+			if (isOktogo[a.x + 1][a.y] == 1 && move != 2) {
+				valid = 1;
+				temp.x = a.x;
+				temp.y = a.y;
+				addHead(pHead, temp);
+				temp.x = a.x + 1;
+				addHead(pHead, temp);
+				for (int i = 2; i <= b.x - a.x; i++) {
+					if (isOktogo[a.x + i][a.y] != 1) {
+						valid = 0;
+						break;
+					}
+					if (i < b.x - a.x) {
+						temp.x = a.x + i;
+						addHead(pHead, temp);
+					}
+				}
+				if (valid) {
+					c.x = b.x;
+					c.y = a.y;
+					test = path_I(isOktogo, c, b);
+					if (test != NULL) {
+						insertTail(test, pHead); //The linked list of the I-shaped path is from b to c => put the current list to the tail of I-shaped path(from b to a)
+						return test;
+					}
+				}
+			}
+		}
+		else { //Check vertically upward
+			if (isOktogo[a.x - 1][a.y] == 1 && move != 2) {
+				valid = 1;
+				temp.x = a.x;
+				temp.y = a.y;
+				addHead(pHead, temp);
+				temp.x = a.x - 1;
+				addHead(pHead, temp);
+				for (int i = 2; i <= a.x - b.x; i++) {
+					if (isOktogo[a.x - i][a.y] != 1) {
+						valid = 0;
+						break;
+					}
+					if (i < a.x - b.x) {
+						temp.x = a.x - i;
+						addHead(pHead, temp);
+					}
 				}
 			}
 			if (valid) {
@@ -374,38 +400,98 @@ Node* path_L(int** isOktogo, int move, Point a, Point b) {
 				c.y = a.y;
 				test = path_I(isOktogo, c, b);
 				if (test != NULL) {
-					insertTail(test, pHead); //The linked list of the I-shaped path is from b to c => put the current list to the tail of I-shaped path(from b to a)
+					insertTail(test, pHead); //Same as downward
 					return test;
 				}
 			}
 		}
 	}
-	else { //Check vertically upward
-		if (isOktogo[a.x - 1][a.y] == 1 && move != 3) {
+	else if (b.y > a.y) {
+		if (isOktogo[a.x][a.y + 1] == 1 && move != 1) { //Check horizontally to the right
 			valid = 1;
 			temp.x = a.x;
 			temp.y = a.y;
+			addHead(pHead, temp); //Adding the point a to the list first
+			temp.y = a.y + 1;
 			addHead(pHead, temp);
-			temp.x = a.x - 1;
-			addHead(pHead, temp);
-			for (int i = 2; i <= a.x - b.x; i++) {
-				if (isOktogo[a.x - i][a.y] != 1) {
+			for (int i = 2; i <= b.y - a.y; i++) {
+				if (isOktogo[a.x][a.y + i] != 1) {
 					valid = 0;
 					break;
 				}
-				if (i < a.x - b.x) {
-					temp.x = a.x - i;
+				if (i < b.y - a.y) {
+					temp.y = a.y + i; //If the path is valid, add the considered point into the list
 					addHead(pHead, temp);
 				}
 			}
+			if (valid) { //At this point, the path is a straight line
+				c.x = a.x;
+				c.y = b.y;
+				test = path_I(isOktogo, c, b); //If at point c, there is a I-shaped path => combining 2 lines into an L-shaped path
+				if (test != NULL) {
+					insertTail(test, pHead); //The linked list of the I-shaped path is from b to c => put the current pHead to the tail of I-shaped path(from b to a)
+					return test;
+				}
+			}
+			removeAll(pHead); //If the path is not valid => delete the list
 		}
-		if (valid) {
-			c.x = b.x;
-			c.y = a.y;
-			test = path_I(isOktogo, c, b);
-			if (test != NULL) {
-				insertTail(test, pHead); //Same as downward
-				return test;
+		//The way of creating list under is the same as above
+		if (b.x > a.x) { //Check vertically downward	
+			if (isOktogo[a.x + 1][a.y] == 1 && move != 4) {
+				valid = 1;
+				temp.x = a.x;
+				temp.y = a.y;
+				addHead(pHead, temp);
+				temp.x = a.x + 1;
+				addHead(pHead, temp);
+				for (int i = 2; i <= b.x - a.x; i++) {
+					if (isOktogo[a.x + i][a.y] != 1) {
+						valid = 0;
+						break;
+					}
+					if (i < b.x - a.x) {
+						temp.x = a.x + i;
+						addHead(pHead, temp);
+					}
+				}
+				if (valid) {
+					c.x = b.x;
+					c.y = a.y;
+					test = path_I(isOktogo, c, b);
+					if (test != NULL) {
+						insertTail(test, pHead); //The linked list of the I-shaped path is from b to c => put the current list to the tail of I-shaped path(from b to a)
+						return test;
+					}
+				}
+			}
+		}
+		else { //Check vertically upward
+			if (isOktogo[a.x - 1][a.y] == 1 && move != 3) {
+				valid = 1;
+				temp.x = a.x;
+				temp.y = a.y;
+				addHead(pHead, temp);
+				temp.x = a.x - 1;
+				addHead(pHead, temp);
+				for (int i = 2; i <= a.x - b.x; i++) {
+					if (isOktogo[a.x - i][a.y] != 1) {
+						valid = 0;
+						break;
+					}
+					if (i < a.x - b.x) {
+						temp.x = a.x - i;
+						addHead(pHead, temp);
+					}
+				}
+			}
+			if (valid) {
+				c.x = b.x;
+				c.y = a.y;
+				test = path_I(isOktogo, c, b);
+				if (test != NULL) {
+					insertTail(test, pHead); //Same as downward
+					return test;
+				}
 			}
 		}
 	}
@@ -413,10 +499,6 @@ Node* path_L(int** isOktogo, int move, Point a, Point b) {
 	return NULL;
 }
 Node* path_U_Z(int** isOktogo, int row, int col, Point a, Point b) {
-	if (b.y < a.y) { //The point a must be on the left side of the point b
-		swap_2int(a.x, b.x);
-		swap_2int(a.y, b.y);
-	}
 	Node* pHead = NULL;
 	Point temp;
 	Node* test = NULL;
@@ -432,7 +514,7 @@ Node* path_U_Z(int** isOktogo, int row, int col, Point a, Point b) {
 			addHead(pHead, temp); //Adding the considered point to the list
 			c.x = a.x;
 			c.y = a.y + i;
-			test = path_L(isOktogo, 2, c, b); 
+			test = path_L(isOktogo, 1, c, b); 
 			if (test != NULL) { //If there is a valid L-path from the considered point
 				removeHead(pHead); //Remove the considered point from the list(Because the L-path has already had this point)
 				insertTail(test, pHead); //L-path is generated from b to c => put the current list into the L-path => from b to a
@@ -473,7 +555,7 @@ Node* path_U_Z(int** isOktogo, int row, int col, Point a, Point b) {
 			addHead(pHead, temp);
 			c.x = a.x + i;
 			c.y = a.y;
-			test = path_L(isOktogo, 4, c, b);
+			test = path_L(isOktogo, 2, c, b);
 			if (test != NULL) {
 				removeHead(pHead);
 				insertTail(test, pHead);
@@ -493,7 +575,7 @@ Node* path_U_Z(int** isOktogo, int row, int col, Point a, Point b) {
 			addHead(pHead, temp);
 			c.x = a.x - i;
 			c.y = a.y;
-			test = path_L(isOktogo, 3, c, b);
+			test = path_L(isOktogo, 2, c, b);
 			if (test != NULL) {
 				removeHead(pHead);
 				insertTail(test, pHead);
