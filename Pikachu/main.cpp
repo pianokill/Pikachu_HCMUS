@@ -23,17 +23,17 @@ int main() {
 
 	Point a;
 	a.x = 3;
-	a.y = 1;
+	a.y = 3;
 	Point b;
-	b.x = 1;
-	b.y = 5;
+	b.x = 7;
+	b.y = 6;
 	Node* pHead = NULL;
 	int num = matching_check(ptr, 10, 10, a, b);
 	if (num != 0) {
 		cout << num << endl;
 		cout << "YES";
-		pHead = path_finding(ptr, num, 10, 10, a, b);
-		printList(pHead);
+		//pHead = path_finding(ptr, num, 10, 10, a, b);
+		//printList(pHead);
 	}
 	return 0;
 }
