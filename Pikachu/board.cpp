@@ -16,21 +16,6 @@ void addHead(Node*& pHead, Point data) {
 		pHead->pNext = pTemp;
 	}
 }
-void addTail(Node*& pHead, Point data) {
-	Node* pCurrent = pHead;
-	while (pCurrent->pNext != NULL) {
-		pCurrent = pCurrent->pNext;
-	}
-	Node* pTemp = new Node;
-	pTemp->data.x = data.x;
-	pTemp->data.y = data.y;
-	if (pCurrent != NULL) {
-		pCurrent->pNext = pTemp;
-	}
-	else {
-		addHead(pHead, data);
-	}
-}
 void insertTail(Node*& pHead, Node* test) {
 	Node* pCurrent = pHead;
 	while (pCurrent->pNext != NULL) {
@@ -68,15 +53,6 @@ void printList(Node* pHead) {
 	cout << "[" << pHead->data.x << "][" << pHead->data.y << "] ";
 	printList(pHead->pNext);
 	return;
-}
-Node* reverseList(Node* pHead) {
-	Node* temp = NULL;
-	Node* pCurrent = pHead;
-	while (pCurrent != NULL) {
-		addHead(temp, pCurrent->data);
-		pCurrent = pCurrent->pNext;
-	}
-	return temp;
 }
 void board::init()
 {

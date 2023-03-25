@@ -16,12 +16,10 @@ struct Node {
 	Node* pNext;
 };
 void addHead(Node*& pHead, Point data);
-void addTail(Node*& pHead, Point data);
 void insertTail(Node*& pHead, Node* test);
 void removeHead(Node*& pHead);
 void removeAll(Node*& pHead);
 void printList(Node* pHead);
-Node* reverseList(Node* pHead);
 struct board
 {
 	int** isOktogo; // To check whether a cell is available on the board
