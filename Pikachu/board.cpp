@@ -105,17 +105,34 @@ void board::init()
 	for (int i = 0; i < m * n / 2; i++)
 		used_characters[m * n / 2 + i] = characters_list[i]; // Random the characters_list and append the result to the second half of the list
 	for (int i = 0; i < m + 2; i++)
-		for (int j = 0; j < n + 2; j++)
-		{
-			isOktogo[i][j] = 1;
-			letters[i][j] = '$';
-		}
+	{
+		letters[i][0] = '$';
+		letters[i][n + 1] = '$';
+		isOktogo[i][0] = 1;
+		isOktogo[i][n + 1] = 1;
+	}
+	for (int i = 0; i < n + 2; i++) {
+		letters[0][i] = '$';
+		letters[m + 1][i] = '$';
+		isOktogo[0][i] = 1;
+		isOktogo[m + 1][i] = 1;
+	}
 	for (int i = 0; i < m; i++)
 		for (int j = 0; j < n; j++)
 		{
-			isOktogo[i + 1][j + 1] = 0;
 			letters[i + 1][j + 1] = used_characters[n * i + j]; // Put the randomized board onto the map
 		}
+	for (int i = 1; i < m + 1; i++) {
+		for (int j = 1; j < n + 1; j++) {
+			isOktogo[i][j] = letters[i][j];
+		}
+	}
+	for (int i = 0; i < m + 2; i++)
+	{
+		for (int j = 0; j < n + 2; j++)
+			cout << isOktogo[i][j] << ' ';   
+		cout << '\n';
+	}
 	for (int i = 0; i < m + 2; i++)
 	{
 		for (int j = 0; j < n + 2; j++)
