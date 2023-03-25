@@ -614,9 +614,9 @@ bool automatically_finding(int** isOktogo, int row, int col, Point &a, Point &b)
 		a.x = i;
 		for (int j = 1; j < col - 1; j++) {
 			a.y = j;
-			for (int m = 1; m < row - 1; m++) {
+			for (int m = i; m < row - 1; m++) {
 				b.x = m;
-				for (int n = 1; n < col - 1; n++) {
+				for (int n = j; n < col - 1; n++) {
 					b.y = n;
 					if((a.x != b.x || a.y != b.y) && isOktogo[a.x][a.y] == isOktogo[b.x][b.y]) {
 						if (matching_check(isOktogo, row, col, a, b) != 0) {

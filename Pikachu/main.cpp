@@ -1,8 +1,8 @@
 #include "matching.h"
 #include "node_functions.h"
 int main() {
-	int row = 5;
-	int col = 8;
+	int row = 10;
+	int col = 15;
 	int** ptr = new int*[row];  
 
 	for (int i = 0; i < row; i++) {
@@ -23,7 +23,7 @@ int main() {
 		cout << endl;
 	}/*
 	Point a;
-	a.x = 1;
+	a.x = 3;
 	a.y = 4;
 	Point b;
 	b.x = 2;
