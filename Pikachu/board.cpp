@@ -1,4 +1,5 @@
 #include "board.h"
+//Linked list functions
 void swap_2int(int& a, int& b) {
 	a = a + b;
 	b = a - b;
@@ -54,6 +55,7 @@ void printList(Node* pHead) {
 	printList(pHead->pNext);
 	return;
 }
+//Board controlling functions
 void board::init()
 {
 	srand(time(0));
@@ -103,12 +105,12 @@ void board::init()
 			isOktogo[i][j] = letters[i][j];
 		}
 	}
-	for (int i = 0; i < m + 2; i++)
-	{
-		for (int j = 0; j < n + 2; j++)
-			cout << isOktogo[i][j] << ' ';   
-		cout << '\n';
-	}
+	print_board();
+}
+void board::print_board() {
+	int m, n;
+	m = size[difficulty - 1].first;
+	n = size[difficulty - 1].second;
 	for (int i = 0; i < m + 2; i++)
 	{
 		for (int j = 0; j < n + 2; j++)
@@ -128,10 +130,10 @@ void board::destroy_board()
 	delete[] isOktogo;
 	delete[] letters;
 }
+
 //move variable definition:
 //1: Move to the left or the righ
 //2: Move to the top or the bottom
-
 //Checking functions
 bool board::matching_I(Point a, Point b) {
 	if (a.x == b.x) { //Check horizontally
@@ -304,7 +306,7 @@ int board::matching_Z_U(int row, int col, Point a, Point b) {
 			c.x = a.x;
 			c.y = a.y - i;
 			if (matching_L(1, c, b)) { //Check if at that point c, is there a L-shaped path to b
-				if (c.y > b.y) {
+				if (c.y < b.y) {
 					return 1; //Z matching
 				}
 				else {
@@ -320,7 +322,7 @@ int board::matching_Z_U(int row, int col, Point a, Point b) {
 			c.x = a.x + i;
 			c.y = a.y;
 			if (matching_L(2, c, b)) {
-				if (c.x < b.x) {
+				if (c.x > b.x) {
 					return 1; //Z matching
 				}
 				else {
@@ -336,7 +338,7 @@ int board::matching_Z_U(int row, int col, Point a, Point b) {
 			c.x = a.x - i;
 			c.y = a.y;
 			if (matching_L(2, c, b)) { //Check if at that point c, is there a L-shaped path to b
-				if (c.x > b.x) {
+				if (c.x < b.x) {
 					return 1; //Z matching
 				}
 				else {
@@ -362,10 +364,10 @@ int board::matching_check(int row, int col, Point a, Point b) {
 	}
 	int condition = matching_Z_U(row, col, a, b);//Lastly, check the U or Z shaped
 	if (condition == 1) {
-		return 3;
+		return 3; //Z matching
 	}
 	if (condition == 2) {
-		return 4;
+		return 4; //U matching
 	}
 	return 0;
 }
@@ -736,13 +738,17 @@ bool board::automatically_finding(int row, int col, Point& a, Point& b) {
 		a.x = i;
 		for (int j = 1; j < col - 1; j++) {
 			a.y = j;
-			for (int m = i; m < row - 1; m++) {
-				b.x = m;
-				for (int n = j; n < col - 1; n++) {
-					b.y = n;
-					if ((a.x != b.x || a.y != b.y) && isOktogo[a.x][a.y] == isOktogo[b.x][b.y]) {
-						if (matching_check(row, col, a, b) != 0) {
-							return 1;
+			if (isOktogo[a.x][a.y] != 1) {
+				for (int m = i; m < row - 1; m++) {
+					b.x = m;
+					for (int n = j + 1; n < col - 1; n++) {
+						b.y = n;
+						if (isOktogo[a.x][a.y] != 1 && isOktogo[b.x][b.y] != 1) {
+							if (isOktogo[a.x][a.y] == isOktogo[b.x][b.y]) {
+								if (matching_check(row, col, a, b) != 0) {
+									return 1;
+								}
+							}
 						}
 					}
 				}
@@ -765,5 +771,52 @@ int board::FindScore()
 		printList(pHead);
 		return ans;
 	}
+	return 0;
+}
+//Playing game
+int board::matching(Point x, Point y)
+{
+	int m, n;
+	m = size[difficulty - 1].first;
+	n = size[difficulty - 1].second;
+	Node* pHead;
+
+	int type = matching_check(m, n, x, y);
+	pHead = path_finding(type, m, n, x, y);
+	if (type != 0) {
+		switch (type) {
+		case 1:
+			cout << "I matching" << endl;
+			cout << "The path is: ";
+			printList(pHead);
+			cout << endl;
+			break;
+		case 2:
+			cout << "L matching" << endl;
+			cout << "The path is: ";
+			printList(pHead);
+			cout << endl;
+			break;
+		case 3:
+			cout << "U matching" << endl;
+			cout << "The path is: ";
+			printList(pHead);
+			cout << endl;
+			break;
+		case 4:
+			cout << "Z matching" << endl;
+			cout << "The path is: ";
+			printList(pHead);
+			cout << endl;
+			break;
+		}
+		isOktogo[x.x][x.y] = 1;
+		isOktogo[y.x][y.y] = 1;
+		letters[x.x][x.y] = '$';
+		letters[y.x][y.y] = '$';
+		print_board();
+		return 1;
+	}
+	cout << "Not valid!" << endl;
 	return 0;
 }

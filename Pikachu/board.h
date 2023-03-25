@@ -27,6 +27,7 @@ struct board
 	int difficulty; // Difficulty of the game, which will be 1 (Easy), 2 (Medium), 3 (Hard)
 	const pair<int, int> size[3] = { {3,4},{6,8},{10,12} }; // For each difficulty, a respective size of the board will be displayed
 	void init(); // Initialize the board based on the chosen difficulty
+	void print_board();
 	void destroy_board(); // Delete the board after the game ends
 	bool matching_I(Point, Point);
 	bool matching_L(int, Point, Point);
@@ -38,4 +39,5 @@ struct board
 	Node* path_finding(int, int, int, Point, Point);
 	bool automatically_finding(int, int, Point&, Point&);
 	int FindScore();
+	int matching(Point, Point);
 };
