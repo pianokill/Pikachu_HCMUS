@@ -1,16 +1,9 @@
 #pragma once
 #include <iostream>
 #include <fstream>
-using namespace std;
+#include "node_functions.h"
 
-struct Point {
-	int x;
-	int y;
-};
-struct Node {
-	Point data;
-	Node* pNext;
-};
+using namespace std;
 
 void swap_2int(int& a, int& b);
 bool matching_I(int** isOktogo, Point a, Point b);
