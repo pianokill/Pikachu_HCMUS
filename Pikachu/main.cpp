@@ -62,6 +62,6 @@ int main() {
 		pHead = path_finding(ptr, num, 10, 10, a, b);
 		printList(pHead);
 	}
-	cout << endl << "Hi";
+	cout << endl << "Hi" << "123";
 	return 0;
 }
