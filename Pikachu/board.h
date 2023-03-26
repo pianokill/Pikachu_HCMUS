@@ -1,8 +1,8 @@
-#pragma once
 #include <iostream>
 #include <algorithm>
 #include <cstdlib>
 #include <ctime>
+#include <fstream>
 
 using namespace std;
 
@@ -22,22 +22,37 @@ void removeAll(Node*& pHead);
 void printList(Node* pHead);
 struct board
 {
-	int** isOktogo; // To check whether a cell is available on the board
 	char** letters; // The character that the players will see on the board
 	int difficulty; // Difficulty of the game, which will be 1 (Easy), 2 (Medium), 3 (Hard)
-	const pair<int, int> size[3] = { {3,4},{6,8},{10,12} }; // For each difficulty, a respective size of the board will be displayed
+	board () {}
+	board(int n) {
+		this->difficulty = n;
+		this->letters = new char*[(this->difficulty)*3 + 2];
+		for (int i = 0; i < (this->difficulty) * 3 + 2; i++) 
+		{
+			this->letters[i] = new char[(this->difficulty) * 4 + 2];
+		}
+	}
+	/*
+	~board() {
+		for (int i = 0; i < this->difficulty * 3+2; i++) {
+			delete[] this->letters[i];
+		}
+		delete[]this->letters;
+	}
+	*/
 	void init(); // Initialize the board based on the chosen difficulty
 	void print_board();
 	void destroy_board(); // Delete the board after the game ends
-	bool matching_I(Point, Point);
-	bool matching_L(int, Point, Point);
-	int matching_Z_U(int, int, Point, Point);
-	int matching_check(int, int, Point, Point);
-	Node* path_I(Point, Point);
-	Node* path_L(int, Point, Point);
-	Node* path_U_Z(int, int, Point, Point);
-	Node* path_finding(int, int, int, Point, Point);
-	bool automatically_finding(int, int, Point&, Point&);
 	int FindScore();
-	int matching(Point, Point);
 };
+bool matching_I(char** letters, Point a, Point b);
+bool matching_L(char** letters, Point a, Point b);
+int matching_Z_U(char** letters, int row, int col, Point a, Point b);
+int matching_check(char** letters, int row, int col, Point a, Point b);
+Node* path_I(char** letters, Point a, Point b);
+Node* path_L(char** letters, Point a, Point b);
+Node* path_U_Z(char** letters, int row, int col, Point a, Point b);
+Node* path_finding(char** letters, int row, int col, Point a, Point b);
+bool automatically_finding(char** letters, int row, int col, Point& a, Point& b);
+int matching(char**& letters, int row, int col, Point x, Point y);

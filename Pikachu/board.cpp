@@ -60,17 +60,10 @@ void board::init()
 {
 	srand(time(0));
 	int m, n;
-	m = size[difficulty - 1].first;
-	n = size[difficulty - 1].second; // Get the size of the board (m*n) based on the difficulty
+	m = difficulty * 3;
+	n = difficulty * 4; // Get the size of the board (m*n) based on the difficulty
 	char* used_characters; // The list of the character that will be available on the board
 	char* characters_list; // Save the received letter from randomization
-	isOktogo = new int* [m + 2];
-	letters = new char* [m + 2];
-	for (int i = 0; i < m + 2; i++)
-	{
-		isOktogo[i] = new int[n + 2];
-		letters[i] = new char[n + 2];
-	}
 	used_characters = new char [m * n];
 	characters_list = new char[m * n / 2];
 	for (int i = 0; i < m * n / 2; i++)
@@ -86,73 +79,88 @@ void board::init()
 	{
 		letters[i][0] = '$';
 		letters[i][n + 1] = '$';
-		isOktogo[i][0] = 1;
-		isOktogo[i][n + 1] = 1;
 	}
 	for (int i = 0; i < n + 2; i++) {
 		letters[0][i] = '$';
 		letters[m + 1][i] = '$';
-		isOktogo[0][i] = 1;
-		isOktogo[m + 1][i] = 1;
 	}
 	for (int i = 0; i < m; i++)
 		for (int j = 0; j < n; j++)
 		{
 			letters[i + 1][j + 1] = used_characters[n * i + j]; // Put the randomized board onto the map
 		}
-	for (int i = 1; i < m + 1; i++) {
-		for (int j = 1; j < n + 1; j++) {
-			isOktogo[i][j] = letters[i][j];
-		}
-	}
 	print_board();
 }
 void board::print_board() {
 	int m, n;
-	m = size[difficulty - 1].first;
-	n = size[difficulty - 1].second;
+	m = difficulty*3;
+	n = difficulty*4;
 	for (int i = 0; i < m + 2; i++)
 	{
 		for (int j = 0; j < n + 2; j++)
-			cout << letters[i][j] << ' ';   //  just debugging the board
+			cout << letters[i][j] << ' ';   
 		cout << '\n';
 	}
 }
 void board::destroy_board()
 {
 	int m;
-	m = size[difficulty - 1].first;
+	m = difficulty * 3 + 2;
 	for (int i = 0; i < m; i++)
 	{
-		delete[] isOktogo[i];
 		delete[] letters[i];
 	}
-	delete[] isOktogo;
 	delete[] letters;
 }
-
+int board::FindScore()
+{
+	return 0;
+	/*
+	int m, n;
+	m = size[difficulty - 1].first;
+	n = size[difficulty - 1].second;
+	Point x, y;
+	Node* pHead;
+	if (automatically_finding(m, n, x, y))
+	{
+		int ans = matching_check(m, n, x, y);
+		pHead = path_finding(ans, m, n, x, y);
+		printList(pHead);
+		return ans;
+	}
+	return 0;*/
+}
 //move variable definition:
 //1: Move to the left or the righ
 //2: Move to the top or the bottom
 //Checking functions
-bool board::matching_I(Point a, Point b) {
-	if (a.x == b.x) { //Check horizontally
-		if (b.y < a.y) {
+bool matching_I(char** letters, Point a, Point b) 
+{
+	if (a.x == b.x) 
+	{ //Check horizontally
+		if (b.y < a.y) 
+		{
 			swap_2int(b.y, a.y);
 		}
-		for (int i = 1; i < b.y - a.y; i++) {
-			if (isOktogo[a.x][a.y + i] != 1) { //If there is an invalid point => no path
+		for (int i = 1; i < b.y - a.y; i++) 
+		{
+			if (letters[a.x][a.y + i] != '$') 
+			{ //If there is an invalid point => no path
 				return 0;
 			}
 		}
 		return 1;
 	}
-	else if (a.y == b.y) { //Check vertically
-		if (b.x < a.x) {
+	else if (a.y == b.y) 
+	{ //Check vertically
+		if (b.x < a.x) 
+		{
 			swap_2int(b.x, a.x);
 		}
-		for (int i = 1; i < b.x - a.x; i++) {
-			if (isOktogo[a.x + i][a.y] != 1) {	//Same as above		
+		for (int i = 1; i < b.x - a.x; i++) 
+		{
+			if (letters[a.x + i][a.y] != '$') 
+			{	//Same as above		
 				return 0;
 			}
 		}
@@ -160,188 +168,189 @@ bool board::matching_I(Point a, Point b) {
 	}
 	return 0;
 }
-bool board::matching_L(int move, Point a, Point b) {
+bool matching_L(char** letters, int move, Point a, Point b) 
+{
 	//If the move variable appears, it means that the U or Z path is considered => Do not want the L path go on the same way
-	if (a.x == b.x || a.y == b.y) {
+	if (a.x == b.x || a.y == b.y) 
+	{
 		return 0;
 	}
 	bool valid;
 	Point c;
-	if (b.y > a.y) { //If the point b is on the right side of the point a
-		if (isOktogo[a.x][a.y + 1] == 1 && move != 1) { //Check horizontally to the right 
+	if (a.y < b.y && move != 1) //Check horizontally to the right
+	{ 
+		if (letters[a.x][a.y + 1] == '$')
+		{ //Check horizontally to the right 
 			valid = 1;
-			for (int i = 2; i <= b.y - a.y; i++) {
-				if (isOktogo[a.x][a.y + i] != 1) {
+			for (int i = 2; i <= b.y - a.y; i++)
+			{
+				if (letters[a.x][a.y + i] != '$')
+				{
+					valid = 0;
+					break;
+				}
+			}
+			if (valid)
+			{
+				c.x = a.x;
+				c.y = b.y;
+				if (matching_I(letters, c, b))
+				{
+					return 1;
+				}
+			}
+		}
+	}
+	else if (a.y > b.y && move != 1)  //Check horizontally to the left
+	{
+		if (letters[a.x][a.y - 1] == '$') 
+		{ 
+			valid = 1;
+			for (int i = 2; i <= a.y - b.y; i++) 
+			{
+				if (letters[a.x][a.y - i] != '$')
+				{
+					valid = 0;
+					break;
+				}
+			}
+			if (valid) 
+			{
+				c.x = a.x;
+				c.y = b.y;
+				if (matching_I(letters, c, b)) 
+				{
+					return 1;
+				}
+			}
+		}
+	}
+	if (a.x < b.x && move != 2)  //Check vertically downward	
+	{		
+		if (letters[a.x + 1][a.y] == '$') {
+			valid = 1;
+			for (int i = 2; i <= b.x - a.x; i++) {
+				if (letters[a.x + i][a.y] != '$') {
 					valid = 0;
 					break;
 				}
 			}
 			if (valid) {
-				c.x = a.x;
-				c.y = b.y;
-				if (matching_I(c, b)) {
+				c.x = b.x;
+				c.y = a.y;
+				if (matching_I(letters, c, b)) {
 					return 1;
 				}
 			}
 		}
-		if (b.x > a.x) {
-			if (b.x > a.x) { //Check vertically downward			
-				if (isOktogo[a.x + 1][a.y] == 1 && move != 2) {
-					valid = 1;
-					for (int i = 2; i <= b.x - a.x; i++) {
-						if (isOktogo[a.x + i][a.y] != 1) {
-							valid = 0;
-							break;
-						}
-					}
-					if (valid) {
-						c.x = b.x;
-						c.y = a.y;
-						if (matching_I(c, b)) {
-							return 1;
-						}
-					}
-				}
-			}
-		}
-		else { //Check vertically upward
-			if (isOktogo[a.x - 1][a.y] == 1 && move != 2) {
-				valid = 1;
-				for (int i = 2; i <= a.x - b.x; i++) {
-					if (isOktogo[a.x - i][a.y] != 1) {
-						valid = 0;
-						break;
-					}
-				}
-				if (valid) {
-					c.x = b.x;
-					c.y = a.y;
-					if (matching_I(c, b)) {
-						return true;
-					}
-				}
-			}
-		}
 	}
-	else if (b.y < a.y) { //If the point b is on the left side of the point a
-		if (isOktogo[a.x][a.y - 1] == 1 && move != 1) { //Check horizontally to the left
+	else if (a.x > b.x && move != 2) // Check vertically upward
+	{
+		if (letters[a.x - 1][a.y] == '$') 
+		{
 			valid = 1;
-			for (int i = 2; i <= a.y - b.y; i++) {
-				if (isOktogo[a.x][a.y - i] != 1) {
+			for (int i = 2; i <= a.x - b.x; i++) 
+			{
+				if (letters[a.x - i][a.y] != '$') 
+				{
 					valid = 0;
 					break;
 				}
 			}
-			if (valid) {
-				c.x = a.x;
-				c.y = b.y;
-				if (matching_I(c, b)) {
+			if (valid) 
+			{
+				c.x = b.x;
+				c.y = a.y;
+				if (matching_I(letters, c, b)) 
+				{
 					return 1;
 				}
 			}
 		}
-		if (b.x > a.x) {
-			if (b.x > a.x) { //Check vertically downward			
-				if (isOktogo[a.x + 1][a.y] == 1 && move != 2) {
-					valid = 1;
-					for (int i = 2; i <= b.x - a.x; i++) {
-						if (isOktogo[a.x + i][a.y] != 1) {
-							valid = 0;
-							break;
-						}
-					}
-					if (valid) {
-						c.x = b.x;
-						c.y = a.y;
-						if (matching_I(c, b)) {
-							return 1;
-						}
-					}
-				}
-			}
-		}
-		else { //Check vertically upward
-			if (isOktogo[a.x - 1][a.y] == 1 && move != 2) {
-				valid = 1;
-				for (int i = 2; i <= a.x - b.x; i++) {
-					if (isOktogo[a.x - i][a.y] != 1) {
-						valid = 0;
-						break;
-					}
-				}
-				if (valid) {
-					c.x = b.x;
-					c.y = a.y;
-					if (matching_I(c, b)) {
-						return true;
-					}
-				}
-			}
-		}
 	}
-	return false;
+	return 0;
 }
-int board::matching_Z_U(int row, int col, Point a, Point b) {
+int matching_Z_U(char** letters, int row, int col, Point a, Point b) {
 	Point c;
 	int i;
-	if (isOktogo[a.x][a.y + 1] == 1) { //Check horizontally to the right
+	if (letters[a.x][a.y + 1] == '$') //Check horizontally to the right
+	{ 
 		i = 1;
-		while (a.y + i < col && isOktogo[a.x][a.y + i] == 1) { //Continue moving to the right
-			c.x = a.x;
+		c.x = a.x;
+		while (a.y + i < col && letters[a.x][a.y + i] == '$') //Continue moving to the right
+		{ 
 			c.y = a.y + i;
-			if (matching_L(1, c, b)) { //Check if at that point c, is there a L-shaped path to b(L-shaped path do not go to the right or left again)
-				if (c.y < b.y) {
+			if (matching_L(letters, 1, c, b)) //Check if at that point c, is there a L-shaped path to b(L-shaped path do not go to the right or left again)
+			{ 
+				if (c.y < b.y) 
+				{
 					return 1; //Z matching
 				}
-				else {
+				else if(c.y > b.y) 
+				{
 					return 2; //U matching
 				}
 			}
 			i++;
 		}
 	}
-	if (isOktogo[a.x][a.y - 1] == 1) { //Check horizontally to the left
+	if (letters[a.x][a.y - 1] == '$') //Check horizontally to the left
+	{ 
 		i = 1;
-		while (a.y - i >= 0 && isOktogo[a.x][a.y - i] == 1) { //Continue moving to the left
-			c.x = a.x;
+		c.x = a.x;
+		while (a.y - i >= 0 && letters[a.x][a.y - i] == '$') 
+		{ //Continue moving to the left
 			c.y = a.y - i;
-			if (matching_L(1, c, b)) { //Check if at that point c, is there a L-shaped path to b
-				if (c.y < b.y) {
+			if (matching_L(letters, 1, c, b)) 
+			{ //Check if at that point c, is there a L-shaped path to b
+				if (c.y > b.y) 
+				{
 					return 1; //Z matching
 				}
-				else {
+				else if (c.y < b.y)
+				{
 					return 2; //U matching
 				}
 			}
 			i++;
 		}
 	}
-	if (isOktogo[a.x + 1][a.y] == 1) { //Check vertically downward
+	if (letters[a.x + 1][a.y] == '$') 
+	{ //Check vertically downward
 		i = 1;
-		while (a.x + i < row && isOktogo[a.x + i][a.y] == 1) { //Continue moving downward
+		c.y = a.y;
+		while (a.x + i < row && letters[a.x + i][a.y] == '$')
+		{ //Continue moving downward
 			c.x = a.x + i;
-			c.y = a.y;
-			if (matching_L(2, c, b)) {
-				if (c.x > b.x) {
+			if (matching_L(letters, 2, c, b)) 
+			{
+				if (c.x < b.x) 
+				{
 					return 1; //Z matching
 				}
-				else {
+				else if (c.x > b.x) 
+				{
 					return 2; //U matching
 				}
 			}
 			i++;
 		}
 	}
-	if (isOktogo[a.x - 1][a.y] == 1) { //Check vertically upward
+	if (letters[a.x - 1][a.y] == '$')
+	{ //Check vertically upward
 		i = 1;
-		while (a.x - i >= 0 && isOktogo[a.x - i][a.y] == 1) { //Continue moving upward
+		c.y = a.y;
+		while (a.x - i >= 0 && letters[a.x - i][a.y] == '$')
+		{ //Continue moving upward
 			c.x = a.x - i;
-			c.y = a.y;
-			if (matching_L(2, c, b)) { //Check if at that point c, is there a L-shaped path to b
-				if (c.x < b.x) {
+			if (matching_L(letters, 2, c, b)) 
+			{ //Check if at that point c, is there a L-shaped path to b
+				if (c.x > b.x) 
+				{
 					return 1; //Z matching
 				}
-				else {
+				else if (c.x < b.x)
+				{
 					return 2; //U matching
 				}
 			}
@@ -350,38 +359,43 @@ int board::matching_Z_U(int row, int col, Point a, Point b) {
 	}
 	return 0;
 }
-int board::matching_check(int row, int col, Point a, Point b) {
-	if (isOktogo[a.x][a.y] != isOktogo[b.x][b.y]) {//Check the similarity between a and b
+int matching_check(char** letters, int row, int col, Point a, Point b) {
+	if (letters[a.x][a.y] != letters[b.x][b.y]) {//Check the similarity between a and b
 		return 0;
 	}
 	if (a.x == b.x || a.y == b.y) { //If they are on the same column or row => Check I-shaped first
-		if (matching_I(a, b)) {
+		if (matching_I(letters, a, b)) {
 			return 1;
 		}
 	}
-	if (matching_L(0, a, b)) {//Then check L-shaped if they are not on the same row or column
+	if (matching_L(letters, 0, a, b)) {//Then check L-shaped if they are not on the same row or column
 		return 2;
 	}
-	int condition = matching_Z_U(row, col, a, b);//Lastly, check the U or Z shaped
+	int condition = matching_Z_U(letters, row, col, a, b);//Lastly, check the U or Z shaped
 	if (condition == 1) {
 		return 3; //Z matching
 	}
-	if (condition == 2) {
+	else if (condition == 2) {
 		return 4; //U matching
 	}
 	return 0;
 }
 //Finding all of the points on the path
-Node* board::path_I(Point a, Point b) {
+Node* path_I(char** letters, Point a, Point b) 
+{
 	Node* pHead = NULL;
 	Point temp;
-	if (a.x == b.x) { //Check horizontally
+	if (a.x == b.x) 
+	{ //Check horizontally
 		temp.x = a.x;
 		temp.y = a.y;
 		addHead(pHead, temp);
-		if (b.y < a.y) {
-			for (int i = 1; i < a.y - b.y; i++) {
-				if (isOktogo[a.x][a.y - i] != 1) {
+		if (a.y > b.y) //To the left
+		{
+			for (int i = 1; i < a.y - b.y; i++) 
+			{
+				if (letters[a.x][a.y - i] != '$') 
+				{
 					removeAll(pHead); //If the path is invalid, delete the list
 					return NULL;
 				}
@@ -389,9 +403,12 @@ Node* board::path_I(Point a, Point b) {
 				addHead(pHead, temp); //If valid, add the point into the list
 			}
 		}
-		else if (b.y > a.y) {
-			for (int i = 1; i < b.y - a.y; i++) {
-				if (isOktogo[a.x][a.y + i] != 1) {
+		else if (a.y < b.y) //To the right
+		{
+			for (int i = 1; i < b.y - a.y; i++) 
+			{
+				if (letters[a.x][a.y + i] != '$') 
+				{
 					removeAll(pHead); //If the path is invalid, delete the list
 					return NULL;
 				}
@@ -402,14 +419,18 @@ Node* board::path_I(Point a, Point b) {
 		addHead(pHead, b);  //Lastly, add the point b
 		return pHead;
 	}
-	else if (a.y == b.y) { //Check vertically(Must divined into 2 situations in order to find the accurate path)
+	else if (a.y == b.y) 
+	{ //Check vertically
 		//The list is created exactly the same as the horizontal one
 		temp.x = a.x;
 		temp.y = a.y;
 		addHead(pHead, temp);
-		if (b.x > a.x) { //Downward
-			for (int i = 1; i < b.x - a.x; i++) {
-				if (isOktogo[a.x + i][a.y] != 1) {
+		if (a.x < b.x) 
+		{ //Downward
+			for (int i = 1; i < b.x - a.x; i++) 
+			{
+				if (letters[a.x + i][a.y] != '$') 
+				{
 					removeAll(pHead);
 					return NULL;
 				}
@@ -417,9 +438,11 @@ Node* board::path_I(Point a, Point b) {
 				addHead(pHead, temp);
 			}
 		}
-		else if (b.x < a.x) { //Upward
-			for (int i = 1; i < a.x - b.x; i++) {
-				if (isOktogo[a.x - i][a.y] != 1) {
+		else if (a.x > b.x) { //Upward
+			for (int i = 1; i < a.x - b.x; i++) 
+			{
+				if (letters[a.x - i][a.y] != 1) 
+				{
 					removeAll(pHead);
 					return NULL;
 				}
@@ -433,7 +456,7 @@ Node* board::path_I(Point a, Point b) {
 	removeAll(pHead);
 	return NULL;
 }
-Node* board::path_L(int move, Point a, Point b) {
+Node* path_L(char** letters, int move, Point a, Point b) {
 	if (a.x == b.x || a.y == b.y) {
 		return NULL;
 	}
@@ -442,28 +465,32 @@ Node* board::path_L(int move, Point a, Point b) {
 	Point temp;
 	Point c;
 	bool valid;
-	if (b.y < a.y) {
-		if (isOktogo[a.x][a.y - 1] == 1 && move != 1) { //Check horizontally to the left
+	if (a.y > b.y && move != 1) //Check horizontally to the left
+	{
+		if (letters[a.x][a.y - 1] == '$') 
+		{ 
 			valid = 1;
 			temp.x = a.x;
 			temp.y = a.y;
 			addHead(pHead, temp); //Adding the point a to the list first
-			temp.y = a.y - 1;
-			addHead(pHead, temp);
-			for (int i = 2; i <= a.y - b.y; i++) {
-				if (isOktogo[a.x][a.y - i] != 1) {
+			for (int i = 1; i <= a.y - b.y; i++) 
+			{
+				if (letters[a.x][a.y - i] != '$') 
+				{
 					valid = 0;
 					break;
 				}
-				if (i < a.y - b.y) {
+				if (i < a.y - b.y)  //Do not add the last point
+				{
 					temp.y = a.y - i; //If the path is valid, add the considered point into the list
 					addHead(pHead, temp);
 				}
 			}
-			if (valid) { //At this point, the path is a straight line
+			if (valid) 
+			{ //At this point, the path is a straight line
 				c.x = a.x;
 				c.y = b.y;
-				test = path_I(c, b); //If at point c, there is a I-shaped path => combining 2 lines into an L-shaped path
+				test = path_I(letters, c, b); //If at point c, there is a I-shaped path => combining 2 lines into an L-shaped path
 				if (test != NULL) {
 					insertTail(test, pHead); //The linked list of the I-shaped path is from b to c => put the current pHead to the tail of I-shaped path(from b to a)
 					return test;
@@ -471,89 +498,36 @@ Node* board::path_L(int move, Point a, Point b) {
 			}
 			removeAll(pHead); //If the path is not valid => delete the list
 		}
-		//The way of creating list under is the same as above
-		if (b.x > a.x) { //Check vertically downward	
-			if (isOktogo[a.x + 1][a.y] == 1 && move != 2) {
-				valid = 1;
-				temp.x = a.x;
-				temp.y = a.y;
-				addHead(pHead, temp);
-				temp.x = a.x + 1;
-				addHead(pHead, temp);
-				for (int i = 2; i <= b.x - a.x; i++) {
-					if (isOktogo[a.x + i][a.y] != 1) {
-						valid = 0;
-						break;
-					}
-					if (i < b.x - a.x) {
-						temp.x = a.x + i;
-						addHead(pHead, temp);
-					}
-				}
-				if (valid) {
-					c.x = b.x;
-					c.y = a.y;
-					test = path_I(c, b);
-					if (test != NULL) {
-						insertTail(test, pHead); //The linked list of the I-shaped path is from b to c => put the current list to the tail of I-shaped path(from b to a)
-						return test;
-					}
-				}
-			}
-		}
-		else { //Check vertically upward
-			if (isOktogo[a.x - 1][a.y] == 1 && move != 2) {
-				valid = 1;
-				temp.x = a.x;
-				temp.y = a.y;
-				addHead(pHead, temp);
-				temp.x = a.x - 1;
-				addHead(pHead, temp);
-				for (int i = 2; i <= a.x - b.x; i++) {
-					if (isOktogo[a.x - i][a.y] != 1) {
-						valid = 0;
-						break;
-					}
-					if (i < a.x - b.x) {
-						temp.x = a.x - i;
-						addHead(pHead, temp);
-					}
-				}
-			}
-			if (valid) {
-				c.x = b.x;
-				c.y = a.y;
-				test = path_I(c, b);
-				if (test != NULL) {
-					insertTail(test, pHead); //Same as downward
-					return test;
-				}
-			}
-		}
 	}
-	else if (b.y > a.y) {
-		if (isOktogo[a.x][a.y + 1] == 1 && move != 1) { //Check horizontally to the right
+	//The way of creating list under is the same as above
+	else if (a.y < b.y && move != 1) //Check horizontally to the right
+	{
+		if (letters[a.x][a.y + 1] == '$') 
+		{
 			valid = 1;
 			temp.x = a.x;
 			temp.y = a.y;
 			addHead(pHead, temp); //Adding the point a to the list first
-			temp.y = a.y + 1;
-			addHead(pHead, temp);
-			for (int i = 2; i <= b.y - a.y; i++) {
-				if (isOktogo[a.x][a.y + i] != 1) {
+			for (int i = 1; i <= b.y - a.y; i++) 
+			{
+				if (letters[a.x][a.y + i] != '$')
+				{
 					valid = 0;
 					break;
 				}
-				if (i < b.y - a.y) {
+				if (i < b.y - a.y) 
+				{
 					temp.y = a.y + i; //If the path is valid, add the considered point into the list
 					addHead(pHead, temp);
 				}
 			}
-			if (valid) { //At this point, the path is a straight line
+			if (valid) 
+			{ //At this point, the path is a straight line
 				c.x = a.x;
 				c.y = b.y;
-				test = path_I(c, b); //If at point c, there is a I-shaped path => combining 2 lines into an L-shaped path
-				if (test != NULL) {
+				test = path_I(letters, c, b); //If at point c, there is a I-shaped path => combining 2 lines into an L-shaped path
+				if (test != NULL) 
+				{
 					insertTail(test, pHead); //The linked list of the I-shaped path is from b to c => put the current pHead to the tail of I-shaped path(from b to a)
 					return test;
 				}
@@ -561,86 +535,98 @@ Node* board::path_L(int move, Point a, Point b) {
 			removeAll(pHead); //If the path is not valid => delete the list
 		}
 		//The way of creating list under is the same as above
-		if (b.x > a.x) { //Check vertically downward	
-			if (isOktogo[a.x + 1][a.y] == 1 && move != 2) {
-				valid = 1;
-				temp.x = a.x;
-				temp.y = a.y;
-				addHead(pHead, temp);
-				temp.x = a.x + 1;
-				addHead(pHead, temp);
-				for (int i = 2; i <= b.x - a.x; i++) {
-					if (isOktogo[a.x + i][a.y] != 1) {
-						valid = 0;
-						break;
-					}
-					if (i < b.x - a.x) {
-						temp.x = a.x + i;
-						addHead(pHead, temp);
-					}
+	}
+	if (a.x < b.x && move != 2) //Check vertically downward	
+	{ 
+		if (letters[a.x + 1][a.y] == '$')
+		{
+			valid = 1;
+			temp.x = a.x;
+			temp.y = a.y;
+			addHead(pHead, temp);
+			for (int i = 1; i <= b.x - a.x; i++) 
+			{
+				if (letters[a.x + i][a.y] != '$')
+				{
+					valid = 0;
+					break;
 				}
-				if (valid) {
-					c.x = b.x;
-					c.y = a.y;
-					test = path_I(c, b);
-					if (test != NULL) {
-						insertTail(test, pHead); //The linked list of the I-shaped path is from b to c => put the current list to the tail of I-shaped path(from b to a)
-						return test;
-					}
+				if (i < b.x - a.x) 
+				{
+					temp.x = a.x + i;
+					addHead(pHead, temp);
 				}
 			}
-		}
-		else { //Check vertically upward
-			if (isOktogo[a.x - 1][a.y] == 1 && move != 2) {
-				valid = 1;
-				temp.x = a.x;
-				temp.y = a.y;
-				addHead(pHead, temp);
-				temp.x = a.x - 1;
-				addHead(pHead, temp);
-				for (int i = 2; i <= a.x - b.x; i++) {
-					if (isOktogo[a.x - i][a.y] != 1) {
-						valid = 0;
-						break;
-					}
-					if (i < a.x - b.x) {
-						temp.x = a.x - i;
-						addHead(pHead, temp);
-					}
-				}
-			}
-			if (valid) {
+			if (valid) 
+			{
 				c.x = b.x;
 				c.y = a.y;
-				test = path_I(c, b);
-				if (test != NULL) {
-					insertTail(test, pHead); //Same as downward
+				test = path_I(letters, c, b);
+				if (test != NULL) 
+				{
+					insertTail(test, pHead); //The linked list of the I-shaped path is from b to c => put the current list to the tail of I-shaped path(from b to a)
 					return test;
 				}
 			}
+			removeAll(pHead);
 		}
+	}
+	else if(a.x > b.x && move != 2) 
+	{ //Check vertically upward
+		if (letters[a.x - 1][a.y] == '$') {
+			valid = 1;
+			temp.x = a.x;
+			temp.y = a.y;
+			addHead(pHead, temp);
+			for (int i = 1; i <= a.x - b.x; i++) {
+				if (letters[a.x - i][a.y] != '$') {
+					valid = 0;
+					break;
+				}
+				if (i < a.x - b.x) {
+					temp.x = a.x - i;
+					addHead(pHead, temp);
+				}
+			}
+		}
+		if (valid) 
+		{
+			c.x = b.x;
+			c.y = a.y;
+			test = path_I(letters, c, b);
+			if (test != NULL) 
+			{
+				insertTail(test, pHead); //Same as downward
+				return test;
+			}
+		}
+		removeAll(pHead);
 	}
 	removeAll(pHead);
 	return NULL;
 }
-Node* board::path_U_Z(int row, int col, Point a, Point b) {
+Node* path_U_Z(char** letters, int row, int col, Point a, Point b) 
+{
 	Node* pHead = NULL;
 	Point temp;
 	Node* test = NULL;
 	Point c;
 	int i;
-	if (isOktogo[a.x][a.y + 1] == 1) { //Check horizontally to the right
+	if (letters[a.x][a.y + 1] == '$') 
+	{ //Check horizontally to the right
 		temp.x = a.x;
 		temp.y = a.y;
 		addHead(pHead, temp); //Adding point a to the list first
 		i = 1;
-		while (a.y + i < col && isOktogo[a.x][a.y + i] == 1) {
+		while (a.y + i < col && letters[a.x][a.y + i] == '$') 
+		{
 			temp.y = a.y + i;
 			addHead(pHead, temp); //Adding the considered point to the list
 			c.x = a.x;
 			c.y = a.y + i;
-			test = path_L(1, c, b);
-			if (test != NULL) { //If there is a valid L-path from the considered point
+			test = path_L(letters, 1, c, b);
+			if (test != NULL) 
+			{ //If there is a valid L-path from the considered point
 				removeHead(pHead); //Remove the considered point from the list(Because the L-path has already had this point)
 				insertTail(test, pHead); //L-path is generated from b to c => put the current list into the L-path => from b to a
 				return test;
@@ -650,18 +636,21 @@ Node* board::path_U_Z(int row, int col, Point a, Point b) {
 		removeAll(pHead);
 	}
 	//The way of creating list under is the same as above
-	if (isOktogo[a.x][a.y - 1] == 1) { //Check horizontally to the left
+	if (letters[a.x][a.y - 1] == '$') 
+	{ //Check horizontally to the left
 		temp.x = a.x;
 		temp.y = a.y;
 		addHead(pHead, temp);
 		i = 1;
-		while (a.y - i >= 0 && isOktogo[a.x][a.y - i] == 1) {
+		while (a.y - i >= 0 && letters[a.x][a.y - i] == '$')
+		{
 			temp.y = a.y - i;
 			addHead(pHead, temp);
 			c.x = a.x;
 			c.y = a.y - i;
-			test = path_L(1, c, b);
-			if (test != NULL) {
+			test = path_L(letters, 1, c, b);
+			if (test != NULL) 
+			{
 				removeHead(pHead);
 				insertTail(test, pHead);
 				return test;
@@ -670,18 +659,21 @@ Node* board::path_U_Z(int row, int col, Point a, Point b) {
 		}
 		removeAll(pHead);
 	}
-	if (isOktogo[a.x + 1][a.y] == 1) { //Check vertically downward
+	if (letters[a.x + 1][a.y] == '$') 
+	{ //Check vertically downward
 		temp.x = a.x;
 		temp.y = a.y;
 		addHead(pHead, temp);
 		i = 1;
-		while (a.x + i < row && isOktogo[a.x + i][a.y]) { //Continue moving downward
+		while (a.x + i < row && letters[a.x + i][a.y] == '$')
+		{ //Continue moving downward
 			temp.x = a.x + i;
 			addHead(pHead, temp);
 			c.x = a.x + i;
 			c.y = a.y;
-			test = path_L(2, c, b);
-			if (test != NULL) {
+			test = path_L(letters, 2, c, b);
+			if (test != NULL) 
+			{
 				removeHead(pHead);
 				insertTail(test, pHead);
 				return test;
@@ -690,17 +682,19 @@ Node* board::path_U_Z(int row, int col, Point a, Point b) {
 		}
 		removeAll(pHead);
 	}
-	if (isOktogo[a.x - 1][a.y] == 1) { //Check vertically upward
+	if (letters[a.x - 1][a.y] == '$') 
+	{ //Check vertically upward
 		temp.x = a.x;
 		temp.y = a.y;
 		addHead(pHead, temp);
 		i = 1;
-		while (a.x - i >= 0 && isOktogo[a.x - i][a.y] == 1) { //Continue moving upward
+		while (a.x - i >= 0 && letters[a.x - i][a.y] == '$')
+		{ //Continue moving upward
 			temp.x = a.x - i;
 			addHead(pHead, temp);
 			c.x = a.x - i;
 			c.y = a.y;
-			test = path_L(2, c, b);
+			test = path_L(letters, 2, c, b);
 			if (test != NULL) {
 				removeHead(pHead);
 				insertTail(test, pHead);
@@ -712,40 +706,40 @@ Node* board::path_U_Z(int row, int col, Point a, Point b) {
 	}
 	return 0;
 }
-Node* board::path_finding(int type, int row, int col, Point a, Point b) {
+Node* path_finding(char** letters, int type, int row, int col, Point a, Point b) {
 	if (type == 0) {
 		return NULL;
 	}
 	switch (type) { //Based on the type number(must be determined before by using mathcing_check function)
 	case 1:
-		return path_I(a, b);
+		return path_I(letters, a, b);
 		break;
 	case 2:
-		return path_L(0, a, b);
+		return path_L(letters, 0, a, b);
 		break;
 	case 3:
-		return path_U_Z(row, col, a, b);
+		return path_U_Z(letters, row, col, a, b);
 		break;
 	case 4:
-		return path_U_Z(row, col, a, b);
+		return path_U_Z(letters, row, col, a, b);
 		break;
 	}
 	return NULL;
 }
 //Automatically finding 2 valid points
-bool board::automatically_finding(int row, int col, Point& a, Point& b) {
+bool automatically_finding(char** letters, int row, int col, Point& a, Point& b) {
 	for (int i = 1; i < row - 1; i++) {
 		a.x = i;
 		for (int j = 1; j < col - 1; j++) {
 			a.y = j;
-			if (isOktogo[a.x][a.y] != 1) {
-				for (int m = i; m < row - 1; m++) {
+			if (letters[a.x][a.y] != '$') {
+				for (int m = 0; m < row - 1; m++) {
 					b.x = m;
-					for (int n = j + 1; n < col - 1; n++) {
+					for (int n = 0; n < col - 1; n++) {
 						b.y = n;
-						if (isOktogo[a.x][a.y] != 1 && isOktogo[b.x][b.y] != 1) {
-							if (isOktogo[a.x][a.y] == isOktogo[b.x][b.y]) {
-								if (matching_check(row, col, a, b) != 0) {
+						if (m != i || n != j) {
+							if (letters[a.x][a.y] == letters[b.x][b.y]) {
+								if (matching_check(letters, row, col, a, b) != 0) {
 									return 1;
 								}
 							}
@@ -757,32 +751,17 @@ bool board::automatically_finding(int row, int col, Point& a, Point& b) {
 	}
 	return 0;
 }
-int board::FindScore()
-{
-	int m, n;
-	m = size[difficulty - 1].first;
-	n = size[difficulty - 1].second;
-	Point x, y;
-	Node* pHead;
-	if (automatically_finding(m, n, x, y))
-	{
-		int ans = matching_check(m, n, x, y);
-		pHead = path_finding(ans, m, n, x, y);
-		printList(pHead);
-		return ans;
-	}
-	return 0;
-}
-//Playing game
-int board::matching(Point x, Point y)
-{
-	int m, n;
-	m = size[difficulty - 1].first;
-	n = size[difficulty - 1].second;
-	Node* pHead;
 
-	int type = matching_check(m, n, x, y);
-	pHead = path_finding(type, m, n, x, y);
+
+
+
+//Playing game
+
+int matching(char** &letters, int row, int col, Point x, Point y)
+{
+	Node* pHead;
+	int type = matching_check(letters, row, col, x, y);
+	pHead = path_finding(letters, type, row, col, x, y);
 	if (type != 0) {
 		switch (type) {
 		case 1:
@@ -798,23 +777,20 @@ int board::matching(Point x, Point y)
 			cout << endl;
 			break;
 		case 3:
-			cout << "U matching" << endl;
-			cout << "The path is: ";
-			printList(pHead);
-			cout << endl;
-			break;
-		case 4:
 			cout << "Z matching" << endl;
 			cout << "The path is: ";
 			printList(pHead);
 			cout << endl;
 			break;
+		case 4:
+			cout << "U matching" << endl;
+			cout << "The path is: ";
+			printList(pHead);
+			cout << endl;
+			break;
 		}
-		isOktogo[x.x][x.y] = 1;
-		isOktogo[y.x][y.y] = 1;
 		letters[x.x][x.y] = '$';
 		letters[y.x][y.y] = '$';
-		print_board();
 		return 1;
 	}
 	cout << "Not valid!" << endl;
