@@ -440,7 +440,7 @@ Node* path_I(char** letters, Point a, Point b)
 		else if (a.x > b.x) { //Upward
 			for (int i = 1; i < a.x - b.x; i++) 
 			{
-				if (letters[a.x - i][a.y] != 1) 
+				if (letters[a.x - i][a.y] != '$')
 				{
 					removeAll(pHead);
 					return NULL;
@@ -789,4 +789,31 @@ int matching(char** &letters, int row, int col, Point x, Point y)
 	}
 	cout << "Not valid!" << endl;
 	return 0;
+}
+//Saving game
+bool saving_board(board b) 
+{
+	ofstream fout;
+	fout.open("matrix_test.dat", ios::binary | ios::trunc);
+	if (fout.fail())
+	{
+		return 0;
+	}
+	for (int i = 0; i < b.difficulty + 3 + 2; i++) {
+		fout.write(b.letters[i], b.difficulty*2 + 4 + 2);
+	}
+	fout.close();
+	return 1;
+}
+bool reading_board(board &b) {
+	ifstream fin;
+	fin.open("matrix_test.dat", ios::binary | ios::in);
+	if (fin.fail()) {
+		return 0;
+	}
+	for (int i = 0; i < b.difficulty + 3 + 2; i++) {
+		fin.read(b.letters[i], b.difficulty*2 + 4 + 2);
+	}
+	fin.close();
+	return 1;
 }

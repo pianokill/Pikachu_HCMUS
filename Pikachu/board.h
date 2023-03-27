@@ -54,3 +54,5 @@ Node* path_U_Z(char** letters, int row, int col, Point a, Point b);
 Node* path_finding(char** letters, int row, int col, Point a, Point b);
 bool automatically_finding(char** letters, int row, int col, Point& a, Point& b);
 int matching(char**& letters, int row, int col, Point x, Point y);
+bool saving_board(board b);
+bool reading_board(board &b);
