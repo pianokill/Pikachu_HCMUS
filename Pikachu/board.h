@@ -41,7 +41,8 @@ struct board
 	}
 	void init(); // Initialize the board based on the chosen difficulty
 	void print_board();
-	int FindScore();
+	//int FindScore();
+	void shuffle_board();
 };
 bool matching_I(char** letters, Point a, Point b);
 bool matching_L(char** letters, Point a, Point b);

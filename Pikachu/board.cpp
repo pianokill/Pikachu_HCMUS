@@ -101,10 +101,10 @@ void board::print_board() {
 		cout << '\n';
 	}
 }
-int board::FindScore()
+/*int board::FindScore()
 {
 	return 0;
-	/*
+	
 	int m, n;
 	m = size[difficulty - 1].first;
 	n = size[difficulty - 1].second;
@@ -117,8 +117,8 @@ int board::FindScore()
 		printList(pHead);
 		return ans;
 	}
-	return 0;*/
-}
+	return 0;
+}*/
 //move variable definition:
 //1: Move to the left or the righ
 //2: Move to the top or the bottom
@@ -811,4 +811,46 @@ bool reading_board(board &b) {
 	}
 	fin.close();
 	return 1;
+}
+void board::shuffle_board() 
+{
+	int valid_box = 0;
+	int row = difficulty + 3;
+	int col = difficulty * 2 + 4;
+	for (int i = 1; i <= row; i++) //This loop help determine the number of not-matched boxes in board
+	{
+		for (int j = 1; j <= col; j++) 
+		{
+			if (letters[i][j] != '$')
+			{
+				valid_box++;
+			}
+		}
+	}
+	char* used_char = new char[valid_box]; //Create dynamic memories for an array with right size
+	int k = 0;
+	for (int i = 1; i <= row; i++) //This loop help put all of the not-matched boxes into the array
+	{
+		for (int j = 1; j <= col; j++)
+		{
+			if (letters[i][j] != '$')
+			{
+				used_char[k] = letters[i][j];
+				k++;
+			}
+		}
+	}
+	k = 0;
+	random_shuffle(used_char, used_char + valid_box);
+	for (int i = 1; i <= row; i++)
+	{
+		for (int j = 1; j <= col; j++)
+		{
+			if (letters[i][j] != '$')
+			{
+				letters[i][j] = used_char[k];
+				k++;
+			}
+		}
+	}
 }
