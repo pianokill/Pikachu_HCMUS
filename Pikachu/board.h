@@ -27,14 +27,14 @@ struct board
 	board () {}
 	board(int n) {
 		this->difficulty = n;
-		this->letters = new char*[(this->difficulty)*3 + 2];
-		for (int i = 0; i < (this->difficulty) * 3 + 2; i++) 
+		this->letters = new char*[(this->difficulty) + 3 + 2];
+		for (int i = 0; i < (this->difficulty) + 3 + 2; i++) 
 		{
-			this->letters[i] = new char[(this->difficulty) * 4 + 2];
+			this->letters[i] = new char[(this->difficulty)*2 + 4 + 2];
 		}
 	}
 	~board() {
-		for (int i = 0; i < this->difficulty * 3+2; i++) {
+		for (int i = 0; i < this->difficulty + 3 + 2; i++) {
 			delete[] this->letters[i];
 		}
 		delete[]this->letters;

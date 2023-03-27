@@ -52,8 +52,8 @@ int main()
 	game GAME(diff);
 	GAME.map.init();
 	int m, n;
-	m = GAME.map.difficulty * 3;
-	n = GAME.map.difficulty * 4;
+	m = GAME.map.difficulty + 3;
+	n = GAME.map.difficulty*2 + 4;
 	int k = 0;
 	int mot;
 	GAME.build_board(m, n);

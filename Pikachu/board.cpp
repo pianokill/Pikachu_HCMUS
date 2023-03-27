@@ -60,8 +60,8 @@ void board::init()
 {
 	srand(time(0));
 	int m, n;
-	m = difficulty * 3;
-	n = difficulty * 4; // Get the size of the board (m*n) based on the difficulty
+	m = difficulty + 3;
+	n = difficulty*2 + 4; // Get the size of the board (m*n) based on the difficulty
 	char* used_characters; // The list of the character that will be available on the board
 	char* characters_list; // Save the received letter from randomization
 	used_characters = new char [m * n];
@@ -92,8 +92,8 @@ void board::init()
 }
 void board::print_board() {
 	int m, n;
-	m = difficulty*3;
-	n = difficulty*4;
+	m = difficulty + 3;
+	n = difficulty*2 + 4;
 	for (int i = 0; i < m + 2; i++)
 	{
 		for (int j = 0; j < n + 2; j++)
@@ -104,7 +104,7 @@ void board::print_board() {
 void board::destroy_board()
 {
 	int m;
-	m = difficulty * 3 + 2;
+	m = difficulty + 3;
 	for (int i = 0; i < m; i++)
 	{
 		delete[] letters[i];
