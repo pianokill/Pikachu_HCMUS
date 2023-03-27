@@ -101,16 +101,6 @@ void board::print_board() {
 		cout << '\n';
 	}
 }
-void board::destroy_board()
-{
-	int m;
-	m = difficulty + 3;
-	for (int i = 0; i < m; i++)
-	{
-		delete[] letters[i];
-	}
-	delete[] letters;
-}
 int board::FindScore()
 {
 	return 0;
@@ -731,14 +721,14 @@ bool automatically_finding(char** letters, int row, int col, Point& a, Point& b)
 		a.x = i;
 		for (int j = 1; j < col - 1; j++) {
 			a.y = j;
-			if (letters[a.x][a.y] != '$') {
+			if (letters[a.x][a.y] != '$') { //Checking if the Point a is invalid
 				for (int m = 0; m < row - 1; m++) {
 					b.x = m;
 					for (int n = 0; n < col - 1; n++) {
 						b.y = n;
-						if (m != i || n != j) {
-							if (letters[a.x][a.y] == letters[b.x][b.y]) {
-								if (matching_check(letters, row, col, a, b) != 0) {
+						if (m != i || n != j) { //The point b must be different from point a
+							if (letters[a.x][a.y] == letters[b.x][b.y]) { //The value of point b must be similiar to point a
+								if (matching_check(letters, row, col, a, b) != 0) { //Checking if the pair is valid
 									return 1;
 								}
 							}
@@ -748,16 +738,18 @@ bool automatically_finding(char** letters, int row, int col, Point& a, Point& b)
 			}
 		}
 	}
-	return 0;
+	return 0; //If the loop can end => No more valid pair left
 }
 //Playing game
-int matching(char** &letters, int row, int col, Point x, Point y)
+bool matching(char** &letters, int row, int col, Point x, Point y)
 {
 	Node* pHead;
-	int type = matching_check(letters, row, col, x, y);
-	pHead = path_finding(letters, type, row, col, x, y);
-	if (type != 0) {
-		switch (type) {
+	int type = matching_check(letters, row, col, x, y); //Checking if the pair is valid
+	if (type != 0) 
+	{ //If valid pair
+		pHead = path_finding(letters, type, row, col, x, y); //Storing the path in linked list and the pHead is point y
+		switch (type) 
+		{
 		case 1:
 			cout << "I matching" << endl;
 			cout << "The path is: ";
@@ -787,8 +779,11 @@ int matching(char** &letters, int row, int col, Point x, Point y)
 		letters[y.x][y.y] = '$';
 		return 1;
 	}
-	cout << "Not valid!" << endl;
-	return 0;
+	else
+	{
+		cout << "Not valid!" << endl;
+		return 0;
+	}
 }
 //Saving game
 bool saving_board(board b) 
@@ -800,7 +795,7 @@ bool saving_board(board b)
 		return 0;
 	}
 	for (int i = 0; i < b.difficulty + 3 + 2; i++) {
-		fout.write(b.letters[i], b.difficulty*2 + 4 + 2);
+		fout.write(b.letters[i], b.difficulty*2 + 4 + 2); //Printing every single row of the matrix
 	}
 	fout.close();
 	return 1;
@@ -812,7 +807,7 @@ bool reading_board(board &b) {
 		return 0;
 	}
 	for (int i = 0; i < b.difficulty + 3 + 2; i++) {
-		fin.read(b.letters[i], b.difficulty*2 + 4 + 2);
+		fin.read(b.letters[i], b.difficulty*2 + 4 + 2); //Reading every single row of the matrix
 	}
 	fin.close();
 	return 1;

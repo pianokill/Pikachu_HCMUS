@@ -41,7 +41,6 @@ struct board
 	}
 	void init(); // Initialize the board based on the chosen difficulty
 	void print_board();
-	void destroy_board(); // Delete the board after the game ends
 	int FindScore();
 };
 bool matching_I(char** letters, Point a, Point b);
@@ -53,6 +52,6 @@ Node* path_L(char** letters, Point a, Point b);
 Node* path_U_Z(char** letters, int row, int col, Point a, Point b);
 Node* path_finding(char** letters, int row, int col, Point a, Point b);
 bool automatically_finding(char** letters, int row, int col, Point& a, Point& b);
-int matching(char**& letters, int row, int col, Point x, Point y);
+bool matching(char**& letters, int row, int col, Point x, Point y);
 bool saving_board(board b);
 bool reading_board(board &b);

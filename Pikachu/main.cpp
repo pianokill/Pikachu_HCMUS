@@ -5,9 +5,9 @@ int main()
 {
 	int diff;
 	cin >> diff;
-	//board first(diff);
-	//first.init();
-	//saving_board(first);
+	board first(diff);
+	first.init();
+	saving_board(first);
 	Point a, o;
 	int x = 1;
 	int y = 1;
