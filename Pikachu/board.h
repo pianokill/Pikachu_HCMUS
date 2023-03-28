@@ -3,8 +3,16 @@
 #include <cstdlib>
 #include <ctime>
 #include <fstream>
+#include <conio.h>
+#include <Windows.h>
 
 using namespace std;
+
+const string NAVY = "\x1B[46m";
+const string BLACK = "\x1B[0m"; // Background color
+const string GREEN = "\x1B[42m";
+const string YELLOW = "\x1B[43m";
+const string RED = "\x1B[41m";
 
 void swap_2int(int& a, int& b);
 struct Point {
@@ -40,8 +48,16 @@ struct board
 		delete[]this->letters;
 	}
 	void init(); // Initialize the board based on the chosen difficulty
-	void print_board();
-	//int FindScore();
+	void printBoard(int, int);
+	void highlightChoice(int, int);
+	void unhighlightChoice(int, int);
+	void highlightMatch(Point, Point);
+	void highlightWrongMatch(Point, Point);
+	void moveLeft(int&, int&, Point);
+	void moveDown(int&, int&, Point);
+	void moveRight(int&, int&, Point);
+	void moveUp(int&, int&, Point);
+	void deleteCells(Point, Point);
 	void shuffle_board();
 };
 bool matching_I(char** letters, Point a, Point b);
