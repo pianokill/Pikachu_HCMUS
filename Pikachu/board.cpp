@@ -228,10 +228,10 @@ void board::moveUp(int& x, int& y, Point a)
 //Function to print the board onto the screen, if the player is currently on cell (x,y), fill that cell with NAVY color, otherwise BLACK.
 void board::printBoard(int x, int y)
 {
-	ClearScreen();
+	system("cls");
 	int m, n;
-	m = difficulty * 3 + 2;
-	n = difficulty * 4 + 2;
+	m = difficulty  + 3 + 2;
+	n = difficulty * 2 + 4 + 2;
 	for (int i = 1; i < m - 1; i++)
 	{
 		for (int j = 1; j < n - 1; j++)
@@ -362,7 +362,6 @@ void board::highlightWrongMatch(Point a, Point b)
 	cout << "       ";
 	cout << BLACK;
 }
-
 void board::deleteCells(Point a, Point b)
 {
 	letters[a.x][a.y] = '$';
