@@ -1,9 +1,6 @@
 #include "board.h"
 //Linked list functions
-void ClearScreen()
-{
-	system("cls");
-}
+
 void swap_2int(int& a, int& b) {
 	a = a + b;
 	b = a - b;
