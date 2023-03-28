@@ -126,7 +126,7 @@ void board::moveLeft(int& x, int& y, Point a)
 	}
 	cout << BLACK;
 }
-void board::moveRight(int& x, int& y, Point a) // The same process goes with Right, Up and Down
+void board::moveLeft(int& x, int& y, Point a)
 {
 	HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
 	COORD cursorPos;
@@ -138,7 +138,40 @@ void board::moveRight(int& x, int& y, Point a) // The same process goes with Rig
 		cout << "       ";
 		cursorPos = { short((y - 1) * 8 + 1),short((x - 1) * 4 + 2) };
 		SetConsoleCursorPosition(console, cursorPos);
-		cout << "   " << letters[x][y] << "   ";
+		cout << "   " << (letters[x][y]=='$'?' ':letters[x][y]) << "   ";
+		cursorPos = { short((y - 1) * 8 + 1),short((x - 1) * 4 + 3) };
+		SetConsoleCursorPosition(console, cursorPos);
+		cout << "       ";
+	}
+	cout << NAVY;
+	y--;
+	if (a.x != x || a.y != y)
+	{
+		cursorPos = { short((y - 1) * 8 + 1),short((x - 1) * 4 + 1) };
+		SetConsoleCursorPosition(console, cursorPos);
+		cout << "       ";
+		cursorPos = { short((y - 1) * 8 + 1),short((x - 1) * 4 + 2) };
+		SetConsoleCursorPosition(console, cursorPos);
+		cout << "   " << (letters[x][y]=='$'?' ':letters[x][y]) << "   ";
+		cursorPos = { short((y - 1) * 8 + 1),short((x - 1) * 4 + 3) };
+		SetConsoleCursorPosition(console, cursorPos);
+		cout << "       ";
+	}
+	cout << BLACK;
+}
+void board::moveRight(int& x, int& y, Point a)
+{
+	HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
+	COORD cursorPos;
+	if (a.x != x || a.y != y)
+	{
+		cursorPos = { short((y - 1) * 8 + 1),short((x - 1) * 4 + 1) };
+		SetConsoleCursorPosition(console, cursorPos);
+		cout << BLACK;
+		cout << "       ";
+		cursorPos = { short((y - 1) * 8 + 1),short((x - 1) * 4 + 2) };
+		SetConsoleCursorPosition(console, cursorPos);
+		cout << "   " << (letters[x][y]=='$'?' ':letters[x][y]) << "   ";
 		cursorPos = { short((y - 1) * 8 + 1),short((x - 1) * 4 + 3) };
 		SetConsoleCursorPosition(console, cursorPos);
 		cout << "       ";
@@ -152,7 +185,7 @@ void board::moveRight(int& x, int& y, Point a) // The same process goes with Rig
 		cout << "       ";
 		cursorPos = { short((y - 1) * 8 + 1),short((x - 1) * 4 + 2) };
 		SetConsoleCursorPosition(console, cursorPos);
-		cout << "   " << letters[x][y] << "   ";
+		cout << "   " << (letters[x][y]=='$'?' ':letters[x][y]) << "   ";
 		cursorPos = { short((y - 1) * 8 + 1),short((x - 1) * 4 + 3) };
 		SetConsoleCursorPosition(console, cursorPos);
 		cout << "       ";
@@ -171,7 +204,7 @@ void board::moveDown(int& x, int& y, Point a)
 		cout << "       ";
 		cursorPos = { short((y - 1) * 8 + 1),short((x - 1) * 4 + 2) };
 		SetConsoleCursorPosition(console, cursorPos);
-		cout << "   " << letters[x][y] << "   ";
+		cout << "   " << (letters[x][y]=='$'?' ':letters[x][y]) << "   ";
 		cursorPos = { short((y - 1) * 8 + 1),short((x - 1) * 4 + 3) };
 		SetConsoleCursorPosition(console, cursorPos);
 		cout << "       ";
@@ -185,7 +218,7 @@ void board::moveDown(int& x, int& y, Point a)
 		cout << "       ";
 		cursorPos = { short((y - 1) * 8 + 1),short((x - 1) * 4 + 2) };
 		SetConsoleCursorPosition(console, cursorPos);
-		cout << "   " << letters[x][y] << "   ";
+		cout << "   " << (letters[x][y]=='$'?' ':letters[x][y]) << "   ";
 		cursorPos = { short((y - 1) * 8 + 1),short((x - 1) * 4 + 3) };
 		SetConsoleCursorPosition(console, cursorPos);
 		cout << "       ";
@@ -204,7 +237,7 @@ void board::moveUp(int& x, int& y, Point a)
 		cout << "       ";
 		cursorPos = { short((y - 1) * 8 + 1),short((x - 1) * 4 + 2) };
 		SetConsoleCursorPosition(console, cursorPos);
-		cout << "   " << letters[x][y] << "   ";
+		cout << "   " << (letters[x][y]=='$'?' ':letters[x][y]) << "   ";
 		cursorPos = { short((y - 1) * 8 + 1),short((x - 1) * 4 + 3) };
 		SetConsoleCursorPosition(console, cursorPos);
 		cout << "       ";
@@ -218,7 +251,7 @@ void board::moveUp(int& x, int& y, Point a)
 		cout << "       ";
 		cursorPos = { short((y - 1) * 8 + 1),short((x - 1) * 4 + 2) };
 		SetConsoleCursorPosition(console, cursorPos);
-		cout << "   " << letters[x][y] << "   ";
+		cout << "   " << (letters[x][y]=='$'?' ':letters[x][y]) << "   ";
 		cursorPos = { short((y - 1) * 8 + 1),short((x - 1) * 4 + 3) };
 		SetConsoleCursorPosition(console, cursorPos);
 		cout << "       ";
@@ -369,6 +402,78 @@ void board::deleteCells(Point a, Point b)
 	HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
 	COORD cursorPos;
 	cout << BLACK;
+	if (letters[a.x - 1][a.y] == '$')
+	{
+		cursorPos = { short((a.y - 1) * 8 + 1),short((a.x - 1) * 4) };
+		SetConsoleCursorPosition(console, cursorPos);
+		cout << "       ";
+	}
+	if (letters[a.x + 1][a.y] == '$')
+	{
+		cursorPos = { short((a.y - 1) * 8 + 1),short((a.x - 1) * 4 + 4) };
+		SetConsoleCursorPosition(console, cursorPos);
+		cout << "       ";
+	}
+	if (letters[a.x][a.y - 1] == '$')
+	{
+		cursorPos = { short((a.y - 1) * 8),short((a.x - 1) * 4 + 1) };
+		SetConsoleCursorPosition(console, cursorPos);
+		cout << " ";
+		cursorPos = { short((a.y - 1) * 8),short((a.x - 1) * 4 + 2) };
+		SetConsoleCursorPosition(console, cursorPos);
+		cout << " ";
+		cursorPos = { short((a.y - 1) * 8),short((a.x - 1) * 4 + 3) };
+		SetConsoleCursorPosition(console, cursorPos);
+		cout << " ";
+	}
+	if (letters[a.x][a.y + 1] == '$')
+	{
+		cursorPos = { short((a.y - 1) * 8 + 8),short((a.x - 1) * 4 + 1) };
+		SetConsoleCursorPosition(console, cursorPos);
+		cout << " ";
+		cursorPos = { short((a.y - 1) * 8 + 8),short((a.x - 1) * 4 + 2) };
+		SetConsoleCursorPosition(console, cursorPos);
+		cout << " ";
+		cursorPos = { short((a.y - 1) * 8 + 8),short((a.x - 1) * 4 + 3) };
+		SetConsoleCursorPosition(console, cursorPos);
+		cout << " ";
+	}
+	if (letters[b.x - 1][b.y] == '$')
+	{
+		cursorPos = { short((b.y - 1) * 8 + 1),short((b.x - 1) * 4) };
+		SetConsoleCursorPosition(console, cursorPos);
+		cout << "       ";
+	}
+	if (letters[b.x + 1][b.y] == '$')
+	{
+		cursorPos = { short((b.y - 1) * 8 + 1),short((b.x - 1) * 4 + 4) };
+		SetConsoleCursorPosition(console, cursorPos);
+		cout << "       ";
+	}
+	if (letters[b.x][b.y - 1] == '$')
+	{
+		cursorPos = { short((b.y - 1) * 8),short((b.x - 1) * 4 + 1) };
+		SetConsoleCursorPosition(console, cursorPos);
+		cout << " ";
+		cursorPos = { short((b.y - 1) * 8),short((b.x - 1) * 4 + 2) };
+		SetConsoleCursorPosition(console, cursorPos);
+		cout << " ";
+		cursorPos = { short((b.y - 1) * 8),short((b.x - 1) * 4 + 3) };
+		SetConsoleCursorPosition(console, cursorPos);
+		cout << " ";
+	}
+	if (letters[b.x][b.y + 1] == '$')
+	{
+		cursorPos = { short((b.y - 1) * 8 + 8),short((b.x - 1) * 4 + 1) };
+		SetConsoleCursorPosition(console, cursorPos);
+		cout << " ";
+		cursorPos = { short((b.y - 1) * 8 + 8),short((b.x - 1) * 4 + 2) };
+		SetConsoleCursorPosition(console, cursorPos);
+		cout << " ";
+		cursorPos = { short((b.y - 1) * 8 + 8),short((b.x - 1) * 4 + 3) };
+		SetConsoleCursorPosition(console, cursorPos);
+		cout << " ";
+	}
 	cursorPos = { short((a.y - 1) * 8 + 1),short((a.x - 1) * 4 + 1) };
 	SetConsoleCursorPosition(console, cursorPos);
 	cout << "       ";
