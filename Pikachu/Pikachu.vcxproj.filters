@@ -27,6 +27,9 @@
     <ClCompile Include="menu.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="controller.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="board.h">
@@ -38,8 +41,25 @@
     <ClInclude Include="menu.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="controller.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="matrix_test.dat" />
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="theme.wav">
+      <Filter>Resource Files</Filter>
+    </Media>
+    <Media Include="round3.wav">
+      <Filter>Resource Files</Filter>
+    </Media>
+    <Media Include="round2.wav">
+      <Filter>Resource Files</Filter>
+    </Media>
+    <Media Include="round1.wav">
+      <Filter>Resource Files</Filter>
+    </Media>
   </ItemGroup>
 </Project>

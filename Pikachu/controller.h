@@ -1,7 +1,6 @@
 #pragma once
 #include "game.h"
 #include "menu.h"
-#include <Windows.h>
 #include <mmsystem.h>
 #pragma comment(lib, "winmm.lib")
 
