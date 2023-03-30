@@ -5,6 +5,6 @@
 #pragma comment(lib, "winmm.lib")
 
 void controlGame();
-void playingGame(menu& a, int diff, int& pairs, int& fin_score);
+void playingGame(game &b);
 void onRoundTheme(int diff);
 void offRoundTheme(int diff);

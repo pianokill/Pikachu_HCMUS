@@ -27,6 +27,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="account.cpp" />
     <ClCompile Include="board.cpp" />
     <ClCompile Include="controller.cpp" />
     <ClCompile Include="game.cpp" />
@@ -34,6 +35,7 @@
     <ClCompile Include="menu.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="account.h" />
     <ClInclude Include="board.h" />
     <ClInclude Include="controller.h" />
     <ClInclude Include="game.h" />

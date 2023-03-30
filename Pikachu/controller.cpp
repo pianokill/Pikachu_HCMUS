@@ -45,7 +45,6 @@ void controlGame()
 	cout << "Press any key to continue";
 	char f = _getch();
 	system("cls");
-	int pairs, fin_score;
 	int diff;
 	while (true)
 	{
@@ -66,31 +65,31 @@ void controlGame()
 	}
 	mciSendString(L"stop  \"theme.mp3\"", 0, 0, 0);
 	onRoundTheme(diff);
-	playingGame(a, diff, pairs, fin_score);
+	game b(diff);
+	b.map.init();
+	playingGame(b);
 	offRoundTheme(diff);
 	system("cls");
-	if (pairs)
+	if (b.pairs)
 	{
 		cout << "You didn't finish the fucking game : (";
 	}
 	else
 	{
-		cout << "YAY YOU DID IT!!! Your score was " << fin_score;
+		cout << "YAY YOU DID IT!!! Your score was " << b.score.fin_score;
 	}
 }
-void playingGame(menu &a, int diff, int &pairs, int &fin_score)
+void playingGame(game &b)
 {
 	int x, y;
 	x = 1;
 	y = 1;
-	game b(diff);
-	b.map.init();
 	int m, n;
 	m = b.map.difficulty + 3;
 	n = b.map.difficulty * 2 + 4;
-	pairs = m * n / 2;
-	fin_score = 0;
-	while (1 && pairs)
+	b.pairs = m * n / 2;
+	b.score.fin_score = 0;
+	while (1 && b.pairs)
 	{
 		int cmd;
 		cmd = _getch();
@@ -135,19 +134,19 @@ void playingGame(menu &a, int diff, int &pairs, int &fin_score)
 			{
 				b.select2(x, y);
 				int score = matching_check(b.map.letters, m + 2, n + 2, b.selection.first, b.selection.second);
-				fin_score += score;
+				b.score.fin_score += score;
 				HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
 				COORD cursorPos = { 0,m * 4 + 8 };
 				SetConsoleCursorPosition(console, cursorPos);
 				if (score)
 				{
 					PlaySound(TEXT("correct.wav"), NULL, SND_FILENAME | SND_ASYNC);
-					pairs--;
+					b.pairs--;
 					cout << "You've got " << score << " point";
 					if (score > 1)
 						cout << 's';
 					cout << " from that match!                                                \n";
-					cout << "Current score:  " << fin_score << "                              \n";
+					cout << "Current score:  " << b.score.fin_score << "                              \n";
 					b.map.highlightMatch(b.selection.first, b.selection.second);
 					Sleep(269);
 					b.map.deleteCells(b.selection.first, b.selection.second);
@@ -174,16 +173,16 @@ void playingGame(menu &a, int diff, int &pairs, int &fin_score)
 		{
 			Beep(400, 150);
 			b.map.checkValid();
-			fin_score -= 2;
-			if (fin_score < 0)
+			b.score.fin_score -= 2;
+			if (b.score.fin_score < 0)
 			{
-				fin_score = 0;
+				b.score.fin_score = 0;
 			}
 			HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
 			COORD cursorPos = { 0,m * 4 + 8 };
 			SetConsoleCursorPosition(console, cursorPos);
 			cout << "Hint used, minus 2 points!!                                                 \n";
-			cout << "Current score:  " << fin_score << "                              \n";
+			cout << "Current score:  " << b.score.fin_score << "                              \n";
 		}
 		else if (cmd == ESCAPE)
 		{
