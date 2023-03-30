@@ -1,0 +1,10 @@
+#pragma once
+#include "game.h"
+#include "menu.h"
+#include <mmsystem.h>
+#pragma comment(lib, "winmm.lib")
+
+void controlGame();
+void playingGame(menu& a, int diff, int& pairs, int& fin_score);
+void onRoundTheme(int diff);
+void offRoundTheme(int diff);
