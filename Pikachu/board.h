@@ -34,9 +34,10 @@ void removeAll(Node*& pHead);
 void extractList(Node* pHead, vector<pair<int, int>>&, int);
 struct board
 {
-	char** letters; // The character that the players will see on the board
 	int difficulty; // Difficulty of the game, which will be 1 (Easy), 2 (Medium), 3 (Hard)
-	board(int n) {
+	char** letters; // The character that the players will see on the board
+	board(int n) 
+	{
 		this->difficulty = n;
 		this->letters = new char* [n + 5];
 		for (int i = 0; i < n + 5; i++)
@@ -44,11 +45,19 @@ struct board
 			this->letters[i] = new char[n * 2 + 6];
 		}
 	}
+	board()
+	{
+		this->letters = NULL;
+		this->difficulty = 0;
+	}
 	~board() {
-		for (int i = 0; i < this->difficulty + 5; i++) {
-			delete[] this->letters[i];
+		if (this->difficulty == 1 || this->difficulty == 2 || this->difficulty == 3)
+		{
+			for (int i = 0; i < this->difficulty + 5; i++) {
+				delete[] this->letters[i];
+			}
+			delete[]this->letters;
 		}
-		delete[]this->letters;
 	}
 	void init(); // Initialize the board based on the chosen difficulty
 	void printBoard(int, int);
