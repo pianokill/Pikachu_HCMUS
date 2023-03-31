@@ -73,4 +73,15 @@ struct board
 bool matching_I(char**, Point, Point);
 bool matching_L(char**, Point, Point);
 int matching_Z_U(char**, int, int, Point, Point);
-int matching_check(cha
+int matching_check(char**, int, int, Point, Point);
+Node* path_I(char**, Point, Point);
+Node* path_L(char**, Point, Point);
+Node* path_U_Z(char**, int, int, Point, Point);
+Node* path_finding(char**, int, int, Point, Point);
+bool automatically_finding(char**, int, int);
+void checkPath(pair<int, int>, pair<int, int>, pair<int, int>, int, int);
+void removePath(pair<int, int>, pair<int, int>, pair<int, int>, int, int);
+void matching(char**&, int, int, Point, Point);
+void unmatching(char**&, int, int, Point, Point);
+bool saving_board(board);
+bool reading_board(board&);
