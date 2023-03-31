@@ -4,6 +4,7 @@
 #include <ctime>
 #include <fstream>
 #include <conio.h>
+#include <vector>
 #include <Windows.h>
 
 using namespace std;
@@ -30,7 +31,7 @@ void addHead(Node*& pHead, Point data);
 void insertTail(Node*& pHead, Node* test);
 void removeHead(Node*& pHead);
 void removeAll(Node*& pHead);
-void printList(Node* pHead);
+void extractList(Node* pHead, vector<pair<int, int>>&, int);
 struct board
 {
 	char** letters; // The character that the players will see on the board
@@ -50,7 +51,6 @@ struct board
 		delete[]this->letters;
 	}
 	void init(); // Initialize the board based on the chosen difficulty
-	void drawOutline();
 	void printBoard(int, int);
 	void cleanBoard();
 	void highlightCell(int, int, string);
@@ -59,6 +59,8 @@ struct board
 	void highlightMatch(Point, Point);
 	void highlightHint(Point, Point);
 	void highlightWrongMatch(Point, Point);
+	void drawMatch(Point, Point);
+	void eraseMatch(Point, Point);
 	void moveLeft(int&, int&, Point);
 	void moveDown(int&, int&, Point);
 	void moveRight(int&, int&, Point);
@@ -68,15 +70,7 @@ struct board
 	void shuffleBoard(int, int);
 	int FindScore();
 };
-bool matching_I(char** letters, Point a, Point b);
-bool matching_L(char** letters, Point a, Point b);
-int matching_Z_U(char** letters, int row, int col, Point a, Point b);
-int matching_check(char** letters, int row, int col, Point a, Point b);
-Node* path_I(char** letters, Point a, Point b);
-Node* path_L(char** letters, Point a, Point b);
-Node* path_U_Z(char** letters, int row, int col, Point a, Point b);
-Node* path_finding(char** letters, int row, int col, Point a, Point b);
-bool automatically_finding(char** letters, int row, int col);
-bool matching(char**& letters, int row, int col, Point x, Point y);
-bool saving_board(board b);
-bool reading_board(board& b);
+bool matching_I(char**, Point, Point);
+bool matching_L(char**, Point, Point);
+int matching_Z_U(char**, int, int, Point, Point);
+int matching_check(cha
