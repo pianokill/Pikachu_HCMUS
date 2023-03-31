@@ -48,12 +48,21 @@ void removeAll(Node*& pHead) {
 	pHead = NULL;
 	return;
 }
-void printList(Node* pHead) {
+int getSize(Node* pHead, int size)
+{
+	if (pHead == NULL)
+	{
+		return size-1;
+	}
+	getSize(pHead->pNext, size + 1);
+}
+void extractList(Node* pHead, vector<pair<int,int>>& path, int id)
+{
 	if (pHead == NULL) {
 		return;
 	}
-	cout << "[" << pHead->data.x << "][" << pHead->data.y << "] ";
-	printList(pHead->pNext);
+	path[id] = { pHead->data.x,pHead->data.y };
+	extractList(pHead->pNext,path,id+1);
 	return;
 }
 //Board controlling functions
@@ -326,6 +335,20 @@ void board::highlightWrongMatch(Point a, Point b) // Highlight both cells with G
 	highlightCell(a.x, a.y, RED);
 	highlightCell(b.x, b.y, RED);
 }
+void board::drawMatch(Point a, Point b)
+{
+	int m, n;
+	m = difficulty + 3;
+	n = difficulty * 2 + 4;
+	matching(letters, m + 2, n + 2, a, b);
+}
+void board::eraseMatch(Point a, Point b)
+{
+	int m, n;
+	m = difficulty + 3;
+	n = difficulty * 2 + 4;
+	unmatching(letters, m + 2, n + 2, a, b);
+}
 void board::checkValid() // Check the whole board and pick any pair of cells that can make a valid move
 {
 	int m, n;
@@ -485,6 +508,7 @@ bool matching_L(char** letters, int move, Point a, Point b)
 		return 0;
 	}
 	bool valid;
+	valid = false;
 	Point c;
 	if (a.y < b.y && move != 1) //Check horizontally to the right
 	{
@@ -774,6 +798,7 @@ Node* path_L(char** letters, int move, Point a, Point b) {
 	Point temp;
 	Point c;
 	bool valid;
+	valid = false;
 	if (a.y > b.y && move != 1) //Check horizontally to the left
 	{
 		if (letters[a.x][a.y - 1] == '$')
@@ -1067,44 +1092,311 @@ bool automatically_finding(char** letters, int row, int col) {
 
 //Playing game
 
-bool matching(char**& letters, int row, int col, Point x, Point y)
+void checkPath(pair<int, int> a, pair<int, int> b, pair<int, int> c, int id, int sze)
+{
+	HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
+	COORD cursorPos;
+	if (b.second == a.second)
+	{
+		if (b.first > a.first)
+		{
+			cursorPos = { short(8 * b.second + 4),short(4 * b.first + 1) };
+			SetConsoleCursorPosition(console, cursorPos);
+			cout << '|';
+			if (id != 1)
+			{
+				cursorPos = { short(8 * b.second + 4),short(4 * b.first) };
+				SetConsoleCursorPosition(console, cursorPos);
+				cout << '|';
+			}
+		}
+		else
+		{
+			cursorPos = { short(8 * b.second + 4),short(4 * b.first + 3) };
+			SetConsoleCursorPosition(console, cursorPos);
+			cout << '|';
+			if (id != 1)
+			{
+				cursorPos = { short(8 * b.second + 4),short(4 * b.first + 4) };
+				SetConsoleCursorPosition(console, cursorPos);
+				cout << '|';
+			}
+		}
+	}
+	else if (b.first == a.first)
+	{
+		if (b.second > a.second)
+		{
+			cursorPos = { short(8 * b.second + 1),short(4 * b.first + 2) };
+			SetConsoleCursorPosition(console, cursorPos);
+			cout << "---";
+			if (id != 1)
+			{
+				cursorPos = { short(8 * b.second),short(4 * b.first + 2) };
+				SetConsoleCursorPosition(console, cursorPos);
+				cout << "-";
+			}
+		}
+		else
+		{
+			cursorPos = { short(8 * b.second + 4),short(4 * b.first + 2) };
+			SetConsoleCursorPosition(console, cursorPos);
+			cout << " ---";
+			if (id != 1)
+			{
+				cursorPos = { short(8 * b.second + 8),short(4 * b.first + 2) };
+				SetConsoleCursorPosition(console, cursorPos);
+				cout << "-";
+			}
+		}
+	}
+	if (b.second == c.second)
+	{
+		if (b.first > c.first)
+		{
+			cursorPos = { short(8 * b.second + 4),short(4 * b.first + 1) };
+			SetConsoleCursorPosition(console, cursorPos);
+			cout << '|';
+			if (b.second == a.second)
+			{
+				cursorPos = { short(8 * b.second + 4),short(4 * b.first + 2) };
+				SetConsoleCursorPosition(console, cursorPos);
+				cout << '|';
+			}
+			if (id != sze)
+			{
+				cursorPos = { short(8 * b.second + 4),short(4 * b.first) };
+				SetConsoleCursorPosition(console, cursorPos);
+				cout << '|';
+			}
+		}
+		else
+		{
+			cursorPos = { short(8 * b.second + 4),short(4 * b.first + 3) };
+			SetConsoleCursorPosition(console, cursorPos);
+			cout << '|';
+			if (b.second == a.second)
+			{
+				cursorPos = { short(8 * b.second + 4),short(4 * b.first + 2) };
+				SetConsoleCursorPosition(console, cursorPos);
+				cout << '|';
+			}
+			if (id != sze)
+			{
+				cursorPos = { short(8 * b.second + 4),short(4 * b.first + 4) };
+				SetConsoleCursorPosition(console, cursorPos);
+				cout << '|';
+			}
+		}
+	}
+	else if (b.first == c.first)
+	{
+		if (b.second < c.second)
+		{
+			cursorPos = { short(8 * b.second + 4),short(4 * b.first + 2) };
+			SetConsoleCursorPosition(console, cursorPos);
+			cout << " ---";
+			if (b.first == a.first)
+			{
+				cursorPos = { short(8 * b.second + 4),short(4 * b.first + 2) };
+				SetConsoleCursorPosition(console, cursorPos);
+				cout << "-";
+			}
+			if (id != sze)
+			{
+				cursorPos = { short(8 * b.second + 8),short(4 * b.first + 2) };
+				SetConsoleCursorPosition(console, cursorPos);
+				cout << "-";
+			}
+		}
+		else
+		{
+			cursorPos = { short(8 * b.second + 1),short(4 * b.first + 2) };
+			SetConsoleCursorPosition(console, cursorPos);
+			cout << "---";
+			if (b.first == a.first)
+			{
+				cursorPos = { short(8 * b.second + 4),short(4 * b.first + 2) };
+				SetConsoleCursorPosition(console, cursorPos);
+				cout << "-";
+			}
+			if (id != sze)
+			{
+				cursorPos = { short(8 * b.second),short(4 * b.first + 2) };
+				SetConsoleCursorPosition(console, cursorPos);
+				cout << "-";
+			}
+		}
+	}
+}
+void removePath(pair<int, int> a, pair<int, int> b, pair<int, int> c, int id, int sze)
+{
+	HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
+	COORD cursorPos;
+	if (b.second == a.second)
+	{
+		if (b.first > a.first)
+		{
+			cursorPos = { short(8 * b.second + 4),short(4 * b.first + 1) };
+			SetConsoleCursorPosition(console, cursorPos);
+			cout << ' ';
+			if (id != 1)
+			{
+				cursorPos = { short(8 * b.second + 4),short(4 * b.first) };
+				SetConsoleCursorPosition(console, cursorPos);
+				cout << ' ';
+			}
+		}
+		else
+		{
+			cursorPos = { short(8 * b.second + 4),short(4 * b.first + 3) };
+			SetConsoleCursorPosition(console, cursorPos);
+			cout << ' ';
+			if (id != 1)
+			{
+				cursorPos = { short(8 * b.second + 4),short(4 * b.first + 4) };
+				SetConsoleCursorPosition(console, cursorPos);
+				cout << ' ';
+			}
+		}
+	}
+	else if (b.first == a.first)
+	{
+		if (b.second > a.second)
+		{
+			cursorPos = { short(8 * b.second + 1),short(4 * b.first + 2) };
+			SetConsoleCursorPosition(console, cursorPos);
+			cout << "   ";
+			if (id != 1)
+			{
+				cursorPos = { short(8 * b.second),short(4 * b.first + 2) };
+				SetConsoleCursorPosition(console, cursorPos);
+				cout << " ";
+			}
+		}
+		else
+		{
+			cursorPos = { short(8 * b.second + 4),short(4 * b.first + 2) };
+			SetConsoleCursorPosition(console, cursorPos);
+			cout << "    ";
+			if (id != 1)
+			{
+				cursorPos = { short(8 * b.second + 8),short(4 * b.first + 2) };
+				SetConsoleCursorPosition(console, cursorPos);
+				cout << " ";
+			}
+		}
+	}
+	if (b.second == c.second)
+	{
+		if (b.first > c.first)
+		{
+			cursorPos = { short(8 * b.second + 4),short(4 * b.first + 1) };
+			SetConsoleCursorPosition(console, cursorPos);
+			cout << ' ';
+			if (b.second == a.second)
+			{
+				cursorPos = { short(8 * b.second + 4),short(4 * b.first + 2) };
+				SetConsoleCursorPosition(console, cursorPos);
+				cout << ' ';
+			}
+			if (id != sze)
+			{
+				cursorPos = { short(8 * b.second + 4),short(4 * b.first) };
+				SetConsoleCursorPosition(console, cursorPos);
+				cout << ' ';
+			}
+		}
+		else
+		{
+			cursorPos = { short(8 * b.second + 4),short(4 * b.first + 3) };
+			SetConsoleCursorPosition(console, cursorPos);
+			cout << ' ';
+			if (b.second == a.second)
+			{
+				cursorPos = { short(8 * b.second + 4),short(4 * b.first + 2) };
+				SetConsoleCursorPosition(console, cursorPos);
+				cout << ' ';
+			}
+			if (id != sze)
+			{
+				cursorPos = { short(8 * b.second + 4),short(4 * b.first + 4) };
+				SetConsoleCursorPosition(console, cursorPos);
+				cout << ' ';
+			}
+		}
+	}
+	else if (b.first == c.first)
+	{
+		if (b.second < c.second)
+		{
+			cursorPos = { short(8 * b.second + 4),short(4 * b.first + 2) };
+			SetConsoleCursorPosition(console, cursorPos);
+			cout << "    ";
+			if (b.first == a.first)
+			{
+				cursorPos = { short(8 * b.second + 4),short(4 * b.first + 2) };
+				SetConsoleCursorPosition(console, cursorPos);
+				cout << " ";
+			}
+			if (id != sze)
+			{
+				cursorPos = { short(8 * b.second + 8),short(4 * b.first + 2) };
+				SetConsoleCursorPosition(console, cursorPos);
+				cout << " ";
+			}
+		}
+		else
+		{
+			cursorPos = { short(8 * b.second + 1),short(4 * b.first + 2) };
+			SetConsoleCursorPosition(console, cursorPos);
+			cout << "   ";
+			if (b.first == a.first)
+			{
+				cursorPos = { short(8 * b.second + 4),short(4 * b.first + 2) };
+				SetConsoleCursorPosition(console, cursorPos);
+				cout << " ";
+			}
+			if (id != sze)
+			{
+				cursorPos = { short(8 * b.second),short(4 * b.first + 2) };
+				SetConsoleCursorPosition(console, cursorPos);
+				cout << " ";
+			}
+		}
+	}
+}
+void matching(char**& letters, int row, int col, Point x, Point y)
 {
 	Node* pHead;
 	int type = matching_check(letters, row, col, x, y);
 	pHead = path_finding(letters, type, row, col, x, y);
-	if (type != 0) {
-		switch (type) {
-		case 1:
-			cout << "I matching" << endl;
-			cout << "The path is: ";
-			printList(pHead);
-			cout << endl;
-			break;
-		case 2:
-			cout << "L matching" << endl;
-			cout << "The path is: ";
-			printList(pHead);
-			cout << endl;
-			break;
-		case 3:
-			cout << "Z matching" << endl;
-			cout << "The path is: ";
-			printList(pHead);
-			cout << endl;
-			break;
-		case 4:
-			cout << "U matching" << endl;
-			cout << "The path is: ";
-			printList(pHead);
-			cout << endl;
-			break;
-		}
-		letters[x.x][x.y] = '$';
-		letters[y.x][y.y] = '$';
-		return 1;
+	int path_size = getSize(pHead, 0);
+	vector<pair<int, int>> path(path_size + 2);
+	extractList(pHead, path, 0);
+	for (int i = 1; i < path_size; i++)
+	{
+		checkPath(path[i - 1], path[i], path[i + 1], i, path_size - 1);
 	}
-	cout << "Not valid!" << endl;
-	return 0;
+	letters[x.x][x.y] = '$';
+	letters[y.x][y.y] = '$';
+	return;
+}
+void unmatching(char**& letters, int row, int col, Point x, Point y)
+{
+	Node* pHead;
+	int type = matching_check(letters, row, col, x, y);
+	pHead = path_finding(letters, type, row, col, x, y);
+	int path_size = getSize(pHead, 0);
+	vector<pair<int, int>> path(path_size + 2);
+	extractList(pHead, path, 0);
+	for (int i = 1; i < path_size; i++)
+	{
+		removePath(path[i - 1], path[i], path[i + 1], i, path_size - 1);
+	}
+	letters[x.x][x.y] = '$';
+	letters[y.x][y.y] = '$';
+	return;
 }
 void board::shuffleBoard(int x, int y) // Function to shuffle the board when there's no valid move left
 {
