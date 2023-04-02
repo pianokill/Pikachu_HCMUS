@@ -15,5 +15,6 @@ int main()
 	int fin = 0;
 	readingLeaderboard(Leaderboard, fin, 0x12345678);
 	controlGame(list_acc, acc_num, Leaderboard, fin);
+	cout << "hi";
 	return 0;
 }
