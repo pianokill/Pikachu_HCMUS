@@ -111,23 +111,29 @@ void controlGame(Account list_acc[], int &acc_num, finish F[], int &fin)
 			}
 			int select; //Select the filesave to play
 			cout << "You've already saved " << list_acc[pos].file_number << " files:" << endl; //Print all of the filesaves and their status 
+			int pairs = 0;
 			for (int i = 0; i < 3; i++)
 			{
-				if (i < list_acc[pos].file_number) {
+				list_acc[pos].saves[i].map.getPairs(pairs);
+				if (i < list_acc[pos].file_number && pairs != 0) 
+				{
 					cout << "File save number " << i + 1 << ": Saved ";
 					printDate(list_acc[pos].saves[i].date);
 					cout << endl;
 				}
-				else {
+				else 
+				{
 					cout << "File save number " << i + 1 << ": Empty";
 					cout << endl;
 				}
 			}
 			while (true) //Get the number of filesave
 			{
+				pairs = 0;
 				cout << "Choose your file: ";
 				cin >> select;
-				if (select > list_acc[pos].file_number)
+				list_acc[pos].saves[select - 1].map.getPairs(pairs);
+				if (select > list_acc[pos].file_number || pairs == 0)
 				{
 					cout << "This file save is invalid" << endl;
 				}
@@ -195,21 +201,24 @@ void controlGame(Account list_acc[], int &acc_num, finish F[], int &fin)
 void playingGame(Account acc[], int acc_pos, int acc_num, game& b, bool loaded, finish F[], int &fin)
 {
 	Record curr_time; 
-	curr_time = getTime();
+	curr_time = getTime(); //Get the starting game
 	Record finishing_time;
 	int total_time = 0;
 	if (loaded) 
 	{
 		total_time = b.score.finishing_second; //If the game is loaded => total time updated
 	}
+	else
+	{
+		b.score.fin_score = 0; //If not loaded 
+	}
 	int x, y;
 	x = 1;
 	y = 1;
 	int m, n;
-	m = b.map.difficulty + 3;
+	m = b.map.difficulty + 3; //Get the size of the board
 	n = b.map.difficulty * 2 + 4;
-	b.map.getPairs(b.pairs);
-	b.score.fin_score = 0;
+	b.map.getPairs(b.pairs); //Get the valid pairs of the board
 	b.map.printBoard(x, y);
 	while (1 && b.pairs)
 	{
@@ -333,47 +342,45 @@ void playingGame(Account acc[], int acc_pos, int acc_num, game& b, bool loaded, 
 		else if (cmd == 'p')
 		{
 			system("cls");
-			finishing_time = getTime();
-			b.score.finishing_second = total_time + total_playingtime(finishing_time, curr_time);
-			game temp(b.map.difficulty);
-			temp.date = b.date;
-			temp.score = b.score;
-			int m = temp.map.difficulty + 5;
-			int n = temp.map.difficulty * 2 + 6;
-			for (int i = 0; i < m; i++)
+			finishing_time = getTime(); //Get the saving time
+			b.score.finishing_second = total_time + total_playingtime(finishing_time, curr_time); //Get the total time
+			game temp(b.map.difficulty); //Initialized a new game 
+			temp.date = b.date; //Copy date
+			temp.score = b.score; //Copy score
+			for (int i = 0; i < m + 2; i++)
 			{
-				for (int j = 0; j < n; j++)
+				for (int j = 0; j < n + 2; j++)
 				{
-					temp.map.letters[i][j] = b.map.letters[i][j];
+					temp.map.letters[i][j] = b.map.letters[i][j]; //Copy matrix
 				}
 			}
-			saving_map(acc[acc_pos], temp);
-			temp.map.letters = NULL;
-			temp.map.difficulty = 0;
+			saving_map(acc[acc_pos], temp); //Saving the temp game to the filesave
+			temp.map.letters = NULL; //Make the pointer NULL => do not need to deallocate this temp anymore in the end because the address is in the filesave now
+			temp.map.difficulty = 0; //Make the difficulty 0
 			Sleep(1000);
 			system("cls");
 			b.map.printBoard(1, 1);
 		}
 	}
 	system("cls");
-	if (b.pairs == 0)
+	if (b.pairs == 0) //If the game is finished
 	{
-		finishing_time = getTime();
-		b.score.finishing_second = total_time + total_playingtime(finishing_time, curr_time);
-		cout << "You get " << b.score.fin_score << " points "<< endl;
+		finishing_time = getTime(); 
+		b.score.finishing_second = total_time + total_playingtime(finishing_time, curr_time); //Get the total playing time 
+		cout << "You get " << b.score.fin_score << " points "<< endl; 
 		cout << "Total playing time is: " << b.score.finishing_second << " seconds" << endl;
-		float last_score = final_score(b.score.fin_score, b.score.finishing_second);
+		float last_score = final_score(b.score.fin_score, b.score.finishing_second); //Get the final score
 		cout << "Final score: " << last_score;
-		finish Finish;
+		finish Finish; //create a finish struct
 		Finish.difficulty = b.map.difficulty;
 		Finish.time = b.score.finishing_second;
 		Finish.score = last_score;
 		strcpy_s(Finish.name, strlen(acc[acc_pos].name) + 1, acc[acc_pos].name);
-		F[fin] = Finish;
+		F[fin] = Finish; //add it to the finished game list
 		fin++;
 		Sleep(5000);
 	}
-	if (loaded)
+	if (loaded) //If loaded => make sure the game is not deallocated => the filesave will be deallocated in the end
 	{
 		b.map.letters = NULL;
 		b.map.difficulty = 0;

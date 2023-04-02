@@ -22,9 +22,11 @@ void saving_map(Account& acc, const game& Game)	 //Saving the playing Game to th
 {
 	int pos = 0;
 	cout << "You've already saved " << acc.file_number << " files:" << endl;
+	int pairs = 0;
 	for (int i = 0; i < 3; i++) //Printing all of the filesaves'status
 	{
-		if (i < acc.file_number) {
+		acc.saves[i].map.getPairs(pairs);
+		if (i < acc.file_number && pairs != 0) {
 			cout << "File save number " << i + 1 << ": Saved ";
 			printDate(acc.saves[i].date);
 			cout << endl;
