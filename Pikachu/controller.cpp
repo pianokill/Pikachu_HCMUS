@@ -1,11 +1,11 @@
 #include "controller.h"
 
 
-void onRoundTheme(int diff)
+void onRoundTheme(int diff) 
 {
 	if (diff == 1)
 	{
-		mciSendString(L"play \"round1.mp3\" repeat", 0, 0, 0);
+		mciSendString(L"play \"round1.mp3\" repeat", 0, 0, 0); //Using mciSendString function in mmsystem library with repeat mode
 	}
 	else if (diff == 2)
 	{
@@ -33,22 +33,22 @@ void offRoundTheme(int diff)
 }
 void controlGame(Account list_acc[], int &acc_num, finish F[], int &fin)
 {
-	Account guest;
-	creatingAcc(guest);
-	guest.file_number = 0;
+	Account guest; 
+	creatingAcc(guest); //Creating a guest account 
+	guest.file_number = 0; //Make sure that the file number of the guest account firstly is 0
 	int pos = -1;
-	pos = loading_account(list_acc, acc_num, guest);
-	if (pos == -2)
+	pos = loading_account(list_acc, acc_num, guest); //Load or add the guest account to the list
+	if (pos == -2) //If too many attemps 
 	{
 		return;
 	}
-	bool exit_game = 0;
-	int choice;
-	bool loaded = 0;
+	bool exit_game = 0; //For the while loop
+	int choice; //For the menu
+	bool loaded = 0; //Condition if the playing game is loaded from the file
 	while (exit_game != 1)
 	{
 		Record curr_time = getTime();
-		mciSendString(L"play \"theme.mp3\" repeat", 0, 0, 0);
+		mciSendString(L"play \"theme.mp3\" repeat", 0, 0, 0); //To play the default music theme of the game
 		menu a;
 		a.PrintLogo();
 		a.SetCursor(38, 12);
@@ -67,12 +67,13 @@ void controlGame(Account list_acc[], int &acc_num, finish F[], int &fin)
 		cout << "Enter choice: ";
 		cin >> choice;
 		system("cls");
+		loaded = 0;
 		switch (choice)
 		{
-		case 1: 
+		case 1: //New game 
 		{
 			int diff;
-			while (true)
+			while (true) //Get the size of the game
 			{
 				cout << "Pick a difficulty\n";
 				cout << "1. Easy\n";
@@ -88,25 +89,28 @@ void controlGame(Account list_acc[], int &acc_num, finish F[], int &fin)
 					cout << "Invalid difficulty, please enter again" << endl;
 				}
 			}
-			mciSendString(L"stop  \"theme.mp3\"", 0, 0, 0);
-			onRoundTheme(diff);
-			game b(diff);
-			b.date = curr_time;
-			b.map.init();	
-			playingGame(list_acc, pos, acc_num, b, loaded, F, fin);
-			offRoundTheme(diff);
+			mciSendString(L"stop  \"theme.mp3\"", 0, 0, 0); //Turn of the music theme before playing game
+			onRoundTheme(diff); //Turn on music theme for each round
+			game b(diff); //Inititalize game struct with exact difficulty
+			b.date = curr_time; //Get the current time to the game struct
+			b.map.init(); //Creating the board
+			playingGame(list_acc, pos, acc_num, b, loaded, F, fin); //Playing game!
+			offRoundTheme(diff); //Turn off music theme for each round after closing game
 			system("cls");
 			break;
 		}
-		case 2:
+		case 2: //Load game
 		{
-			if (list_acc[pos].file_number == 0)
+			if (list_acc[pos].file_number == 0) //If the account doesn't have any filesaves => break
 			{
+				system("cls");
 				cout << "No filesave available!" << endl;
+				Sleep(3000);
+				system("cls");
 				break;
 			}
-			int select;
-			cout << "You've already saved " << list_acc[pos].file_number << " files:" << endl;
+			int select; //Select the filesave to play
+			cout << "You've already saved " << list_acc[pos].file_number << " files:" << endl; //Print all of the filesaves and their status 
 			for (int i = 0; i < 3; i++)
 			{
 				if (i < list_acc[pos].file_number) {
@@ -119,7 +123,7 @@ void controlGame(Account list_acc[], int &acc_num, finish F[], int &fin)
 					cout << endl;
 				}
 			}
-			while (true)
+			while (true) //Get the number of filesave
 			{
 				cout << "Choose your file: ";
 				cin >> select;
@@ -132,23 +136,24 @@ void controlGame(Account list_acc[], int &acc_num, finish F[], int &fin)
 					break;
 				}
 			}
-			loaded = 1;
+			loaded = 1; //To make sure the playinggame function understands that the playing game is loaded from the file
 			select = select - 1;
-			game c(list_acc[pos].saves[select].map.difficulty);
-			c.map.letters = list_acc[pos].saves[select].map.letters;
-			c.date = curr_time;
-			c.score = list_acc[pos].saves[select].score;
+			game c; //Initiallize the game struct with uninitialized board map
+			c.map.letters = list_acc[pos].saves[select].map.letters; //Get the address of the matrix
+			c.map.difficulty = list_acc[pos].saves[select].map.difficulty; //Get the difficulty
+			c.date = curr_time; //Do not need to get the time of the filesave but get the current time
+			c.score = list_acc[pos].saves[select].score; //Get the score of the filesave
 			system("cls");
-			mciSendString(L"stop  \"theme.mp3\"", 0, 0, 0);
-			onRoundTheme(list_acc[pos].saves[select].map.difficulty);
+			mciSendString(L"stop  \"theme.mp3\"", 0, 0, 0); //Turn off the music theme of the game
+			onRoundTheme(list_acc[pos].saves[select].map.difficulty); //Turn on the music theme of the round
 			playingGame(list_acc, pos, acc_num, c, loaded, F, fin);
 			system("cls");
-			offRoundTheme(list_acc[pos].saves[select].map.difficulty);
+			offRoundTheme(list_acc[pos].saves[select].map.difficulty); //Turn off the music theme of the round
 			break;
 		}
-		case 3:
+		case 3: //Leaderboard
 		{
-			int size;
+			int size; //Get the size of game on the leaderboard
 			while (true)
 			{
 				system("cls");
@@ -177,10 +182,10 @@ void controlGame(Account list_acc[], int &acc_num, finish F[], int &fin)
 			system("cls");
 			break;
 		}
-		case 4:
+		case 4: //Exit game
 		{
-			printing_account(list_acc, acc_num);
-			printingLeaderboard(F, fin, 0x12345678);
+			printing_account(list_acc, acc_num); //Print all of the accounts
+			printingLeaderboard(F, fin, 0x12345678); //Print all of the finished games
 			exit_game = 1;
 			break;
 		}
@@ -189,14 +194,13 @@ void controlGame(Account list_acc[], int &acc_num, finish F[], int &fin)
 }
 void playingGame(Account acc[], int acc_pos, int acc_num, game& b, bool loaded, finish F[], int &fin)
 {
-	bool saved = 0;
 	Record curr_time; 
 	curr_time = getTime();
 	Record finishing_time;
 	int total_time = 0;
-	if (loaded)
+	if (loaded) 
 	{
-		total_time = b.score.finishing_second;
+		total_time = b.score.finishing_second; //If the game is loaded => total time updated
 	}
 	int x, y;
 	x = 1;
@@ -223,7 +227,7 @@ void playingGame(Account acc[], int acc_pos, int acc_num, game& b, bool loaded, 
 		if (cmd == UP)
 		{
 			b.map.moveUp(x, y, b.selection.first);
-			PlaySound(TEXT("move.wav"), NULL, SND_FILENAME | SND_ASYNC);
+			PlaySound(TEXT("move.wav"), NULL, SND_FILENAME | SND_ASYNC); //Using PlaySound function of the mmsystem library => smoother and better for effect sound than mciSendString
 		}
 		else if (cmd == LEFT)
 		{
@@ -242,7 +246,7 @@ void playingGame(Account acc[], int acc_pos, int acc_num, game& b, bool loaded, 
 		}
 		else if (cmd == ENTER && b.map.letters[x][y] != '$' && (b.selection.first.x != x || b.selection.first.y != y))
 		{
-			Beep(600, 150);
+			Beep(600, 150); //Using Beep sound of the Windows.h library => various sounds
 			if (b.select_state == 0)
 			{
 				b.select1(x, y);
@@ -321,11 +325,6 @@ void playingGame(Account acc[], int acc_pos, int acc_num, game& b, bool loaded, 
 		}
 		else if (cmd == ESCAPE)
 		{
-			if (saved)
-			{
-				b.map.letters = NULL;
-				b.map.difficulty = 0;
-			}
 			HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
 			COORD cursorPos = { 0,25 };
 			SetConsoleCursorPosition(console, cursorPos);
@@ -354,7 +353,6 @@ void playingGame(Account acc[], int acc_pos, int acc_num, game& b, bool loaded, 
 			Sleep(1000);
 			system("cls");
 			b.map.printBoard(1, 1);
-			saved = 1;
 		}
 	}
 	system("cls");

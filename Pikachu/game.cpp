@@ -26,7 +26,7 @@ void game::resetState()
 Record getTime()
 {
 	Record curr_time;
-	struct tm ltm;
+	struct tm ltm; //Using ctime library 
 	time_t now = time(0);
 	localtime_s(&ltm, &now);
 	curr_time.day = ltm.tm_mday;
@@ -41,16 +41,16 @@ float final_score(int score, int time)
 {
 	float score2 = (float)score;
 	float time2 = (float)time;
-	float bonus_factor = 1;
-	float bonus_score = (1 - time2 / 300) * 100 * bonus_factor;
-	float score_weight_factor = 0.7;
-	float time_weight_factor = 0.3;
+	float bonus_factor = 1; //Bonus_factor helps determine the importance of total playing time
+	float bonus_score = (1 - time2 / 300) * 100 * bonus_factor; 
+	float score_weight_factor = 0.7; //Playing score percentages in the final score
+	float time_weight_factor = 0.3; //Bonus time percentages in the final score
 	return (score2 * score_weight_factor) + (bonus_score * time_weight_factor);
 }
 int total_playingtime(Record a, Record b) {
 	// Calculate the total number of seconds for each time
-	int secondsA = a.second + a.minute * 60 + a.hour * 3600 + a.day * 86400 + (a.month - 1) * 2678400 + (a.year - 1970) * 31536000;
-	int secondsB = b.second + b.minute * 60 + b.hour * 3600 + b.day * 86400 + (b.month - 1) * 2678400 + (b.year - 1970) * 31536000;
+	int secondsA = a.second + a.minute * 60 + a.hour * 3600 + a.day * 86400 + (a.month - 1) * 2678400 + (a.year - 1970) * 31536000; //As suggested by Chat-GPT
+	int secondsB = b.second + b.minute * 60 + b.hour * 3600 + b.day * 86400 + (b.month - 1) * 2678400 + (b.year - 1970) * 31536000; 
 	// Calculate the difference between the two times in seconds
 	if (secondsA > secondsB)
 	{
@@ -60,12 +60,12 @@ int total_playingtime(Record a, Record b) {
 		return secondsB - secondsA;
 	}
 }
-void xor_finish(finish& f, int mask) {
-	f.difficulty ^= mask;
-	f.time ^= mask;
-	int* p_score = reinterpret_cast<int*>(&f.score);
+void xor_finish(finish& f, int mask) { //Xor the finish struct with the mask
+	f.difficulty ^= mask;  //Int with int
+ 	f.time ^= mask; //Int with int
+	int* p_score = reinterpret_cast<int*>(&f.score); //Float with int 
 	*p_score ^= mask;
-	for (size_t i = 0; i < NAME; i++) {
+	for (size_t i = 0; i < NAME; i++) { //Char with int
 		f.name[i] ^= static_cast<char>(mask);
 	}
 }
@@ -78,11 +78,11 @@ bool printingLeaderboard(finish F[], int n, int mask)
 		cout << "Can not read leaderboard.bin file!" << endl;
 		return 0;
 	}
-	fout.write((char*)&n, sizeof(n));
+	fout.write((char*)&n, sizeof(n)); //Print the number of finished games first(do not need to xor it)
 	for (int i = 0; i < n; i++)
 	{
-		xor_finish(F[i], mask);
-		fout.write((char*)&F[i], sizeof(finish));
+		xor_finish(F[i], mask); //Xor the finished game first
+		fout.write((char*)&F[i], sizeof(finish)); //Print it into the leaderboard.bin with exact size
 	}
 	fout.close();
 	return 1;
@@ -96,11 +96,11 @@ bool readingLeaderboard(finish F[], int &n, int mask)
 		cout << "Can not read leaderboard.bin file!" << endl;
 		return 0;
 	}
-	fin.read((char*)&n, sizeof(n));
+	fin.read((char*)&n, sizeof(n)); //Get the number of finished games
 	for (int i = 0; i < n; i++)
 	{
-		fin.read((char*)&F[i], sizeof(finish));
-		xor_finish(F[i], mask);
+		fin.read((char*)&F[i], sizeof(finish)); //Read the finished game first
+		xor_finish(F[i], mask); //Xor it with the mask int
 	}
 	fin.close();
 	return 1;
@@ -129,7 +129,7 @@ void getTop5(finish F[], int n, int difficulty, finish top5[5], int &num)
 	}
 	if(filtered_size < 5)
 	{
-		num = filtered_size;
+		num = filtered_size; //To make sure segmentation fault doesn't happen
 	}
 	else {
 		num = 5;

@@ -36,7 +36,7 @@ struct board
 {
 	int difficulty; // Difficulty of the game, which will be 1 (Easy), 2 (Medium), 3 (Hard)
 	char** letters; // The character that the players will see on the board
-	board(int n)
+	board(int n) //Automatically allocating the memories for the board if declaring with an int n(difficulty)
 	{
 		this->difficulty = n;
 		this->letters = new char* [n + 5];
@@ -45,13 +45,13 @@ struct board
 			this->letters[i] = new char[n * 2 + 6];
 		}
 	}
-	board()
+	board() //If not declaring with an int => pointer's value is NULL and the difficulty is 0
 	{
 		this->letters = NULL;
 		this->difficulty = 0;
 	}
 	~board() {
-		if (this->difficulty == 1 || this->difficulty == 2 || this->difficulty == 3)
+		if (this->difficulty == 1 || this->difficulty == 2 || this->difficulty == 3) //The difficulty must be 1 or 2 or 3 => deallocating
 		{
 			for (int i = 0; i < this->difficulty + 5; i++) {
 				delete[] this->letters[i];
@@ -80,10 +80,12 @@ struct board
 	void shuffleBoard(int, int);
 	int FindScore();
 };
+//These functions help checking the valid matching
 bool matching_I(char**, Point, Point);
 bool matching_L(char**, Point, Point);
 int matching_Z_U(char**, int, int, Point, Point);
 int matching_check(char**, int, int, Point, Point);
+//These functions help finding the path of the valid matching
 Node* path_I(char**, Point, Point);
 Node* path_L(char**, Point, Point);
 Node* path_U_Z(char**, int, int, Point, Point);
@@ -93,5 +95,3 @@ void checkPath(pair<int, int>, pair<int, int>, pair<int, int>, int, int);
 void removePath(pair<int, int>, pair<int, int>, pair<int, int>, int, int);
 void matching(char**&, int, int, Point, Point);
 void unmatching(char**&, int, int, Point, Point);
-bool saving_board(board);
-bool reading_board(board&);

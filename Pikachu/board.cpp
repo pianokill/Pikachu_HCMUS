@@ -101,10 +101,10 @@ void board::init()
 			{
 				letters[i + 1][j + 1] = used_characters[n * i + j]; // Put the randomized board onto the map
 			}
-	} while (!automatically_finding(letters, m + 2, n + 2));
+	} while (!automatically_finding(letters, m + 2, n + 2)); //The initialized board must has at least 1 valid pair to play
 	system("cls");
 }
-void board::getPairs(int& pairs)
+void board::getPairs(int& pairs) //Get the number of unmatched pairs
 {
 	pairs = 0;
 	int m = difficulty + 5;
@@ -527,7 +527,7 @@ void board::shuffleBoard(int x, int y) // Function to shuffle the board when the
 				}
 			}
 		}
-	} while (!automatically_finding(letters, row + 2, col + 2));
+	} while (!automatically_finding(letters, row + 2, col + 2)); //The shuffled board must has at least 1 valid pair to play
 	printBoard(x, y);
 }
 //Checking functions
@@ -1151,12 +1151,7 @@ bool automatically_finding(char** letters, int row, int col) {
 	}
 	return 0;
 }
-
-
-
-
 //Playing game
-
 void checkPath(pair<int, int> a, pair<int, int> b, pair<int, int> c, int id, int sze)
 {
 	HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);

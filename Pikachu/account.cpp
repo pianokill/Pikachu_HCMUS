@@ -1,125 +1,119 @@
 #include "account.h"
 
-void creatingAcc(Account &temp)
+void creatingAcc(Account& temp)  //Only creating account with name and pass
 {
 	cout << "Enter username: ";
 	cin >> temp.name;
 	cout << "Enter password: ";
 	cin >> temp.pass;
 }
-void printDate(Record date)
+void printDate(Record date) //Printing the date and time to console
 {
 	cout << "(";
 	cout << setfill('0') << setw(2) << date.day << "/";
 	cout << setfill('0') << setw(2) << date.month << "/";
 	cout << setfill('0') << setw(4) << date.year << "-";
-	cout << date.hour << ":" << date.minute << ":" << date.second;
+	cout << setfill('0') << setw(2) << date.hour << ":";
+	cout << setfill('0') << setw(2) << date.minute << ":";
+	cout << setfill('0') << setw(2) << date.second;
 	cout << ")";
 }
-void saving_map(Account &acc, const game &Game)
+void saving_map(Account& acc, const game& Game)	 //Saving the playing Game to the using Account
 {
 	int pos = 0;
-	if (acc.file_number == 0)
+	cout << "You've already saved " << acc.file_number << " files:" << endl;
+	for (int i = 0; i < 3; i++) //Printing all of the filesaves'status
 	{
+		if (i < acc.file_number) {
+			cout << "File save number " << i + 1 << ": Saved ";
+			printDate(acc.saves[i].date);
+			cout << endl;
+		}
+		else {
+			cout << "File save number " << i + 1 << ": Empty";
+			cout << endl;
+		}
+	}
+	if (acc.file_number <= 2) //If the number of filesaves is not maximum => Automatically saved to the next file save number
+	{
+		cout << "The game will be stored in file number " << acc.file_number + 1 << endl;
+		pos = acc.file_number;
 		acc.file_number++;
-		pos = 0;
-		cout << "The game will be stored in file number " << 1 << endl;
 	}
-	else {
-		cout << "You've already saved " << acc.file_number << " files:" << endl;
-		for (int i = 0; i < 3; i++)
+	else if (acc.file_number == 3) { //If the number of filesaves is maximum => Select the file saved to save
+		while (true)
 		{
-			if (i < acc.file_number) {
-				cout << "File save number " << i + 1 << ": Saved ";
-				printDate(acc.saves[i].date);
-				cout << endl;
+			cout << "Enter the file number that you want to save in: ";
+			cin >> pos;
+			if (pos <= 3 && pos >= 1)
+			{
+				pos = pos - 1;
+				break;
 			}
-			else {
-				cout << "File save number " << i + 1 << ": Empty";
-				cout << endl;
-			}
-		}
-		if (acc.file_number <= 2)
-		{
-			cout << "The game will be stored in file number " << acc.file_number + 1 << endl;
-			pos = acc.file_number;
-			acc.file_number++;
-		}
-		else if(acc.file_number == 3) {
-			while(true)
-			{ 
-				cout << "Enter the file number that you want to save in: ";
-				cin >> pos;
-				if (pos <= 3 && pos >= 1)
-				{
-					pos = pos - 1;
-					break;
-				}
-				cout << "Invalid file save!" << endl;
-			}
+			cout << "Invalid file save!" << endl;
 		}
 	}
-	acc.saves[pos].date = Game.date;
-	acc.saves[pos].score = Game.score;
-	acc.saves[pos].map.letters = Game.map.letters;
-	acc.saves[pos].map.difficulty = Game.map.difficulty;
+	acc.saves[pos].date = Game.date; //Copy date of the game
+	acc.saves[pos].score = Game.score; //Copy score of the game
+	acc.saves[pos].map.letters = Game.map.letters; //The value of pointers(address) are the same
+	acc.saves[pos].map.difficulty = Game.map.difficulty; //Copy the difficulty
 }
 bool printing_account(Account acc[], int acc_number)
 {
 	ofstream fout;
-	fout.open("account_log.bin", ios::binary | ios::trunc);
-	if (fout.fail())
+	fout.open("account_log.bin", ios::binary | ios::trunc); //Binary mode and trunc mode => Print from beginning to make sure that everything is printed
+	if (fout.fail()) //Check file
 	{
 		cout << "Can not read account_log.bin file!" << endl;
 		return 0;
 	}
-	fout.write((char*)&acc_number, 4);
-	for (int i = 0; i < acc_number; i++)
+	fout.write((char*)&acc_number, 4); //Print the number of accounts first
+	for (int i = 0; i < acc_number; i++) //For each account
 	{
-		fout.write((char*)&acc[i].name, NAME);
-		fout.write((char*)&acc[i].pass, PASS);
-		fout.write((char*)&acc[i].file_number, 4);
-		for (int j = 0; j < acc[i].file_number; j++)
+		fout.write((char*)&acc[i].name, NAME); //Print account's name
+		fout.write((char*)&acc[i].pass, PASS); //Print account's pass
+		fout.write((char*)&acc[i].file_number, 4); //Print account's number of filesaves
+		for (int j = 0; j < acc[i].file_number; j++) //For each filesave
 		{
-			fout.write((char*)&acc[i].saves[j].date, sizeof(Record));
-			fout.write((char*)&acc[i].saves[j].score, sizeof(Score));
-			int row = acc[i].saves[j].map.difficulty + 5;
+			fout.write((char*)&acc[i].saves[j].date, sizeof(Record)); //Print the date of the played game
+			fout.write((char*)&acc[i].saves[j].score, sizeof(Score)); //Print the score of the played game
+			int row = acc[i].saves[j].map.difficulty + 5; //Get the size of the game
 			int col = acc[i].saves[j].map.difficulty * 2 + 6;
-			fout.write((char*)& acc[i].saves[j].map.difficulty, 4);
+			fout.write((char*)&acc[i].saves[j].map.difficulty, 4); //Print the difficulty of the played game
 			for (int m = 0; m < row; m++) {
-				fout.write(acc[i].saves[j].map.letters[m], col); //Writing every single row of the matrix
+				fout.write(acc[i].saves[j].map.letters[m], col); //Print every single row of the matrix 
 			}
 		}
 	}
 	fout.close();
 	return 1;
 }
-bool reading_account(Account acc[], int &acc_number)
+bool reading_account(Account acc[], int& acc_number)
 {
 	ifstream fin;
-	fin.open("account_log.bin", ios::binary | ios::in);
-	if (fin.fail())
+	fin.open("account_log.bin", ios::binary | ios::in); //Binary mode
+	if (fin.fail()) //Check the file
 	{
 		cout << "Can not read account_log.bin file!" << endl;
 		return 0;
 	}
-	fin.read((char*)&acc_number, 4);
-	for (int i = 0; i < acc_number; i++)
+	fin.read((char*)&acc_number, 4); //Read the number of acocunts
+	for (int i = 0; i < acc_number; i++) //For each account
 	{
-		fin.read((char*)&acc[i].name, NAME);
-		fin.read((char*)&acc[i].pass, PASS);
-		fin.read((char*)&acc[i].file_number, 4);
-		for (int j = 0; j < acc[i].file_number; j++)
+		fin.read((char*)&acc[i].name, NAME); //Read the name
+		fin.read((char*)&acc[i].pass, PASS); //Read the pass
+		fin.read((char*)&acc[i].file_number, 4); //Read the number of filesaves
+		for (int j = 0; j < acc[i].file_number; j++) //For each filesave
 		{
-			fin.read((char*)&acc[i].saves[j].date, sizeof(Record));
-			fin.read((char*)&acc[i].saves[j].score, sizeof(Score));
-			fin.read((char*)&acc[i].saves[j].map.difficulty, 4);
-			int row = acc[i].saves[j].map.difficulty + 5;
+			fin.read((char*)&acc[i].saves[j].date, sizeof(Record)); //Get the date 
+			fin.read((char*)&acc[i].saves[j].score, sizeof(Score)); //Get the score
+			fin.read((char*)&acc[i].saves[j].map.difficulty, 4); //Get the difficulty
+			int row = acc[i].saves[j].map.difficulty + 5; //Get the size of the matrix 
 			int col = acc[i].saves[j].map.difficulty * 2 + 6;
-			acc[i].saves[j].map.letters = new char*[row];
+			acc[i].saves[j].map.letters = new char* [row];
 			for (int k = 0; k < row; k++)
 			{
-				acc[i].saves[j].map.letters[k] = new char[col];
+				acc[i].saves[j].map.letters[k] = new char[col]; //Allocating memories for the double pointer
 			}
 			for (int k = 0; k < row; k++) {
 				fin.read(acc[i].saves[j].map.letters[k], col); //Reading every single row of the matrix
@@ -129,17 +123,17 @@ bool reading_account(Account acc[], int &acc_number)
 	fin.close();
 	return 1;
 }
-int loading_account(Account acc[], int &acc_number, Account guest)
+int loading_account(Account acc[], int& acc_number, Account guest) 
 {
 	for (int i = 0; i < acc_number; i++)
 	{
-		if (strcmp(guest.name, acc[i].name) == 0 )
+		if (strcmp(guest.name, acc[i].name) == 0) //Check if the name of the account is in the list
 		{
-			for(int k = 0; k < 10; k++)
+			for (int k = 0; k < 10; k++)
 			{
-				if (strcmp(guest.pass, acc[i].pass) == 0)
+				if (strcmp(guest.pass, acc[i].pass) == 0) //If then the user has 10 chances to enter the pass
 				{
-					return i;
+					return i; //Return the position of the account in the list
 				}
 				else
 				{
@@ -147,11 +141,11 @@ int loading_account(Account acc[], int &acc_number, Account guest)
 					cin >> guest.pass;
 				}
 			}
-			cout << "Too many times entering password. Game will be closed!";
+			cout << "Too many times entering password. Game will be closed!"; //Game will be closed automatically if too many attemps to login
 			return -2;
 		}
 	}
-	acc[acc_number] = guest;
-	acc_number++;
-	return acc_number - 1;
+	acc[acc_number] = guest; //If the name of the account is not in the list => Added it into the list 
+	acc_number++;  //Increase the number of accounts
+	return acc_number - 1; //Return the position of the account in the list
 }
