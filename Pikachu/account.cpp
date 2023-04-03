@@ -56,8 +56,19 @@ void saving_map(Account& acc, const game& Game)	 //Saving the playing Game to th
 		}
 	}
 	acc.saves[pos].date = Game.date; //Copy date of the game
-	acc.saves[pos].score = Game.score; //Copy score of the game
-	acc.saves[pos].map.letters = Game.map.letters; //The value of pointers(address) are the same
+	acc.saves[pos].score = Game.score; //Copy score of the gamev
+	if (acc.saves[pos].map.difficulty != 0) //If the filesave exists => deallocates it first
+	{
+		int row = acc.saves[pos].map.difficulty + 5;
+		int col = acc.saves[pos].map.difficulty * 2 + 6;
+		for (int i = 0; i < row; i++)
+		{
+			delete[] acc.saves[pos].map.letters[i];
+		}
+		delete[] acc.saves[pos].map.letters;
+		acc.saves[pos].map.difficulty = 0;
+	}
+	acc.saves[pos].map.letters = Game.map.letters; //Get the address of the matrix
 	acc.saves[pos].map.difficulty = Game.map.difficulty; //Copy the difficulty
 }
 bool printing_account(Account acc[], int acc_number)

@@ -58,6 +58,7 @@ struct board
 			}
 			delete[]this->letters;
 		}
+		this->difficulty = 0;
 	}
 	void init(); // Initialize the board based on the chosen difficulty
 	void getPairs(int& pairs);
