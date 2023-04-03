@@ -572,97 +572,32 @@ bool matching_L(char** letters, int move, Point a, Point b)
 	{
 		return 0;
 	}
-	bool valid;
-	valid = false;
 	Point c;
-	if (a.y < b.y && move != 1) //Check horizontally to the right
+	if (move != 1) //Check horizontally
 	{
-		if (letters[a.x][a.y + 1] == '$')
-		{ //Check horizontally to the right 
-			valid = 1;
-			for (int i = 2; i <= b.y - a.y; i++)
-			{
-				if (letters[a.x][a.y + i] != '$')
-				{
-					valid = 0;
-					break;
-				}
-			}
-			if (valid)
-			{
-				c.x = a.x;
-				c.y = b.y;
-				if (matching_I(letters, c, b))
-				{
-					return 1;
-				}
-			}
-		}
-	}
-	else if (a.y > b.y && move != 1)  //Check horizontally to the left
-	{
-		if (letters[a.x][a.y - 1] == '$')
+		c.x = a.x;
+		c.y = b.y;
+		if (matching_I(letters, a, c) && letters[c.x][c.y] == '$')
 		{
-			valid = 1;
-			for (int i = 2; i <= a.y - b.y; i++)
+			c.x = a.x;
+			c.y = b.y;
+			if (matching_I(letters, c, b))
 			{
-				if (letters[a.x][a.y - i] != '$')
-				{
-					valid = 0;
-					break;
-				}
-			}
-			if (valid)
-			{
-				c.x = a.x;
-				c.y = b.y;
-				if (matching_I(letters, c, b))
-				{
-					return 1;
-				}
+				return 1;
 			}
 		}
 	}
-	if (a.x < b.x && move != 2)  //Check vertically downward	
+	if (move != 2)  //Check vertically
 	{
-		if (letters[a.x + 1][a.y] == '$') {
-			valid = 1;
-			for (int i = 2; i <= b.x - a.x; i++) {
-				if (letters[a.x + i][a.y] != '$') {
-					valid = 0;
-					break;
-				}
-			}
-			if (valid) {
-				c.x = b.x;
-				c.y = a.y;
-				if (matching_I(letters, c, b)) {
-					return 1;
-				}
-			}
-		}
-	}
-	else if (a.x > b.x && move != 2) // Check vertically upward
-	{
-		if (letters[a.x - 1][a.y] == '$')
+		c.x = b.x;
+		c.y = a.y;
+		if (matching_I(letters, a, c) && letters[c.x][c.y] == '$')
 		{
-			valid = 1;
-			for (int i = 2; i <= a.x - b.x; i++)
+			c.x = b.x;
+			c.y = a.y;
+			if (matching_I(letters, c, b))
 			{
-				if (letters[a.x - i][a.y] != '$')
-				{
-					valid = 0;
-					break;
-				}
-			}
-			if (valid)
-			{
-				c.x = b.x;
-				c.y = a.y;
-				if (matching_I(letters, c, b))
-				{
-					return 1;
-				}
+				return 1;
 			}
 		}
 	}
