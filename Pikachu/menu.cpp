@@ -28,3 +28,37 @@ void menu::InitializeFont()
 	wcscpy_s(info.FaceName, L"Consolas");
 	SetCurrentConsoleFontEx(ConsoleOut, FALSE, &info);
 }
+void menu::drawInfo()
+{
+	HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
+	COORD cursorPos;
+	// Build a short animation to draw the outline of the info board
+	cursorPos = { 106,6 };
+	SetConsoleCursorPosition(console, cursorPos);
+	for (int i = 0; i < 30; i++)
+	{
+		cout << '-';
+		Sleep(6.9);
+	}
+	for (int i = 0; i < 14; i++)
+	{
+		cursorPos = { 136,short(7 + i) };
+		SetConsoleCursorPosition(console, cursorPos);
+		cout << '|';
+		Sleep(6.9);
+	}
+	for (int i = 0; i < 30; i++)
+	{
+		cursorPos = {short(135 - i), 21};
+		SetConsoleCursorPosition(console, cursorPos);
+		cout << '-';
+		Sleep(6.9);
+	}
+	for (int i = 0; i < 14; i++)
+	{
+		cursorPos = { 105,short(20 - i) };
+		SetConsoleCursorPosition(console, cursorPos);
+		cout << '|';
+		Sleep(6.9);
+	}
+}
