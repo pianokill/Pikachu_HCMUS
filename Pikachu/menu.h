@@ -38,4 +38,5 @@ struct menu
     void SetCursor(int, int);
     void CursorColor(int, int);
     void InitializeFont();
+    void drawInfo();
 };
