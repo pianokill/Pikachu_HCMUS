@@ -114,7 +114,10 @@ void controlGame(Account list_acc[], int &acc_num, finish F[], int &fin)
 			int pairs = 0;
 			for (int i = 0; i < 3; i++)
 			{
-				list_acc[pos].saves[i].map.getPairs(pairs);
+				if (list_acc[pos].saves[i].map.difficulty != 0)
+				{
+					list_acc[pos].saves[i].map.getPairs(pairs);
+				}
 				if (i < list_acc[pos].file_number && pairs != 0) 
 				{
 					cout << "File save number " << i + 1 << ": Saved ";
@@ -132,7 +135,10 @@ void controlGame(Account list_acc[], int &acc_num, finish F[], int &fin)
 				pairs = 0;
 				cout << "Choose your file: ";
 				cin >> select;
-				list_acc[pos].saves[select - 1].map.getPairs(pairs);
+				if (list_acc[pos].saves[select - 1].map.difficulty != 0)
+				{
+					list_acc[pos].saves[select - 1].map.getPairs(pairs);
+				}
 				if (select > list_acc[pos].file_number || pairs == 0)
 				{
 					cout << "This file save is invalid" << endl;

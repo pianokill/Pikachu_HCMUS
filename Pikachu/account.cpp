@@ -25,7 +25,10 @@ void saving_map(Account& acc, const game& Game)	 //Saving the playing Game to th
 	int pairs = 0;
 	for (int i = 0; i < 3; i++) //Printing all of the filesaves'status
 	{
-		acc.saves[i].map.getPairs(pairs);
+		if (acc.saves[i].map.difficulty != 0)
+		{
+			acc.saves[i].map.getPairs(pairs);
+		}
 		if (i < acc.file_number && pairs != 0) {
 			cout << "File save number " << i + 1 << ": Saved ";
 			printDate(acc.saves[i].date);
