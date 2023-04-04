@@ -1,11 +1,10 @@
 #include "controller.h"
 
-
-void onRoundTheme(int diff) 
+void onRoundTheme(int diff)
 {
 	if (diff == 1)
 	{
-		mciSendString(L"play \"round1.mp3\" repeat", 0, 0, 0); //Using mciSendString function in mmsystem library with repeat mode
+		mciSendString(L"play \"round1.mp3\" repeat", 0, 0, 0);
 	}
 	else if (diff == 2)
 	{
@@ -20,20 +19,20 @@ void offRoundTheme(int diff)
 {
 	if (diff == 1)
 	{
-		mciSendString(L"stop \"round1.mp3\"", 0, 0, 0);
+		mciSendString(L"stop \"round1.mp3\" repeat", 0, 0, 0);
 	}
 	else if (diff == 2)
 	{
-		mciSendString(L"stop \"round2.mp3\"", 0, 0, 0);
+		mciSendString(L"stop \"round2.mp3\" repeat", 0, 0, 0);
 	}
 	else if (diff == 3)
 	{
-		mciSendString(L"stop \"round3.mp3\"", 0, 0, 0);
+		mciSendString(L"stop \"round3.mp3\" repeat", 0, 0, 0);
 	}
 }
-void controlGame(Account list_acc[], int &acc_num, finish F[], int &fin)
+void controlGame(Account list_acc[], int& acc_num, finish F[], int& fin)
 {
-	Account guest; 
+	Account guest;
 	creatingAcc(guest); //Creating a guest account 
 	guest.file_number = 0; //Make sure that the file number of the guest account firstly is 0
 	int pos = -1;
@@ -94,7 +93,7 @@ void controlGame(Account list_acc[], int &acc_num, finish F[], int &fin)
 			game b(diff); //Inititalize game struct with exact difficulty
 			b.date = curr_time; //Get the current time to the game struct
 			b.map.init(); //Creating the board
-			playingGame(list_acc, pos, acc_num, b, loaded, F, fin); //Playing game!
+			playingGame(list_acc, pos, acc_num, b, loaded, F, fin, a); //Playing game!
 			offRoundTheme(diff); //Turn off music theme for each round after closing game
 			system("cls");
 			break;
@@ -118,13 +117,13 @@ void controlGame(Account list_acc[], int &acc_num, finish F[], int &fin)
 				{
 					list_acc[pos].saves[i].map.getPairs(pairs);
 				}
-				if (i < list_acc[pos].file_number && pairs != 0) 
+				if (i < list_acc[pos].file_number && pairs != 0)
 				{
 					cout << "File save number " << i + 1 << ": Saved ";
 					printDate(list_acc[pos].saves[i].date);
 					cout << endl;
 				}
-				else 
+				else
 				{
 					cout << "File save number " << i + 1 << ": Empty";
 					cout << endl;
@@ -158,7 +157,7 @@ void controlGame(Account list_acc[], int &acc_num, finish F[], int &fin)
 			system("cls");
 			mciSendString(L"stop  \"theme.mp3\"", 0, 0, 0); //Turn off the music theme of the game
 			onRoundTheme(list_acc[pos].saves[select].map.difficulty); //Turn on the music theme of the round
-			playingGame(list_acc, pos, acc_num, c, loaded, F, fin);
+			playingGame(list_acc, pos, acc_num, c, loaded, F, fin, a);
 			system("cls");
 			offRoundTheme(list_acc[pos].saves[select].map.difficulty); //Turn off the music theme of the round
 			break;
@@ -204,13 +203,13 @@ void controlGame(Account list_acc[], int &acc_num, finish F[], int &fin)
 		}
 	}
 }
-void playingGame(Account acc[], int acc_pos, int acc_num, game& b, bool loaded, finish F[], int &fin)
+void playingGame(Account acc[], int acc_pos, int acc_num, game& b, bool loaded, finish F[], int& fin, menu a)
 {
-	Record curr_time; 
+	Record curr_time;
 	curr_time = getTime(); //Get the starting game
 	Record finishing_time;
 	int total_time = 0;
-	if (loaded) 
+	if (loaded)
 	{
 		total_time = b.score.finishing_second; //If the game is loaded => total time updated
 	}
@@ -226,6 +225,7 @@ void playingGame(Account acc[], int acc_pos, int acc_num, game& b, bool loaded, 
 	n = b.map.difficulty * 2 + 4;
 	b.map.getPairs(b.pairs); //Get the valid pairs of the board
 	b.map.printBoard(x, y);
+	a.drawInfo();
 	while (1 && b.pairs)
 	{
 		int cmd;
@@ -233,7 +233,7 @@ void playingGame(Account acc[], int acc_pos, int acc_num, game& b, bool loaded, 
 		while (!automatically_finding(b.map.letters, m + 2, n + 2))
 		{
 			HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
-			COORD cursorPos = { 0,m * 4 + 8 };
+			COORD cursorPos = { 0,short(m * 4 + 8) };
 			SetConsoleCursorPosition(console, cursorPos);
 			cout << "NO MOVE LEFT!! SHUFFLING: ";
 			Sleep(2000);
@@ -273,25 +273,25 @@ void playingGame(Account acc[], int acc_pos, int acc_num, game& b, bool loaded, 
 				int score = matching_check(b.map.letters, m + 2, n + 2, b.selection.first, b.selection.second);
 				b.score.fin_score += score;
 				HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
-				COORD cursorPos = { 0,m * 4 + 8 };
+				COORD cursorPos = { 0,short(m * 4 + 8) };
 				SetConsoleCursorPosition(console, cursorPos);
 				if (score) // Announce the score and remove the cells if the player did it right
 				{
 					b.pairs--;
 					switch (score)
 					{
-						case 1:
-							cout << "I matching\n";
-							break;
-						case 2:
-							cout << "L matching\n";
-							break;
-						case 3:
-							cout << "Z matching\n";
-							break;
-						case 4:
-							cout << "U matching\n";
-							break;
+					case 1:
+						cout << "I matching\n";
+						break;
+					case 2:
+						cout << "L matching\n";
+						break;
+					case 3:
+						cout << "Z matching\n";
+						break;
+					case 4:
+						cout << "U matching\n";
+						break;
 					}
 					cout << "You've got " << score << " point";
 					if (score > 1)
@@ -304,6 +304,7 @@ void playingGame(Account acc[], int acc_pos, int acc_num, game& b, bool loaded, 
 					Sleep(269);
 					b.map.deleteCells(b.selection.first, b.selection.second);
 					b.map.eraseMatch(b.selection.first, b.selection.second);
+					b.map.redrawBoard(x, y);
 				}
 				else
 				{
@@ -333,7 +334,7 @@ void playingGame(Account acc[], int acc_pos, int acc_num, game& b, bool loaded, 
 				b.score.fin_score = 0;
 			}
 			HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
-			COORD cursorPos = { 0,m * 4 + 8 };
+			COORD cursorPos = { 0,short(m * 4 + 8) };
 			SetConsoleCursorPosition(console, cursorPos);
 			cout << "Hint used, minus 2 points!!                                                 \n";
 			cout << "Current score:  " << b.score.fin_score << "                              \n";
@@ -371,9 +372,9 @@ void playingGame(Account acc[], int acc_pos, int acc_num, game& b, bool loaded, 
 	system("cls");
 	if (b.pairs == 0) //If the game is finished
 	{
-		finishing_time = getTime(); 
+		finishing_time = getTime();
 		b.score.finishing_second = total_time + total_playingtime(finishing_time, curr_time); //Get the total playing time 
-		cout << "You get " << b.score.fin_score << " points "<< endl; 
+		cout << "You get " << b.score.fin_score << " points " << endl;
 		cout << "Total playing time is: " << b.score.finishing_second << " seconds" << endl;
 		float last_score = final_score(b.score.fin_score, b.score.finishing_second); //Get the final score
 		cout << "Final score: " << last_score;
@@ -392,4 +393,3 @@ void playingGame(Account acc[], int acc_pos, int acc_num, game& b, bool loaded, 
 		b.map.difficulty = 0;
 	}
 }
-
