@@ -1,32 +1,40 @@
 #include "board.h"
 
 //Linked list functions
-void swap_2int(int& a, int& b) {
+void swap_2int(int& a, int& b) 
+{
 	a = a + b;
 	b = a - b;
 	a = a - b;
 }
-void addHead(Node*& pHead, Point data) {
+void addHead(Node*& pHead, Point data) 
+{
 	Node* pTemp = pHead;
 	pHead = new Node;
 	pHead->data.x = data.x;
 	pHead->data.y = data.y;
-	if (pTemp == NULL) {
+	if (pTemp == NULL) 
+	{
 		pHead->pNext = NULL;
 	}
-	else {
+	else 
+	{
 		pHead->pNext = pTemp;
 	}
 }
-void insertTail(Node*& pHead, Node* test) {
+void insertTail(Node*& pHead, Node* test) 
+{
 	Node* pCurrent = pHead;
-	while (pCurrent->pNext != NULL) {
+	while (pCurrent->pNext != NULL) 
+	{
 		pCurrent = pCurrent->pNext;
 	}
 	pCurrent->pNext = test;
 }
-void removeHead(Node*& pHead) {
-	if (pHead == NULL) {
+void removeHead(Node*& pHead) 
+{
+	if (pHead == NULL) 
+	{
 		return;
 	}
 	Node* pCurrent = pHead;
@@ -34,12 +42,15 @@ void removeHead(Node*& pHead) {
 	delete pCurrent;
 	return;
 }
-void removeAll(Node*& pHead) {
-	if (pHead == NULL) {
+void removeAll(Node*& pHead) 
+{
+	if (pHead == NULL) 
+	{
 		return;
 	}
 	Node* temp = pHead;
-	while (pHead->pNext != NULL) {
+	while (pHead->pNext != NULL) 
+	{
 		pHead = pHead->pNext;
 		delete temp;
 		temp = pHead;
@@ -52,17 +63,18 @@ int getSize(Node* pHead, int size)
 {
 	if (pHead == NULL)
 	{
-		return size - 1;
+		return size-1;
 	}
 	getSize(pHead->pNext, size + 1);
 }
-void extractList(Node* pHead, vector<pair<int, int>>& path, int id)
+void extractList(Node* pHead, vector<pair<int,int>>& path, int id)
 {
-	if (pHead == NULL) {
+	if (pHead == NULL) 
+	{
 		return;
 	}
 	path[id] = { pHead->data.x,pHead->data.y };
-	extractList(pHead->pNext, path, id + 1);
+	extractList(pHead->pNext,path,id+1);
 	return;
 }
 //Board controlling functions
@@ -101,7 +113,8 @@ void board::init()
 			{
 				letters[i + 1][j + 1] = used_characters[n * i + j]; // Put the randomized board onto the map
 			}
-	} while (!automatically_finding(letters, m + 2, n + 2)); //The initialized board must has at least 1 valid pair to play
+	} 
+	while (!automatically_finding(letters, m + 2, n + 2)); //The initialized board must has at least 1 valid pair to play
 	system("cls");
 }
 void board::getPairs(int& pairs) //Get the number of unmatched pairs
@@ -254,6 +267,7 @@ void board::printBoard(int x, int y) // x and y repressent the player's current 
 		for (int j = 1; j <= n; j++)
 			if (letters[i][j] != '$')
 			{
+				cout << TEXT_BLUE;
 				cursorPos = { short((j - 1) * 8 + 8),short((i - 1) * 4 + 4) };
 				SetConsoleCursorPosition(console, cursorPos);
 				cout << " -------";
@@ -269,6 +283,7 @@ void board::printBoard(int x, int y) // x and y repressent the player's current 
 				cursorPos = { short((j - 1) * 8 + 8),short((i - 1) * 4 + 8) };
 				SetConsoleCursorPosition(console, cursorPos);
 				cout << " -------";
+				cout << BLACK;
 				// Mark the cell where the player is with NAVY colour, and BLACK otherwise
 				if (i == x && j == y)
 					highlightCell(i, j, NAVY);
@@ -313,16 +328,35 @@ void board::cleanBoard() // An animation to clear the board without deleting the
 void board::highlightCell(int a, int b, string color) // Function to highlight a cell at position (a,b) with a desired color
 {
 	HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
-	COORD cursorPos = { short((b - 1) * 8 + 9),short((a - 1) * 4 + 5) };
-	SetConsoleCursorPosition(console, cursorPos);
+	COORD cursorPos;
 	cout << color;
-	cout << "       ";
-	cursorPos = { short((b - 1) * 8 + 9),short((a - 1) * 4 + 6) };
-	SetConsoleCursorPosition(console, cursorPos);
-	cout << "   " << (letters[a][b] == '$' ? ' ' : letters[a][b]) << "   ";
-	cursorPos = { short((b - 1) * 8 + 9),short((a - 1) * 4 + 7) };
-	SetConsoleCursorPosition(console, cursorPos);
-	cout << "       ";
+	if (letters[a][b] != '$')
+	{
+		cursorPos = { short((b - 1) * 8 + 9),short((a - 1) * 4 + 5) };
+		SetConsoleCursorPosition(console, cursorPos);
+		cout << "       ";
+		cursorPos = { short((b - 1) * 8 + 9),short((a - 1) * 4 + 6) };
+		SetConsoleCursorPosition(console, cursorPos);
+		cout << "   " << letters[a][b] << "   ";
+		cursorPos = { short((b - 1) * 8 + 9),short((a - 1) * 4 + 7) };
+		SetConsoleCursorPosition(console, cursorPos);
+		cout << "       ";
+	}
+	else
+	{
+		cursorPos = { short(b * 8 + 1),short(a * 4 + 1) };
+		SetConsoleCursorPosition(console, cursorPos);
+		for (int i = 1; i <= 7; i++)
+			cout << background[a * 4 - 3][b * 8 + i - 8];
+		cursorPos = { short(b * 8 + 1),short(a * 4 + 2) };
+		SetConsoleCursorPosition(console, cursorPos);
+		for (int i = 1; i <= 7; i++)
+			cout << background[a * 4 - 2][b * 8 + i - 8];
+		cursorPos = { short(b * 8 + 1),short(a * 4 + 3) };
+		SetConsoleCursorPosition(console, cursorPos);
+		for (int i = 1; i <= 7; i++)
+			cout << background[a * 4 - 1][b * 8 + i - 8];
+	}
 	cout << BLACK;
 }
 void board::highlightChoice(int a, int b) // Highlight the chosen cell with YELLOW color
@@ -340,7 +374,7 @@ void board::highlightMatch(Point a, Point b) // Highlight both cells with GREEN 
 }
 void board::highlightHint(Point a, Point b) // Highlight both cells with GRAY if they make a valid move
 {
-
+	
 	highlightCell(a.x, a.y, GRAY);
 	highlightCell(b.x, b.y, GRAY);
 	Sleep(69); // A short flash to make the player notices to the hint more
@@ -401,89 +435,95 @@ void board::checkValid() // Check the whole board and pick any pair of cells tha
 		}
 	}
 }
+void board::removeEdge(Point m)
+{
+	HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
+	COORD cursorPos;
+	int a, b;
+	a = m.x;
+	b = m.y;
+	if (letters[a - 1][b] == '$')
+	{
+		cursorPos = { short(b * 8 + 1),short(a * 4) };
+		SetConsoleCursorPosition(console, cursorPos);
+		for (int i = 1; i <= 7; i++)
+			cout << background[a * 4 - 4][b * 8 + i - 8];
+	}
+	if (letters[a + 1][b] == '$')
+	{
+		cursorPos = { short(b * 8 + 1),short((a + 1) * 4) };
+		SetConsoleCursorPosition(console, cursorPos);
+		for (int i = 1; i <= 7; i++)
+			cout << background[a * 4][b * 8 + i - 8];
+	}
+	if (letters[a][b - 1] == '$')
+	{
+		cursorPos = { short(b * 8),short(a * 4 + 1) };
+		SetConsoleCursorPosition(console, cursorPos);
+		cout << background[a * 4 - 3][b * 8 - 8];
+		cursorPos = { short(b * 8),short(a * 4 + 2) };
+		SetConsoleCursorPosition(console, cursorPos);
+		cout << background[a * 4 - 2][b * 8 - 8];
+		cursorPos = { short(b * 8),short(a * 4 + 3) };
+		SetConsoleCursorPosition(console, cursorPos);
+		cout << background[a * 4 - 1][b * 8 - 8];
+	}
+	if (letters[a][b + 1] == '$')
+	{
+		cursorPos = { short(b * 8 + 8),short(a * 4 + 1) };
+		SetConsoleCursorPosition(console, cursorPos);
+		cout << background[a * 4 - 3][b * 8];
+		cursorPos = { short(b * 8 + 8),short(a * 4 + 2) };
+		SetConsoleCursorPosition(console, cursorPos);
+		cout << background[a * 4 - 2][b * 8];
+		cursorPos = { short(b * 8 + 8),short(a * 4 + 3) };
+		SetConsoleCursorPosition(console, cursorPos);
+		cout << background[a * 4 - 1][b * 8];
+	}
+}
 void board::deleteCells(Point a, Point b) // Function to delete cell a and b from the board on the screen
 {
 	letters[a.x][a.y] = '$';
 	letters[b.x][b.y] = '$';
-	HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
-	COORD cursorPos;
-	cout << BLACK;
-	// if the first cell is anywhere in the border of board, remove the necessary lines that build the shape of the cell
-	if (letters[a.x - 1][a.y] == '$')
-	{
-		cursorPos = { short((a.y - 1) * 8 + 9),short((a.x - 1) * 4 + 4) };
-		SetConsoleCursorPosition(console, cursorPos);
-		cout << "       ";
-	}
-	if (letters[a.x + 1][a.y] == '$')
-	{
-		cursorPos = { short((a.y - 1) * 8 + 9),short((a.x - 1) * 4 + 8) };
-		SetConsoleCursorPosition(console, cursorPos);
-		cout << "       ";
-	}
-	if (letters[a.x][a.y - 1] == '$')
-	{
-		cursorPos = { short((a.y - 1) * 8 + 8),short((a.x - 1) * 4 + 5) };
-		SetConsoleCursorPosition(console, cursorPos);
-		cout << " ";
-		cursorPos = { short((a.y - 1) * 8 + 8),short((a.x - 1) * 4 + 6) };
-		SetConsoleCursorPosition(console, cursorPos);
-		cout << " ";
-		cursorPos = { short((a.y - 1) * 8 + 8),short((a.x - 1) * 4 + 7) };
-		SetConsoleCursorPosition(console, cursorPos);
-		cout << " ";
-	}
-	if (letters[a.x][a.y + 1] == '$')
-	{
-		cursorPos = { short((a.y - 1) * 8 + 16),short((a.x - 1) * 4 + 5) };
-		SetConsoleCursorPosition(console, cursorPos);
-		cout << " ";
-		cursorPos = { short((a.y - 1) * 8 + 16),short((a.x - 1) * 4 + 6) };
-		SetConsoleCursorPosition(console, cursorPos);
-		cout << " ";
-		cursorPos = { short((a.y - 1) * 8 + 16),short((a.x - 1) * 4 + 7) };
-		SetConsoleCursorPosition(console, cursorPos);
-		cout << " ";
-	}
-	// the same process goes with the second cell of the board
-	if (letters[b.x - 1][b.y] == '$')
-	{
-		cursorPos = { short((b.y - 1) * 8 + 9),short((b.x - 1) * 4 + 4) };
-		SetConsoleCursorPosition(console, cursorPos);
-		cout << "       ";
-	}
-	if (letters[b.x + 1][b.y] == '$')
-	{
-		cursorPos = { short((b.y - 1) * 8 + 9),short((b.x - 1) * 4 + 8) };
-		SetConsoleCursorPosition(console, cursorPos);
-		cout << "       ";
-	}
-	if (letters[b.x][b.y - 1] == '$')
-	{
-		cursorPos = { short((b.y - 1) * 8 + 8),short((b.x - 1) * 4 + 5) };
-		SetConsoleCursorPosition(console, cursorPos);
-		cout << " ";
-		cursorPos = { short((b.y - 1) * 8 + 8),short((b.x - 1) * 4 + 6) };
-		SetConsoleCursorPosition(console, cursorPos);
-		cout << " ";
-		cursorPos = { short((b.y - 1) * 8 + 8),short((b.x - 1) * 4 + 7) };
-		SetConsoleCursorPosition(console, cursorPos);
-		cout << " ";
-	}
-	if (letters[b.x][b.y + 1] == '$')
-	{
-		cursorPos = { short((b.y - 1) * 8 + 16),short((b.x - 1) * 4 + 5) };
-		SetConsoleCursorPosition(console, cursorPos);
-		cout << " ";
-		cursorPos = { short((b.y - 1) * 8 + 16),short((b.x - 1) * 4 + 6) };
-		SetConsoleCursorPosition(console, cursorPos);
-		cout << " ";
-		cursorPos = { short((b.y - 1) * 8 + 16),short((b.x - 1) * 4 + 7) };
-		SetConsoleCursorPosition(console, cursorPos);
-		cout << " ";
-	}
+	removeEdge(a);
+	removeEdge(b);
 	highlightCell(a.x, a.y, BLACK);
 	highlightCell(b.x, b.y, BLACK);
+}
+void board::redrawBoard(int x, int y)
+{
+	int m, n;
+	m = difficulty + 3;
+	n = difficulty * 2 + 4;
+	HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
+	COORD cursorPos;
+	for (int i = 1; i <= m; i++)
+		for (int j = 1; j <= n; j++)
+			if (letters[i][j] != '$')
+			{
+				cout << TEXT_BLUE;
+				cursorPos = { short((j - 1) * 8 + 8),short((i - 1) * 4 + 4) };
+				SetConsoleCursorPosition(console, cursorPos);
+				cout << " -------";
+				cursorPos = { short((j - 1) * 8 + 8),short((i - 1) * 4 + 5) };
+				SetConsoleCursorPosition(console, cursorPos);
+				cout << "|       |";
+				cursorPos = { short((j - 1) * 8 + 8),short((i - 1) * 4 + 6) };
+				SetConsoleCursorPosition(console, cursorPos);
+				cout << "|       |";
+				cursorPos = { short((j - 1) * 8 + 8),short((i - 1) * 4 + 7) };
+				SetConsoleCursorPosition(console, cursorPos);
+				cout << "|       |";
+				cursorPos = { short((j - 1) * 8 + 8),short((i - 1) * 4 + 8) };
+				SetConsoleCursorPosition(console, cursorPos);
+				cout << " -------";
+				cout << BLACK;
+				// Mark the cell where the player is with NAVY colour, and BLACK otherwise
+				if (i == x && j == y)
+					highlightCell(i, j, NAVY);
+				else
+					highlightCell(i, j, BLACK);
+			}
 }
 void board::shuffleBoard(int x, int y) // Function to shuffle the board when there's no valid move left
 {
@@ -513,21 +553,18 @@ void board::shuffleBoard(int x, int y) // Function to shuffle the board when the
 			}
 		}
 	}
-	do
+	k = 0;
+	random_shuffle(used_char, used_char + valid_box);
+	for (int i = 1; i <= row; i++)
 	{
-		k = 0;
-		random_shuffle(used_char, used_char + valid_box);
-		for (int i = 1; i <= row; i++)
+		for (int j = 1; j <= col; j++)
 		{
-			for (int j = 1; j <= col; j++)
+			if (letters[i][j] != '$')
 			{
-				if (letters[i][j] != '$')
-				{
-					letters[i][j] = used_char[k++];
-				}
+				letters[i][j] = used_char[k++];
 			}
 		}
-	} while (!automatically_finding(letters, row + 2, col + 2)); //The shuffled board must has at least 1 valid pair to play
+	}
 	printBoard(x, y);
 }
 //Checking functions
@@ -1086,9 +1123,15 @@ bool automatically_finding(char** letters, int row, int col) {
 	}
 	return 0;
 }
-//Playing game
-void checkPath(pair<int, int> a, pair<int, int> b, pair<int, int> c, int id, int sze)
+
+
+
+
+//Path controlling functions
+
+void board::checkPath(pair<int, int> a, pair<int, int> b, pair<int, int> c, int id, int sze)
 {
+	cout << TEXT_GREEN;
 	HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
 	COORD cursorPos;
 	if (b.second == a.second)
@@ -1223,145 +1266,158 @@ void checkPath(pair<int, int> a, pair<int, int> b, pair<int, int> c, int id, int
 			}
 		}
 	}
+	cout << BLACK;
 }
-void removePath(pair<int, int> a, pair<int, int> b, pair<int, int> c, int id, int sze)
+void board::removePath(pair<int, int> a, pair<int, int> b, pair<int, int> c, int id, int sze)
 {
+	int m, n;
+	m = difficulty + 3;
+	n = difficulty * 2 + 4;
 	HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
 	COORD cursorPos;
-	if (b.second == a.second)
+	if (b.first == 0 || b.first == m + 1 || b.second == 0 || b.second == n + 1)
 	{
-		if (b.first > a.first)
+		if (b.second == a.second)
 		{
-			cursorPos = { short(8 * b.second + 4),short(4 * b.first + 1) };
-			SetConsoleCursorPosition(console, cursorPos);
-			cout << ' ';
-			if (id != 1)
+			if (b.first > a.first)
 			{
-				cursorPos = { short(8 * b.second + 4),short(4 * b.first) };
+				cursorPos = { short(8 * b.second + 4),short(4 * b.first + 1) };
 				SetConsoleCursorPosition(console, cursorPos);
 				cout << ' ';
+				if (id != 1)
+				{
+					cursorPos = { short(8 * b.second + 4),short(4 * b.first) };
+					SetConsoleCursorPosition(console, cursorPos);
+					cout << ' ';
+				}
+			}
+			else
+			{
+				cursorPos = { short(8 * b.second + 4),short(4 * b.first + 3) };
+				SetConsoleCursorPosition(console, cursorPos);
+				cout << ' ';
+				if (id != 1)
+				{
+					cursorPos = { short(8 * b.second + 4),short(4 * b.first + 4) };
+					SetConsoleCursorPosition(console, cursorPos);
+					cout << ' ';
+				}
 			}
 		}
-		else
+		else if (b.first == a.first)
 		{
-			cursorPos = { short(8 * b.second + 4),short(4 * b.first + 3) };
-			SetConsoleCursorPosition(console, cursorPos);
-			cout << ' ';
-			if (id != 1)
+			if (b.second > a.second)
 			{
-				cursorPos = { short(8 * b.second + 4),short(4 * b.first + 4) };
+				cursorPos = { short(8 * b.second + 1),short(4 * b.first + 2) };
+				SetConsoleCursorPosition(console, cursorPos);
+				cout << "   ";
+				if (id != 1)
+				{
+					cursorPos = { short(8 * b.second),short(4 * b.first + 2) };
+					SetConsoleCursorPosition(console, cursorPos);
+					cout << " ";
+				}
+			}
+			else
+			{
+				cursorPos = { short(8 * b.second + 4),short(4 * b.first + 2) };
+				SetConsoleCursorPosition(console, cursorPos);
+				cout << "    ";
+				if (id != 1)
+				{
+					cursorPos = { short(8 * b.second + 8),short(4 * b.first + 2) };
+					SetConsoleCursorPosition(console, cursorPos);
+					cout << " ";
+				}
+			}
+		}
+		if (b.second == c.second)
+		{
+			if (b.first > c.first)
+			{
+				cursorPos = { short(8 * b.second + 4),short(4 * b.first + 1) };
 				SetConsoleCursorPosition(console, cursorPos);
 				cout << ' ';
+				if (b.second == a.second)
+				{
+					cursorPos = { short(8 * b.second + 4),short(4 * b.first + 2) };
+					SetConsoleCursorPosition(console, cursorPos);
+					cout << ' ';
+				}
+				if (id != sze)
+				{
+					cursorPos = { short(8 * b.second + 4),short(4 * b.first) };
+					SetConsoleCursorPosition(console, cursorPos);
+					cout << ' ';
+				}
+			}
+			else
+			{
+				cursorPos = { short(8 * b.second + 4),short(4 * b.first + 3) };
+				SetConsoleCursorPosition(console, cursorPos);
+				cout << ' ';
+				if (b.second == a.second)
+				{
+					cursorPos = { short(8 * b.second + 4),short(4 * b.first + 2) };
+					SetConsoleCursorPosition(console, cursorPos);
+					cout << ' ';
+				}
+				if (id != sze)
+				{
+					cursorPos = { short(8 * b.second + 4),short(4 * b.first + 4) };
+					SetConsoleCursorPosition(console, cursorPos);
+					cout << ' ';
+				}
+			}
+		}
+		else if (b.first == c.first)
+		{
+			if (b.second < c.second)
+			{
+				cursorPos = { short(8 * b.second + 4),short(4 * b.first + 2) };
+				SetConsoleCursorPosition(console, cursorPos);
+				cout << "    ";
+				if (b.first == a.first)
+				{
+					cursorPos = { short(8 * b.second + 4),short(4 * b.first + 2) };
+					SetConsoleCursorPosition(console, cursorPos);
+					cout << " ";
+				}
+				if (id != sze)
+				{
+					cursorPos = { short(8 * b.second + 8),short(4 * b.first + 2) };
+					SetConsoleCursorPosition(console, cursorPos);
+					cout << " ";
+				}
+			}
+			else
+			{
+				cursorPos = { short(8 * b.second + 1),short(4 * b.first + 2) };
+				SetConsoleCursorPosition(console, cursorPos);
+				cout << "   ";
+				if (b.first == a.first)
+				{
+					cursorPos = { short(8 * b.second + 4),short(4 * b.first + 2) };
+					SetConsoleCursorPosition(console, cursorPos);
+					cout << " ";
+				}
+				if (id != sze)
+				{
+					cursorPos = { short(8 * b.second),short(4 * b.first + 2) };
+					SetConsoleCursorPosition(console, cursorPos);
+					cout << " ";
+				}
 			}
 		}
 	}
-	else if (b.first == a.first)
+	else
 	{
-		if (b.second > a.second)
-		{
-			cursorPos = { short(8 * b.second + 1),short(4 * b.first + 2) };
-			SetConsoleCursorPosition(console, cursorPos);
-			cout << "   ";
-			if (id != 1)
-			{
-				cursorPos = { short(8 * b.second),short(4 * b.first + 2) };
-				SetConsoleCursorPosition(console, cursorPos);
-				cout << " ";
-			}
-		}
-		else
-		{
-			cursorPos = { short(8 * b.second + 4),short(4 * b.first + 2) };
-			SetConsoleCursorPosition(console, cursorPos);
-			cout << "    ";
-			if (id != 1)
-			{
-				cursorPos = { short(8 * b.second + 8),short(4 * b.first + 2) };
-				SetConsoleCursorPosition(console, cursorPos);
-				cout << " ";
-			}
-		}
-	}
-	if (b.second == c.second)
-	{
-		if (b.first > c.first)
-		{
-			cursorPos = { short(8 * b.second + 4),short(4 * b.first + 1) };
-			SetConsoleCursorPosition(console, cursorPos);
-			cout << ' ';
-			if (b.second == a.second)
-			{
-				cursorPos = { short(8 * b.second + 4),short(4 * b.first + 2) };
-				SetConsoleCursorPosition(console, cursorPos);
-				cout << ' ';
-			}
-			if (id != sze)
-			{
-				cursorPos = { short(8 * b.second + 4),short(4 * b.first) };
-				SetConsoleCursorPosition(console, cursorPos);
-				cout << ' ';
-			}
-		}
-		else
-		{
-			cursorPos = { short(8 * b.second + 4),short(4 * b.first + 3) };
-			SetConsoleCursorPosition(console, cursorPos);
-			cout << ' ';
-			if (b.second == a.second)
-			{
-				cursorPos = { short(8 * b.second + 4),short(4 * b.first + 2) };
-				SetConsoleCursorPosition(console, cursorPos);
-				cout << ' ';
-			}
-			if (id != sze)
-			{
-				cursorPos = { short(8 * b.second + 4),short(4 * b.first + 4) };
-				SetConsoleCursorPosition(console, cursorPos);
-				cout << ' ';
-			}
-		}
-	}
-	else if (b.first == c.first)
-	{
-		if (b.second < c.second)
-		{
-			cursorPos = { short(8 * b.second + 4),short(4 * b.first + 2) };
-			SetConsoleCursorPosition(console, cursorPos);
-			cout << "    ";
-			if (b.first == a.first)
-			{
-				cursorPos = { short(8 * b.second + 4),short(4 * b.first + 2) };
-				SetConsoleCursorPosition(console, cursorPos);
-				cout << " ";
-			}
-			if (id != sze)
-			{
-				cursorPos = { short(8 * b.second + 8),short(4 * b.first + 2) };
-				SetConsoleCursorPosition(console, cursorPos);
-				cout << " ";
-			}
-		}
-		else
-		{
-			cursorPos = { short(8 * b.second + 1),short(4 * b.first + 2) };
-			SetConsoleCursorPosition(console, cursorPos);
-			cout << "   ";
-			if (b.first == a.first)
-			{
-				cursorPos = { short(8 * b.second + 4),short(4 * b.first + 2) };
-				SetConsoleCursorPosition(console, cursorPos);
-				cout << " ";
-			}
-			if (id != sze)
-			{
-				cursorPos = { short(8 * b.second),short(4 * b.first + 2) };
-				SetConsoleCursorPosition(console, cursorPos);
-				cout << " ";
-			}
-		}
+		Point x = { b.first,b.second };
+		removeEdge(x);
+		highlightCell(b.first, b.second, BLACK);
 	}
 }
-void matching(char**& letters, int row, int col, Point x, Point y)
+void board::matching(char**& letters, int row, int col, Point x, Point y)
 {
 	Node* pHead;
 	int type = matching_check(letters, row, col, x, y);
@@ -1377,7 +1433,7 @@ void matching(char**& letters, int row, int col, Point x, Point y)
 	letters[y.x][y.y] = '$';
 	return;
 }
-void unmatching(char**& letters, int row, int col, Point x, Point y)
+void board::unmatching(char**& letters, int row, int col, Point x, Point y)
 {
 	Node* pHead;
 	int type = matching_check(letters, row, col, x, y);
@@ -1391,5 +1447,6 @@ void unmatching(char**& letters, int row, int col, Point x, Point y)
 	}
 	letters[x.x][x.y] = '$';
 	letters[y.x][y.y] = '$';
+	
 	return;
 }
