@@ -295,6 +295,7 @@ void playingGame(Account acc[], int acc_pos, int acc_num, game& b, bool loaded, 
 						cout << "U matching\n";
 						break;
 					}
+					PlaySound(TEXT("correct.wav"), NULL, SND_FILENAME | SND_ASYNC);
 					cout << "You've got " << score << " point";
 					if (score > 1)
 						cout << 's';
