@@ -197,7 +197,7 @@ void controlGame(Account list_acc[], int& acc_num, finish F[], int& fin)
 		}
 		case 4: //Exit game
 		{
-			printing_account(list_acc, acc_num); //Print all of the accounts
+			printing_account(list_acc, acc_num, 777); //Print all of the accounts
 			printingLeaderboard(F, fin, 0x12345678); //Print all of the finished games
 			exit_game = 1;
 			break;

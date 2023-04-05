@@ -75,8 +75,49 @@ void saving_map(Account& acc, const game& Game)	 //Saving the playing Game to th
 	acc.saves[pos].map.background = Game.map.background; //Get the address of the background
 	acc.saves[pos].map.difficulty = Game.map.difficulty; //Copy the difficulty
 }
-
-bool printing_account(Account acc[], int acc_number)
+void xor_account(Account& acc, int mask)
+{
+	acc.file_number ^= mask;
+	for (int i = 0; i < NAME; i++)
+	{
+		acc.name[i] ^= mask;
+	}
+	for (int i = 0; i < PASS; i++)
+	{
+		acc.pass[i] ^= mask;
+	}
+}
+void xor_filesave(filesave& save, int mask)
+{
+	save.date.hour ^= mask; //Xor the record
+	save.date.minute ^= mask;
+	save.date.second ^= mask;
+	save.date.day ^= mask;
+	save.date.month ^= mask;
+	save.date.year ^= mask;
+	save.score.finishing_second ^= mask;
+	save.score.fin_score ^= mask;
+	int row = save.map.difficulty + 5; //Get the size of the letters
+	int col = save.map.difficulty * 2 + 6;
+	for (int i = 0; i < row; i++)
+	{
+		for (int j = 0; j < col; j++)
+		{
+			save.map.letters[i][j] ^= mask;
+		}
+	}
+	row = 4 * (save.map.difficulty + 3) + 1; //Get the size of the background
+	col = 8 * (save.map.difficulty * 2 + 4) + 2;
+	for (int i = 0; i < row; i++)
+	{
+		for (int j = 0; j < col; j++)
+		{
+			save.map.background[i][j] ^= mask;
+		}
+	}
+	return;
+}
+bool printing_account(Account acc[], int acc_number, int mask)
 {
 	ofstream fout;
 	fout.open("account_log.bin", ios::binary | ios::trunc); //Binary mode and trunc mode => Print from beginning to make sure that everything is printed
@@ -88,16 +129,21 @@ bool printing_account(Account acc[], int acc_number)
 	fout.write((char*)&acc_number, 4); //Print the number of accounts first
 	for (int i = 0; i < acc_number; i++) //For each account
 	{
+		xor_account(acc[i], mask);
 		fout.write((char*)&acc[i].name, NAME); //Print account's name
 		fout.write((char*)&acc[i].pass, PASS); //Print account's pass
 		fout.write((char*)&acc[i].file_number, 4); //Print account's number of filesaves
+		xor_account(acc[i], mask);
 		for (int j = 0; j < acc[i].file_number; j++) //For each filesave
 		{
+			xor_filesave(acc[i].saves[j], mask);
 			fout.write((char*)&acc[i].saves[j].date, sizeof(Record)); //Print the date of the played game
 			fout.write((char*)&acc[i].saves[j].score, sizeof(Score)); //Print the score of the played game
 			int row = acc[i].saves[j].map.difficulty + 5; //Get the size of the game
 			int col = acc[i].saves[j].map.difficulty * 2 + 6;
+			acc[i].saves[j].map.difficulty ^= mask;
 			fout.write((char*)&acc[i].saves[j].map.difficulty, 4); //Print the difficulty of the played game
+			acc[i].saves[j].map.difficulty ^= mask;
 			for (int m = 0; m < row; m++)
 			{
 				fout.write(acc[i].saves[j].map.letters[m], col); //Print every single row of the matrix 
@@ -113,7 +159,7 @@ bool printing_account(Account acc[], int acc_number)
 	fout.close();
 	return 1;
 }
-bool reading_account(Account acc[], int& acc_number)
+bool reading_account(Account acc[], int& acc_number, int mask)
 {
 	ifstream fin;
 	fin.open("account_log.bin", ios::binary | ios::in); //Binary mode
@@ -128,11 +174,13 @@ bool reading_account(Account acc[], int& acc_number)
 		fin.read((char*)&acc[i].name, NAME); //Read the name
 		fin.read((char*)&acc[i].pass, PASS); //Read the pass
 		fin.read((char*)&acc[i].file_number, 4); //Read the number of filesaves
+		xor_account(acc[i], mask);
 		for (int j = 0; j < acc[i].file_number; j++) //For each filesave
 		{
 			fin.read((char*)&acc[i].saves[j].date, sizeof(Record)); //Get the date 
 			fin.read((char*)&acc[i].saves[j].score, sizeof(Score)); //Get the score
 			fin.read((char*)&acc[i].saves[j].map.difficulty, 4); //Get the difficulty
+			acc[i].saves[j].map.difficulty ^= mask;
 			int row = acc[i].saves[j].map.difficulty + 5; //Get the size of the matrix 
 			int col = acc[i].saves[j].map.difficulty * 2 + 6;
 			acc[i].saves[j].map.letters = new char* [row];
@@ -154,6 +202,7 @@ bool reading_account(Account acc[], int& acc_number)
 			{
 				fin.read(acc[i].saves[j].map.background[m], col); //Reading the background from the file
 			}
+			xor_filesave(acc[i].saves[j], mask);
 		}
 	}
 	fin.close();
