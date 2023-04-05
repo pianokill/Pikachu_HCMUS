@@ -72,6 +72,7 @@ void saving_map(Account& acc, const game& Game)	 //Saving the playing Game to th
 		acc.saves[pos].map.difficulty = 0;
 	}
 	acc.saves[pos].map.letters = Game.map.letters; //Get the address of the matrix
+	acc.saves[pos].map.background = Game.map.background; //Get the address of the background
 	acc.saves[pos].map.difficulty = Game.map.difficulty; //Copy the difficulty
 }
 bool printing_account(Account acc[], int acc_number)
@@ -96,8 +97,15 @@ bool printing_account(Account acc[], int acc_number)
 			int row = acc[i].saves[j].map.difficulty + 5; //Get the size of the game
 			int col = acc[i].saves[j].map.difficulty * 2 + 6;
 			fout.write((char*)&acc[i].saves[j].map.difficulty, 4); //Print the difficulty of the played game
-			for (int m = 0; m < row; m++) {
+			for (int m = 0; m < row; m++)
+			{
 				fout.write(acc[i].saves[j].map.letters[m], col); //Print every single row of the matrix 
+			}
+			row = 4*(acc[i].saves[j].map.difficulty + 3) + 1; //Get the size of the background
+			col = 8*(acc[i].saves[j].map.difficulty*2 + 4) + 2;
+			for (int m = 0; m < row; m++)
+			{
+				fout.write(acc[i].saves[j].map.background[m], col); //Print the background to the file
 			}
 		}
 	}
@@ -129,10 +137,21 @@ bool reading_account(Account acc[], int& acc_number)
 			acc[i].saves[j].map.letters = new char* [row];
 			for (int k = 0; k < row; k++)
 			{
-				acc[i].saves[j].map.letters[k] = new char[col]; //Allocating memories for the double pointer
+				acc[i].saves[j].map.letters[k] = new char[col]; //Allocating memories for the double pointer(letters)
 			}
 			for (int k = 0; k < row; k++) {
 				fin.read(acc[i].saves[j].map.letters[k], col); //Reading every single row of the matrix
+			}
+			row = 4 * (acc[i].saves[j].map.difficulty + 3) + 1; //Get the size of the background
+			col = 8 * (acc[i].saves[j].map.difficulty * 2 + 4) + 2;
+			acc[i].saves[j].map.background = new char* [row];
+			for (int k = 0; k < row; k++)
+			{
+				acc[i].saves[j].map.background[k] = new char[col]; //Allocating memories for the double pointer(background)
+			}
+			for (int m = 0; m < row; m++)
+			{
+				fin.read(acc[i].saves[j].map.background[m], col); //Reading the background from the file
 			}
 		}
 	}

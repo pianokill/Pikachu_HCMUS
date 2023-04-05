@@ -111,6 +111,7 @@ void controlGame(Account list_acc[], int& acc_num, finish F[], int& fin)
 			int select; //Select the filesave to play
 			cout << "You've already saved " << list_acc[pos].file_number << " files:" << endl; //Print all of the filesaves and their status 
 			int pairs = 0;
+			int valid_filesave[3];
 			for (int i = 0; i < 3; i++)
 			{
 				if (list_acc[pos].saves[i].map.difficulty != 0)
@@ -122,9 +123,11 @@ void controlGame(Account list_acc[], int& acc_num, finish F[], int& fin)
 					cout << "File save number " << i + 1 << ": Saved ";
 					printDate(list_acc[pos].saves[i].date);
 					cout << endl;
+					valid_filesave[i] = 1; //flag that the file save is available
 				}
 				else
-				{
+				{				
+					valid_filesave[i] = 0; //flag that the file save is empty
 					cout << "File save number " << i + 1 << ": Empty";
 					cout << endl;
 				}
@@ -134,11 +137,7 @@ void controlGame(Account list_acc[], int& acc_num, finish F[], int& fin)
 				pairs = 0;
 				cout << "Choose your file: ";
 				cin >> select;
-				if (list_acc[pos].saves[select - 1].map.difficulty != 0)
-				{
-					list_acc[pos].saves[select - 1].map.getPairs(pairs);
-				}
-				if (select > list_acc[pos].file_number || pairs == 0)
+				if (select > list_acc[pos].file_number || valid_filesave[select - 1] == 0)
 				{
 					cout << "This file save is invalid" << endl;
 				}
@@ -152,6 +151,7 @@ void controlGame(Account list_acc[], int& acc_num, finish F[], int& fin)
 			game c; //Initiallize the game struct with uninitialized board map
 			c.map.letters = list_acc[pos].saves[select].map.letters; //Get the address of the matrix
 			c.map.difficulty = list_acc[pos].saves[select].map.difficulty; //Get the difficulty
+			c.map.background = list_acc[pos].saves[select].map.background; //Get the address of the background
 			c.date = curr_time; //Do not need to get the time of the filesave but get the current time
 			c.score = list_acc[pos].saves[select].score; //Get the score of the filesave
 			system("cls");
@@ -358,7 +358,16 @@ void playingGame(Account acc[], int acc_pos, int acc_num, game& b, bool loaded, 
 			{
 				for (int j = 0; j < n + 2; j++)
 				{
-					temp.map.letters[i][j] = b.map.letters[i][j]; //Copy matrix
+					temp.map.letters[i][j] = b.map.letters[i][j]; //Copy matrix(letters)
+				}
+			}
+			int p = 4 * (b.map.difficulty + 3) + 1;
+			int q = 8 * (b.map.difficulty * 2 + 4) + 2;
+			for (int i = 0; i < p; i++)
+			{
+				for (int j = 0; j < q; j++)
+				{
+					temp.map.background[i][j] = b.map.background[i][j];
 				}
 			}
 			saving_map(acc[acc_pos], temp); //Saving the temp game to the filesave
@@ -390,6 +399,7 @@ void playingGame(Account acc[], int acc_pos, int acc_num, game& b, bool loaded, 
 	if (loaded) //If loaded => make sure the game is not deallocated => the filesave will be deallocated in the end
 	{
 		b.map.letters = NULL;
+		b.map.background = NULL;
 		b.map.difficulty = 0;
 	}
 }

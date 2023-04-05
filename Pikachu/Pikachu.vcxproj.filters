@@ -53,18 +53,25 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="matrix_test.dat" />
+    <None Include="leaderboard.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="account_log.bin">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <Media Include="theme.wav">
+    <Media Include="wrong.wav">
       <Filter>Resource Files</Filter>
     </Media>
-    <Media Include="round3.wav">
+    <Media Include="theme.mp3" />
+    <Media Include="round3.mp3" />
+    <Media Include="round2.mp3" />
+    <Media Include="round1.mp3" />
+    <Media Include="move.wav">
       <Filter>Resource Files</Filter>
     </Media>
-    <Media Include="round2.wav">
-      <Filter>Resource Files</Filter>
-    </Media>
-    <Media Include="round1.wav">
+    <Media Include="correct.wav">
       <Filter>Resource Files</Filter>
     </Media>
   </ItemGroup>

@@ -42,13 +42,18 @@
     <ClInclude Include="menu.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="account_log.bin" />
+    <None Include="leaderboard.bin" />
     <None Include="matrix_test.dat" />
   </ItemGroup>
   <ItemGroup>
-    <Media Include="round1.wav" />
-    <Media Include="round2.wav" />
-    <Media Include="round3.wav" />
-    <Media Include="theme.wav" />
+    <Media Include="correct.wav" />
+    <Media Include="move.wav" />
+    <Media Include="round1.mp3" />
+    <Media Include="round2.mp3" />
+    <Media Include="round3.mp3" />
+    <Media Include="theme.mp3" />
+    <Media Include="wrong.wav" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

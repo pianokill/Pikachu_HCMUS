@@ -1123,12 +1123,7 @@ bool automatically_finding(char** letters, int row, int col) {
 	}
 	return 0;
 }
-
-
-
-
 //Path controlling functions
-
 void board::checkPath(pair<int, int> a, pair<int, int> b, pair<int, int> c, int id, int sze)
 {
 	cout << TEXT_GREEN;
