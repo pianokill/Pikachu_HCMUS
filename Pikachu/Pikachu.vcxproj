@@ -44,7 +44,6 @@
   <ItemGroup>
     <None Include="account_log.bin" />
     <None Include="leaderboard.bin" />
-    <None Include="matrix_test.dat" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="correct.wav" />
@@ -54,6 +53,11 @@
     <Media Include="round3.mp3" />
     <Media Include="theme.mp3" />
     <Media Include="wrong.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="easy.txt" />
+    <Text Include="hard.txt" />
+    <Text Include="medium.txt" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

@@ -37,6 +37,7 @@ struct finish
 {
 	int difficulty;
 	int time;
+	Record date;
 	float score;
 	char name[NAME];
 };

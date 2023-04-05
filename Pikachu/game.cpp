@@ -63,6 +63,12 @@ int total_playingtime(Record a, Record b) {
 void xor_finish(finish& f, int mask) { //Xor the finish struct with the mask
 	f.difficulty ^= mask;  //Int with int
  	f.time ^= mask; //Int with int
+	f.date.day ^= mask;
+	f.date.month ^= mask;
+	f.date.year ^= mask;
+	f.date.hour ^= mask;
+	f.date.minute ^= mask;
+	f.date.second ^= mask;
 	int* p_score = reinterpret_cast<int*>(&f.score); //Float with int 
 	*p_score ^= mask;
 	for (size_t i = 0; i < NAME; i++) { //Char with int
@@ -78,7 +84,7 @@ bool printingLeaderboard(finish F[], int n, int mask)
 		cout << "Can not read leaderboard.bin file!" << endl;
 		return 0;
 	}
-	fout.write((char*)&n, sizeof(n)); //Print the number of finished games first(do not need to xor it)
+	fout.write((char*)&n, sizeof(n)); //Print the number of finished games first
 	for (int i = 0; i < n; i++)
 	{
 		xor_finish(F[i], mask); //Xor the finished game first

@@ -75,6 +75,7 @@ void saving_map(Account& acc, const game& Game)	 //Saving the playing Game to th
 	acc.saves[pos].map.background = Game.map.background; //Get the address of the background
 	acc.saves[pos].map.difficulty = Game.map.difficulty; //Copy the difficulty
 }
+
 bool printing_account(Account acc[], int acc_number)
 {
 	ofstream fout;

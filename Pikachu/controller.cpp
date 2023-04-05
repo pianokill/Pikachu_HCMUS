@@ -19,15 +19,15 @@ void offRoundTheme(int diff)
 {
 	if (diff == 1)
 	{
-		mciSendString(L"stop \"round1.mp3\" repeat", 0, 0, 0);
+		mciSendString(L"stop \"round1.mp3\"", 0, 0, 0);
 	}
 	else if (diff == 2)
 	{
-		mciSendString(L"stop \"round2.mp3\" repeat", 0, 0, 0);
+		mciSendString(L"stop \"round2.mp3\"", 0, 0, 0);
 	}
 	else if (diff == 3)
 	{
-		mciSendString(L"stop \"round3.mp3\" repeat", 0, 0, 0);
+		mciSendString(L"stop \"round3.mp3\"", 0, 0, 0);
 	}
 }
 void controlGame(Account list_acc[], int& acc_num, finish F[], int& fin)
@@ -186,7 +186,9 @@ void controlGame(Account list_acc[], int& acc_num, finish F[], int& fin)
 			getTop5(F, fin, size, top5, num);
 			for (int i = 0; i < num; i++)
 			{
-				cout << "Top " << i + 1 << ": " << top5[i].name << " " << top5[i].time << " seconds " << top5[i].score << " points" << endl;
+				cout << "Top " << i + 1 << ": " << top5[i].name << " " << top5[i].time << " seconds " << top5[i].score << " points ";
+				printDate(top5[i].date);
+				cout << endl;
 				Sleep(100);
 			}
 			Sleep(10000);
@@ -361,13 +363,13 @@ void playingGame(Account acc[], int acc_pos, int acc_num, game& b, bool loaded, 
 					temp.map.letters[i][j] = b.map.letters[i][j]; //Copy matrix(letters)
 				}
 			}
-			int p = 4 * (b.map.difficulty + 3) + 1;
+			int p = 4 * (b.map.difficulty + 3) + 1; //Size of the background
 			int q = 8 * (b.map.difficulty * 2 + 4) + 2;
 			for (int i = 0; i < p; i++)
 			{
 				for (int j = 0; j < q; j++)
 				{
-					temp.map.background[i][j] = b.map.background[i][j];
+					temp.map.background[i][j] = b.map.background[i][j]; //Copy matrix(background)
 				}
 			}
 			saving_map(acc[acc_pos], temp); //Saving the temp game to the filesave
@@ -376,6 +378,7 @@ void playingGame(Account acc[], int acc_pos, int acc_num, game& b, bool loaded, 
 			Sleep(1000);
 			system("cls");
 			b.map.printBoard(1, 1);
+			a.drawInfo();
 		}
 	}
 	system("cls");
@@ -391,6 +394,7 @@ void playingGame(Account acc[], int acc_pos, int acc_num, game& b, bool loaded, 
 		Finish.difficulty = b.map.difficulty;
 		Finish.time = b.score.finishing_second;
 		Finish.score = last_score;
+		Finish.date = finishing_time;
 		strcpy_s(Finish.name, strlen(acc[acc_pos].name) + 1, acc[acc_pos].name);
 		F[fin] = Finish; //add it to the finished game list
 		fin++;
