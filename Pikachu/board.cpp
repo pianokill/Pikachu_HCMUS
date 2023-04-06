@@ -759,7 +759,7 @@ Node* path_I(char** letters, Point a, Point b)
 	{ //Check horizontally
 		temp.x = a.x;
 		temp.y = a.y;
-		addHead(pHead, temp);
+		addHead(pHead, a);
 		if (a.y > b.y) //To the left
 		{
 			for (int i = 1; i < a.y - b.y; i++)
@@ -794,7 +794,7 @@ Node* path_I(char** letters, Point a, Point b)
 		//The list is created exactly the same as the horizontal one
 		temp.x = a.x;
 		temp.y = a.y;
-		addHead(pHead, temp);
+		addHead(pHead, a);
 		if (a.x < b.x)
 		{ //Downward
 			for (int i = 1; i < b.x - a.x; i++)
@@ -843,7 +843,7 @@ Node* path_L(char** letters, int move, Point a, Point b) {
 			valid = 1;
 			temp.x = a.x;
 			temp.y = a.y;
-			addHead(pHead, temp); //Adding the point a to the list first
+			addHead(pHead, a); //Adding the point a to the list first
 			for (int i = 1; i <= a.y - b.y; i++)
 			{
 				if (letters[a.x][a.y - i] != '$')
@@ -878,7 +878,7 @@ Node* path_L(char** letters, int move, Point a, Point b) {
 			valid = 1;
 			temp.x = a.x;
 			temp.y = a.y;
-			addHead(pHead, temp); //Adding the point a to the list first
+			addHead(pHead, a); //Adding the point a to the list first
 			for (int i = 1; i <= b.y - a.y; i++)
 			{
 				if (letters[a.x][a.y + i] != '$')
@@ -914,7 +914,7 @@ Node* path_L(char** letters, int move, Point a, Point b) {
 			valid = 1;
 			temp.x = a.x;
 			temp.y = a.y;
-			addHead(pHead, temp);
+			addHead(pHead, a);
 			for (int i = 1; i <= b.x - a.x; i++)
 			{
 				if (letters[a.x + i][a.y] != '$')
@@ -948,7 +948,7 @@ Node* path_L(char** letters, int move, Point a, Point b) {
 			valid = 1;
 			temp.x = a.x;
 			temp.y = a.y;
-			addHead(pHead, temp);
+			addHead(pHead, a);
 			for (int i = 1; i <= a.x - b.x; i++) {
 				if (letters[a.x - i][a.y] != '$') {
 					valid = 0;
@@ -987,7 +987,7 @@ Node* path_U_Z(char** letters, int row, int col, Point a, Point b)
 	{ //Check horizontally to the right
 		temp.x = a.x;
 		temp.y = a.y;
-		addHead(pHead, temp); //Adding point a to the list first
+		addHead(pHead, a); //Adding point a to the list first
 		i = 1;
 		while (a.y + i < col && letters[a.x][a.y + i] == '$')
 		{
@@ -1011,7 +1011,7 @@ Node* path_U_Z(char** letters, int row, int col, Point a, Point b)
 	{ //Check horizontally to the left
 		temp.x = a.x;
 		temp.y = a.y;
-		addHead(pHead, temp);
+		addHead(pHead, a);
 		i = 1;
 		while (a.y - i >= 0 && letters[a.x][a.y - i] == '$')
 		{
@@ -1034,7 +1034,7 @@ Node* path_U_Z(char** letters, int row, int col, Point a, Point b)
 	{ //Check vertically downward
 		temp.x = a.x;
 		temp.y = a.y;
-		addHead(pHead, temp);
+		addHead(pHead, a);
 		i = 1;
 		while (a.x + i < row && letters[a.x + i][a.y] == '$')
 		{ //Continue moving downward
@@ -1057,7 +1057,7 @@ Node* path_U_Z(char** letters, int row, int col, Point a, Point b)
 	{ //Check vertically upward
 		temp.x = a.x;
 		temp.y = a.y;
-		addHead(pHead, temp);
+		addHead(pHead, a);
 		i = 1;
 		while (a.x - i >= 0 && letters[a.x - i][a.y] == '$')
 		{ //Continue moving upward
