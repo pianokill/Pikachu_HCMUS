@@ -4,8 +4,19 @@ void creatingAcc(Account& temp)  //Only creating account with name and pass
 {
 	cout << "Enter username: ";
 	cin >> temp.name;
-	cout << "Enter password: ";
-	cin >> temp.pass;
+	while (true)
+	{
+		cout << "Enter password: ";
+		cin >> temp.pass;
+		if (strlen(temp.pass) < 8)
+		{
+			cout << "The length of the password must be more than 7!" << endl;
+		}
+		else
+		{
+			break;
+		}
+	}
 }
 void printDate(Record date) //Printing the date and time to console
 {
@@ -233,4 +244,129 @@ int loading_account(Account acc[], int& acc_number, Account guest)
 	acc[acc_number] = guest; //If the name of the account is not in the list => Added it into the list 
 	acc_number++;  //Increase the number of accounts
 	return acc_number - 1; //Return the position of the account in the list
+}
+bool Changeaccount_name(Account list_acc[], int acc_num, int pos)
+{
+	char name_temp[50] = "";
+	bool same = 0;
+	while (true)
+	{
+		same = 0;
+		cout << "Enter new username: ";
+		cin >> name_temp;
+		for (int i = 0; i < acc_num; i++)
+		{
+			if (strcmp(name_temp, list_acc[i].name) == 0)
+			{
+				same = 1;
+				break;
+			}
+		}
+		if (same == 0)
+		{
+			break;
+		}
+		cout << "This username has been used!" << endl;
+	}
+	strcpy_s(list_acc[pos].name, strlen(name_temp) + 1, name_temp);
+	cout << "Changed successfully" << endl;
+	return 1;
+}
+bool Changeaccount_password(Account list_acc[], int acc_num, int pos)
+{
+	char pass[50];
+	while (true)
+	{
+		cout << "Enter new password: ";
+		cin >> pass;
+		if (strlen(pass) < 8)
+		{
+			cout << "The length of the password must be more than 7!" << endl;
+		}
+		else if (strcmp(pass, list_acc[pos].pass) == 0)
+		{
+			cout << "It is the using password!" << endl;
+		}
+		else
+		{
+			break;
+		}
+	}
+	strcpy_s(list_acc[pos].pass, strlen(pass) + 1, pass);
+	cout << "Changed successfully" << endl;
+	return 1;
+}
+bool Changeaccount_filesave(Account list_acc[], int acc_num, int pos)
+{
+	cout << "You've already saved " << list_acc[pos].file_number << " files:" << endl; //Print all of the filesaves and their status 
+	int pairs = 0;
+	int valid_filesave[3];
+	for (int i = 0; i < 3; i++)
+	{
+		if (list_acc[pos].saves[i].map.difficulty != 0)
+		{
+			list_acc[pos].saves[i].map.getPairs(pairs);
+		}
+		if (i < list_acc[pos].file_number && pairs != 0)
+		{
+			cout << "File save number " << i + 1 << ": Saved ";
+			printDate(list_acc[pos].saves[i].date);
+			cout << endl;
+			valid_filesave[i] = 1; //flag that the file save is available
+		}
+		else
+		{
+			valid_filesave[i] = 0; //flag that the file save is empty
+			cout << "File save number " << i + 1 << ": Empty";
+			cout << endl;
+		}
+	}
+	int select = 0;
+	while (true) //Get the number of filesave
+	{
+		pairs = 0;
+		cout << "Choose your file: ";
+		cin >> select;
+		if (select > list_acc[pos].file_number || valid_filesave[select - 1] == 0)
+		{
+			cout << "This file save is invalid" << endl;
+		}
+		else
+		{
+			break;
+		}
+	}
+	select = select - 1;
+	int choice = 0;
+	while (choice != 3)
+	{
+		cout << "Filesave Menu" << endl;
+		cout << "1.Change score" << endl;
+		cout << "2.Change time" << endl;
+		cout << "3.Exit" << endl;
+		cin >> choice;
+		switch (choice)
+		{
+		case 1:
+		{
+			cout << "The current score of this filesave is " << list_acc[pos].saves[select].score.fin_score << endl;
+			cout << "New score: ";
+			cin >> list_acc[pos].saves[select].score.fin_score;
+			cout << "Changed successfully!" << endl;
+		}
+		case 2:
+		{
+			cout << "The current playing time of this filesave is " << list_acc[pos].saves[select].score.finishing_second << "seconds" << endl;
+			cout << "New time(seconds): ";
+			cin >> list_acc[pos].saves[select].score.finishing_second;
+			cout << "Changed successfully!" << endl;
+		}
+		case 3:
+		{
+			choice = 3;
+			break;
+		}
+		}
+	}
+	return 1;
 }

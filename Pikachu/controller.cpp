@@ -62,7 +62,8 @@ void controlGame(Account list_acc[], int& acc_num, finish F[], int& fin)
 		cout << "1.New Game" << endl;
 		cout << "2.Load Game" << endl;
 		cout << "3.Leader Board" << endl;
-		cout << "4.Exit" << endl;
+		cout << "4.Custom account" << endl;
+		cout << "5.Exit" << endl;
 		cout << "Enter choice: ";
 		cin >> choice;
 		system("cls");
@@ -195,7 +196,44 @@ void controlGame(Account list_acc[], int& acc_num, finish F[], int& fin)
 			system("cls");
 			break;
 		}
-		case 4: //Exit game
+		case 4: //Custom account
+		{
+			int acc_choice = 0;
+			while (acc_choice != 4) 
+			{
+				cout << "Account Menu" << endl;
+				cout << "1.Change username" << endl;
+				cout << "2.Change password" << endl;
+				cout << "3.Change filesave" << endl;
+				cout << "4.Exit to game menu" << endl;
+				cin >> acc_choice;
+				switch (acc_choice)
+				{
+				case 1: 
+				{
+					Changeaccount_name(list_acc, acc_num, pos);
+					break;
+				}
+				case 2:
+				{
+					Changeaccount_password(list_acc, acc_num, pos);
+					break;
+				}
+				case 3:
+				{
+					Changeaccount_filesave(list_acc, acc_num, pos);
+					break;
+				}
+				case 4:
+				{
+					acc_choice = 4;
+					break;
+				}
+				}
+			}
+			break;
+		}
+		case 5: //Exit game
 		{
 			printing_account(list_acc, acc_num, 777); //Print all of the accounts
 			printingLeaderboard(F, fin, 0x12345678); //Print all of the finished games

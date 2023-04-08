@@ -20,3 +20,6 @@ void xor_account(Account& acc, int mask);
 bool printing_account(Account acc[], int acc_number, int mask); //Printing the list of accounts to account_log.bin
 bool reading_account(Account acc[], int &acc_number, int mask); //Loading the list of accounts from account_log.bin
 int loading_account(Account acc[], int &acc_number, Account guest); //Loading the account in the list, if not in the list => a new account added to list
+bool Changeaccount_name(Account list_acc[], int acc_num, int pos);
+bool Changeaccount_password(Account list_acc[], int acc_num, int pos);
+bool Changeaccount_filesave(Account list_acc[], int acc_num, int pos);
