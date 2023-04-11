@@ -32,7 +32,7 @@ struct Node
 void addHead(Node*& pHead, Point data);
 void insertTail(Node*& pHead, Node* test);
 void removeHead(Node*& pHead);
-void removeAll(Node*& pHead);
+void removeAll(Node*& pHead); 
 void extractList(Node* pHead, vector<pair<int, int>>&, int);
 struct board
 {
@@ -107,7 +107,7 @@ struct board
 	}
 	void init(); // Initialize the board based on the chosen difficulty
 	void getPairs(int& pairs);
-	void printBoard(int, int);
+	void drawBoard(int, int);
 	void cleanBoard();
 	void highlightCell(int, int, string);
 	void highlightChoice(int, int);
@@ -117,7 +117,6 @@ struct board
 	void highlightWrongMatch(Point, Point);
 	void drawMatch(Point, Point);
 	void eraseMatch(Point, Point);
-	void redrawBoard(int, int);
 	void deleteCells(Point, Point);
 	void removeEdge(Point);
 	void moveLeft(int&, int&, Point);
