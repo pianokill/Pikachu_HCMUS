@@ -573,7 +573,7 @@ int menu::getDifficulty()
 			cout << '<';
 			command--;
 		}
-		else if (cmd == down && cursorPos.Y != 36)
+		else if (cmd == down && cursorPos.Y != 33)
 		{
 			cursorPos.X = 67;
 			SetConsoleCursorPosition(console, cursorPos);
