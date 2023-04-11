@@ -1,7 +1,9 @@
 #pragma once
 #include "board.h"
-#define NAME 50
+
 using namespace std;
+
+const int NAME = 50;
 const int UP = 72;
 const int LEFT = 75;
 const int RIGHT = 77;
