@@ -4,30 +4,30 @@ void onRoundTheme(int diff)
 {
 	if (diff == 1)
 	{
-		mciSendString("play \"round1.mp3\" repeat", 0, 0, 0);
+		mciSendString(L"play \"round1.mp3\" repeat", 0, 0, 0);
 	}
 	else if (diff == 2)
 	{
-		mciSendString("play \"round2.mp3\" repeat", 0, 0, 0);
+		mciSendString(L"play \"round2.mp3\" repeat", 0, 0, 0);
 	}
 	else if (diff == 3)
 	{
-		mciSendString("play \"round3.mp3\" repeat", 0, 0, 0);
+		mciSendString(L"play \"round3.mp3\" repeat", 0, 0, 0);
 	}
 }
 void offRoundTheme(int diff)
 {
 	if (diff == 1)
 	{
-		mciSendString("stop \"round1.mp3\"", 0, 0, 0);
+		mciSendString(L"stop \"round1.mp3\"", 0, 0, 0);
 	}
 	else if (diff == 2)
 	{
-		mciSendString("stop \"round2.mp3\"", 0, 0, 0);
+		mciSendString(L"stop \"round2.mp3\"", 0, 0, 0);
 	}
 	else if (diff == 3)
 	{
-		mciSendString("stop \"round3.mp3\"", 0, 0, 0);
+		mciSendString(L"stop \"round3.mp3\"", 0, 0, 0);
 	}
 }
 void controlGame(Account list_acc[], int& acc_num, finish F[], int& fin)
@@ -47,7 +47,7 @@ void controlGame(Account list_acc[], int& acc_num, finish F[], int& fin)
 	while (!exit_game)
 	{
 		Record curr_time = getTime();
-		mciSendString("play \"theme.mp3\" repeat", 0, 0, 0); //To play the default music theme of the game
+		mciSendString(L"play \"theme.mp3\" repeat", 0, 0, 0); //To play the default music theme of the game
 		system("cls");
 		blockCursor();
 		menu a;
@@ -70,7 +70,7 @@ void controlGame(Account list_acc[], int& acc_num, finish F[], int& fin)
 			{
 				int diff;
 				diff = a.getDifficulty();
-				mciSendString("stop  \"theme.mp3\"", 0, 0, 0); //Turn of the music theme before playing game
+				mciSendString(L"stop  \"theme.mp3\"", 0, 0, 0); //Turn of the music theme before playing game
 				onRoundTheme(diff); //Turn on music theme for each round
 				game b(diff); //Inititalize game struct with exact difficulty
 				b.date = curr_time; //Get the current time to the game struct
@@ -129,7 +129,7 @@ void controlGame(Account list_acc[], int& acc_num, finish F[], int& fin)
 				c.date = curr_time; //Do not need to get the time of the filesave but get the current time
 				c.score = list_acc[pos].saves[selection].score; //Get the score of the filesave
 				system("cls");
-				mciSendString("stop  \"theme.mp3\"", 0, 0, 0); //Turn off the music theme of the game
+				mciSendString(L"stop  \"theme.mp3\"", 0, 0, 0); //Turn off the music theme of the game
 				onRoundTheme(list_acc[pos].saves[selection].map.difficulty); //Turn on the music theme of the round
 				playingGame(list_acc, pos, acc_num, c, loaded, selection, F, fin, a);
 				system("cls");

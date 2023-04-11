@@ -99,25 +99,35 @@ void saving_map(Account&acc, const game& Game, int file_pos)	 //Saving the playi
 	if (file_pos == pos) //If the selected filesave is the loading filesave
 	{
 		int row = Game.map.difficulty + 5;
-		int col = Game.map.difficulty * 2 + 6;
 		for (int i = 0; i < row; i++) //Deallocating the board of the game => continue using the board of the file save
 		{
 			delete[] Game.map.letters[i];
 		}
 		delete[] Game.map.letters;
+		row = 4 * (Game.map.difficulty + 3) + 1;
+		for (int i = 0; i < row; i++) //Deallocating the board of the game => continue using the board of the file save
+		{
+			delete[] Game.map.background[i];
+		}
+		delete[] Game.map.background;
 	}
 	else
 	{
 		if (acc.saves[pos].map.difficulty != 0) //If the filesave exists => deallocates it first
 		{
 			int row = acc.saves[pos].map.difficulty + 5;
-			int col = acc.saves[pos].map.difficulty * 2 + 6;
 			for (int i = 0; i < row; i++)
 			{
 				delete[] acc.saves[pos].map.letters[i];
 			}
 			delete[] acc.saves[pos].map.letters;
 			acc.saves[pos].map.difficulty = 0;
+			row = 4 * (acc.saves[pos].map.difficulty + 3) + 1;
+			for (int i = 0; i < row; i++)
+			{
+				delete[] acc.saves[pos].map.background[i];
+			}
+			delete[] acc.saves[pos].map.background;
 		}
 		acc.saves[pos].map.letters = Game.map.letters; //Get the address of the matrix
 		acc.saves[pos].map.background = Game.map.background; //Get the address of the background
