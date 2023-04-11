@@ -2,36 +2,62 @@
 
 void creatingAcc(Account& temp)  //Only creating account with name and pass
 {
-	cout << "Enter username: ";
+	printLogin();
+	HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
+	COORD cursorPos = { 38,6 };
+	SetConsoleCursorPosition(console, cursorPos);
 	cin >> temp.name;
-	while (true)
+	while (strlen(temp.name) > 30)
 	{
-		cout << "Enter password: ";
+		system("cls");
+		printLogin();
+		console = GetStdHandle(STD_OUTPUT_HANDLE);
+		cursorPos = { 27,2 };
+		SetConsoleCursorPosition(console, cursorPos);
+		cout << "Invalid input, please enter again";
+		cursorPos = { 38,6 };
+		SetConsoleCursorPosition(console, cursorPos);
+		cin >> temp.name;
+	}
+	console = GetStdHandle(STD_OUTPUT_HANDLE);
+	cursorPos = { 38,10 };
+	SetConsoleCursorPosition(console, cursorPos);
+	cin >> temp.pass;
+	while (7 > strlen(temp.pass) || strlen(temp.pass) > 30)
+	{
+		system("cls");
+		printLogin();
+		cursorPos = { 38,6 };
+		SetConsoleCursorPosition(console, cursorPos);
+		cout << temp.name;
+		console = GetStdHandle(STD_OUTPUT_HANDLE);
+		cursorPos = { 16,2 };
+		SetConsoleCursorPosition(console, cursorPos);
+		cout << "Password must have a length between 8 and 30 characters";
+		cursorPos = { 38,10 };
+		SetConsoleCursorPosition(console, cursorPos);
 		cin >> temp.pass;
-		if (strlen(temp.pass) < 8)
-		{
-			cout << "The length of the password must be more than 7!" << endl;
-		}
-		else
-		{
-			break;
-		}
 	}
 }
 void printDate(Record date) //Printing the date and time to console
 {
-	cout << "(";
-	cout << setfill('0') << setw(2) << date.day << "/";
-	cout << setfill('0') << setw(2) << date.month << "/";
-	cout << setfill('0') << setw(4) << date.year << "-";
 	cout << setfill('0') << setw(2) << date.hour << ":";
 	cout << setfill('0') << setw(2) << date.minute << ":";
-	cout << setfill('0') << setw(2) << date.second;
-	cout << ")";
+	cout << setfill('0') << setw(2) << date.second << "-";;
+	cout << setfill('0') << setw(2) << date.day << "/";
+	cout << setfill('0') << setw(2) << date.month << "/";
+	cout << setfill('0') << setw(4) << date.year;
 }
-void saving_map(Account& acc, const game& Game)	 //Saving the playing Game to the using Account
+void saving_map(Account&acc, const game& Game)	 //Saving the playing Game to the using Account
 {
 	int pos = 0;
+	HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
+	COORD cursorPos;
+	cursorPos = { 10,2 };
+	SetConsoleCursorPosition(console, cursorPos);
+	cout << Logo;
+	cursorPos = { 49,25 };
+	SetConsoleCursorPosition(console, cursorPos);
 	cout << "You've already saved " << acc.file_number << " files:" << endl;
 	int pairs = 0;
 	for (int i = 0; i < 3; i++) //Printing all of the filesaves'status
@@ -41,36 +67,34 @@ void saving_map(Account& acc, const game& Game)	 //Saving the playing Game to th
 			acc.saves[i].map.getPairs(pairs);
 		}
 		if (i < acc.file_number && pairs != 0) {
+			cursorPos = { 43,short(26+i) };
+			SetConsoleCursorPosition(console, cursorPos);
 			cout << "File save number " << i + 1 << ": Saved ";
 			printDate(acc.saves[i].date);
 			cout << endl;
 		}
 		else {
+			cursorPos = { 50,short(26+i) };
+			SetConsoleCursorPosition(console, cursorPos);
 			cout << "File save number " << i + 1 << ": Empty";
 			cout << endl;
 		}
 	}
+	Sleep(3000);
 	if (acc.file_number <= 2) //If the number of filesaves is not maximum => Automatically saved to the next file save number
 	{
+		cursorPos = { 44,29 };
+		SetConsoleCursorPosition(console, cursorPos);
 		cout << "The game will be stored in file number " << acc.file_number + 1 << endl;
 		pos = acc.file_number;
 		acc.file_number++;
 	}
-	else if (acc.file_number == 3) { //If the number of filesaves is maximum => Select the file saved to save
-		while (true)
-		{
-			cout << "Enter the file number that you want to save in: ";
-			cin >> pos;
-			if (pos <= 3 && pos >= 1)
-			{
-				pos = pos - 1;
-				break;
-			}
-			cout << "Invalid file save!" << endl;
-		}
+	else if (acc.file_number == 3) 
+	{	 //If the number of filesaves is maximum => Select the file saved to save
+		pos = getFilesave();
 	}
 	acc.saves[pos].date = Game.date; //Copy date of the game
-	acc.saves[pos].score = Game.score; //Copy score of the gamev
+	acc.saves[pos].score = Game.score; //Copy score of the game
 	if (acc.saves[pos].map.difficulty != 0) //If the filesave exists => deallocates it first
 	{
 		int row = acc.saves[pos].map.difficulty + 5;
@@ -134,7 +158,8 @@ bool printing_account(Account acc[], int acc_number, int mask)
 	fout.open("account_log.bin", ios::binary | ios::trunc); //Binary mode and trunc mode => Print from beginning to make sure that everything is printed
 	if (fout.fail()) //Check file
 	{
-		cout << "Can not read account_log.bin file!" << endl;
+		system("cls");
+		cout << "ERROR! Can not read account_log.bin file! Please check the file directory, close the program and try again!" << endl;
 		return 0;
 	}
 	fout.write((char*)&acc_number, 4); //Print the number of accounts first
@@ -155,15 +180,15 @@ bool printing_account(Account acc[], int acc_number, int mask)
 			acc[i].saves[j].map.difficulty ^= mask;
 			fout.write((char*)&acc[i].saves[j].map.difficulty, 4); //Print the difficulty of the played game
 			acc[i].saves[j].map.difficulty ^= mask;
-			for (int m = 0; m < row; m++)
+			for (int m = 0; m < row; m++) 
 			{
 				fout.write(acc[i].saves[j].map.letters[m], col); //Print every single row of the matrix 
 			}
-			row = 4*(acc[i].saves[j].map.difficulty + 3) + 1; //Get the size of the background
-			col = 8*(acc[i].saves[j].map.difficulty*2 + 4) + 2;
+			row = 4 * (acc[i].saves[j].map.difficulty + 3) + 1;
+			col = 8 * (acc[i].saves[j].map.difficulty * 2 + 4) + 2;
 			for (int m = 0; m < row; m++)
 			{
-				fout.write(acc[i].saves[j].map.background[m], col); //Print the background to the file
+				fout.write(acc[i].saves[j].map.background[m], col);
 			}
 		}
 	}
@@ -176,7 +201,8 @@ bool reading_account(Account acc[], int& acc_number, int mask)
 	fin.open("account_log.bin", ios::binary | ios::in); //Binary mode
 	if (fin.fail()) //Check the file
 	{
-		cout << "Can not read account_log.bin file!" << endl;
+		system("cls");
+		cout << "ERROR! Can not read account_log.bin file! Please check the file directory, close the program and try again!" << endl;
 		return 0;
 	}
 	fin.read((char*)&acc_number, 4); //Read the number of acocunts
@@ -197,21 +223,22 @@ bool reading_account(Account acc[], int& acc_number, int mask)
 			acc[i].saves[j].map.letters = new char* [row];
 			for (int k = 0; k < row; k++)
 			{
-				acc[i].saves[j].map.letters[k] = new char[col]; //Allocating memories for the double pointer(letters)
+				acc[i].saves[j].map.letters[k] = new char[col]; //Allocating memories for the double pointer
 			}
-			for (int k = 0; k < row; k++) {
+			for (int k = 0; k < row; k++) 
+			{
 				fin.read(acc[i].saves[j].map.letters[k], col); //Reading every single row of the matrix
 			}
-			row = 4 * (acc[i].saves[j].map.difficulty + 3) + 1; //Get the size of the background
+			row = 4 * (acc[i].saves[j].map.difficulty + 3) + 1;
 			col = 8 * (acc[i].saves[j].map.difficulty * 2 + 4) + 2;
 			acc[i].saves[j].map.background = new char* [row];
 			for (int k = 0; k < row; k++)
 			{
-				acc[i].saves[j].map.background[k] = new char[col]; //Allocating memories for the double pointer(background)
+				acc[i].saves[j].map.background[k] = new char[col];
 			}
 			for (int m = 0; m < row; m++)
 			{
-				fin.read(acc[i].saves[j].map.background[m], col); //Reading the background from the file
+				fin.read(acc[i].saves[j].map.background[m], col);
 			}
 			xor_filesave(acc[i].saves[j], mask);
 		}
@@ -219,7 +246,7 @@ bool reading_account(Account acc[], int& acc_number, int mask)
 	fin.close();
 	return 1;
 }
-int loading_account(Account acc[], int& acc_number, Account guest) 
+int loading_account(Account acc[], int& acc_number, Account guest)
 {
 	for (int i = 0; i < acc_number; i++)
 	{
@@ -227,17 +254,29 @@ int loading_account(Account acc[], int& acc_number, Account guest)
 		{
 			for (int k = 0; k < 10; k++)
 			{
-				if (strcmp(guest.pass, acc[i].pass) == 0) //If then the user has 10 chances to enter the pass
+				if (strcmp(guest.pass, acc[i].pass) == 0) //If so then the user has 10 chances to enter the pass
 				{
 					return i; //Return the position of the account in the list
 				}
 				else
 				{
-					cout << "Wrong password, please enter again: ";
+					HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
+					COORD cursorPos;
+					system("cls");
+					printLogin();
+					cursorPos = { 27,2 };
+					SetConsoleCursorPosition(console, cursorPos);
+					cout << "Wrong password, please enter again";
+					cursorPos = { 38,6 };
+					SetConsoleCursorPosition(console, cursorPos);
+					cout << guest.name;
+					cursorPos = { 38,10 };
+					SetConsoleCursorPosition(console, cursorPos);
 					cin >> guest.pass;
 				}
 			}
-			cout << "Too many times entering password. Game will be closed!"; //Game will be closed automatically if too many attemps to login
+			system("cls");
+			cout << "ERROR! Too many times entering password. Game will be closed!"; //Game will be closed automatically if too many attemps to login
 			return -2;
 		}
 	}
@@ -245,15 +284,18 @@ int loading_account(Account acc[], int& acc_number, Account guest)
 	acc_number++;  //Increase the number of accounts
 	return acc_number - 1; //Return the position of the account in the list
 }
-bool Changeaccount_name(Account list_acc[], int acc_num, int pos)
+void Changeaccount_name(Account list_acc[], int acc_num, int pos)
 {
+	system("cls");
+	printChangeName();
+	HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
+	COORD cursorPos = { 38,6 };
+	SetConsoleCursorPosition(console, cursorPos);
 	char name_temp[50] = "";
 	bool same = 0;
-	while (true)
+	while (cin>>name_temp)
 	{
 		same = 0;
-		cout << "Enter new username: ";
-		cin >> name_temp;
 		for (int i = 0; i < acc_num; i++)
 		{
 			if (strcmp(name_temp, list_acc[i].name) == 0)
@@ -262,30 +304,74 @@ bool Changeaccount_name(Account list_acc[], int acc_num, int pos)
 				break;
 			}
 		}
-		if (same == 0)
+		if (same == 1)
 		{
-			break;
+			system("cls");
+			printChangeName();
+			cursorPos = { 17,3 };
+			SetConsoleCursorPosition(console, cursorPos);
+			cout << "    This username has been used, please try again!     ";
+			cursorPos = { 38,6 };
+			SetConsoleCursorPosition(console, cursorPos);
+			continue;
 		}
-		cout << "This username has been used!" << endl;
+		if (strlen(name_temp) > 30)
+		{
+			system("cls");
+			printChangeName();
+			cursorPos = { 17,3 };
+			SetConsoleCursorPosition(console, cursorPos);
+			cout << "Username exceeded 30 characters limit, please try again";
+		}
+		break;
 	}
 	strcpy_s(list_acc[pos].name, strlen(name_temp) + 1, name_temp);
-	cout << "Changed successfully" << endl;
-	return 1;
+	cursorPos = { 21,3 };
+	SetConsoleCursorPosition(console, cursorPos);
+	cout << "Changed successfully, press any key to return";
+	char goback;
+	goback = _getch();
+	system("cls");
+	return;
 }
-bool Changeaccount_password(Account list_acc[], int acc_num, int pos)
+void Changeaccount_password(Account list_acc[], int acc_num, int pos)
 {
+	system("cls");
+	printChangePass();
+	HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
+	COORD cursorPos = { 38,6 };
+	SetConsoleCursorPosition(console, cursorPos);
+	cout << list_acc[pos].name;
+	cursorPos = { 38,10 };
+	SetConsoleCursorPosition(console, cursorPos);
 	char pass[50];
-	while (true)
+	while (cin >> pass)
 	{
-		cout << "Enter new password: ";
-		cin >> pass;
-		if (strlen(pass) < 8)
+		if (strlen(pass) < 8 || strlen(pass) > 30)
 		{
-			cout << "The length of the password must be more than 7!" << endl;
+			system("cls");
+			printChangePass();
+			cursorPos = { 38,6 };
+			SetConsoleCursorPosition(console, cursorPos);
+			cout << list_acc[pos].name;
+			cursorPos = { 16,3 };
+			SetConsoleCursorPosition(console, cursorPos);
+			cout << "Password must have a length between 8 and 30 characters";
+			cursorPos = { 38,10 };
+			SetConsoleCursorPosition(console, cursorPos);
 		}
 		else if (strcmp(pass, list_acc[pos].pass) == 0)
 		{
-			cout << "It is the using password!" << endl;
+			system("cls");
+			printChangePass();
+			cursorPos = { 38,6 };
+			SetConsoleCursorPosition(console, cursorPos);
+			cout << list_acc[pos].name;
+			cursorPos = { 16,3 };
+			SetConsoleCursorPosition(console, cursorPos);
+			cout << "      It's the current password, please try again      ";
+			cursorPos = { 38,10 };
+			SetConsoleCursorPosition(console, cursorPos);
 		}
 		else
 		{
@@ -293,14 +379,27 @@ bool Changeaccount_password(Account list_acc[], int acc_num, int pos)
 		}
 	}
 	strcpy_s(list_acc[pos].pass, strlen(pass) + 1, pass);
-	cout << "Changed successfully" << endl;
-	return 1;
+	cursorPos = { 21,3 };
+	SetConsoleCursorPosition(console, cursorPos);
+	cout << "Changed successfully, press any key to return";
+	char goback;
+	goback = _getch();
+	return;
 }
-bool Changeaccount_filesave(Account list_acc[], int acc_num, int pos)
+void Changeaccount_filesave(Account list_acc[], int acc_num, int pos, menu mn)
 {
-	cout << "You've already saved " << list_acc[pos].file_number << " files:" << endl; //Print all of the filesaves and their status 
+	system("cls");
+	HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
+	COORD cursorPos = { 10,2 };
+	SetConsoleCursorPosition(console, cursorPos);
+	cout << mn.savefile;
+	cursorPos = { 42,24 };
+	SetConsoleCursorPosition(console, cursorPos);
+	cout << "Choose a file or return" << endl; //Print all of the filesaves and their status 
 	int pairs = 0;
 	int valid_filesave[3];
+	for (int i = 0; i < 3; i++)
+		valid_filesave[i] = 0;
 	for (int i = 0; i < 3; i++)
 	{
 		if (list_acc[pos].saves[i].map.difficulty != 0)
@@ -309,64 +408,71 @@ bool Changeaccount_filesave(Account list_acc[], int acc_num, int pos)
 		}
 		if (i < list_acc[pos].file_number && pairs != 0)
 		{
-			cout << "File save number " << i + 1 << ": Saved ";
-			printDate(list_acc[pos].saves[i].date);
-			cout << endl;
-			valid_filesave[i] = 1; //flag that the file save is available
+			valid_filesave[i] = 1;
+			cursorPos = { 50,short(27 + 3 * i) };
+			SetConsoleCursorPosition(console, cursorPos);
+			cout << "Slot " << i + 1;
 		}
 		else
 		{
-			valid_filesave[i] = 0; //flag that the file save is empty
-			cout << "File save number " << i + 1 << ": Empty";
-			cout << endl;
+			valid_filesave[i] = 0;
+			cursorPos = { 48,short(27 + 3 * i) };
+			SetConsoleCursorPosition(console, cursorPos);
+			cout << "Empty Slot";
 		}
 	}
-	int select = 0;
-	while (true) //Get the number of filesave
+	int selection = mn.getSlot(valid_filesave);
+	if (selection == 4)
 	{
-		pairs = 0;
-		cout << "Choose your file: ";
-		cin >> select;
-		if (select > list_acc[pos].file_number || valid_filesave[select - 1] == 0)
-		{
-			cout << "This file save is invalid" << endl;
-		}
-		else
-		{
-			break;
-		}
+		return;
 	}
-	select = select - 1;
-	int choice = 0;
-	while (choice != 3)
+	selection--;
+	system("cls");
+	int choice = 1;
+	choice = mn.getCheat();
+	switch (choice)
 	{
-		cout << "Filesave Menu" << endl;
-		cout << "1.Change score" << endl;
-		cout << "2.Change time" << endl;
-		cout << "3.Exit" << endl;
-		cin >> choice;
-		switch (choice)
-		{
 		case 1:
 		{
-			cout << "The current score of this filesave is " << list_acc[pos].saves[select].score.fin_score << endl;
-			cout << "New score: ";
-			cin >> list_acc[pos].saves[select].score.fin_score;
-			cout << "Changed successfully!" << endl;
+			system("cls");
+			printChangeScore();
+			HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
+			COORD cursorPos = { 38,6 };
+			SetConsoleCursorPosition(console, cursorPos);
+			cout << list_acc[pos].saves[selection].score.fin_score;
+			cursorPos = { 38,10 };
+			SetConsoleCursorPosition(console, cursorPos);
+			cin >> list_acc[pos].saves[selection].score.fin_score;
+			cursorPos = { 21,3 };
+			SetConsoleCursorPosition(console, cursorPos);
+			cout << "Changed successfully, press any key to return";
+			char goback;
+			goback = _getch();
+			break;
 		}
 		case 2:
 		{
-			cout << "The current playing time of this filesave is " << list_acc[pos].saves[select].score.finishing_second << "seconds" << endl;
-			cout << "New time(seconds): ";
-			cin >> list_acc[pos].saves[select].score.finishing_second;
-			cout << "Changed successfully!" << endl;
+			system("cls");
+			printChangeTime();
+			HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
+			COORD cursorPos = { 38,6 };
+			SetConsoleCursorPosition(console, cursorPos);
+			cout << list_acc[pos].saves[selection].score.finishing_second;
+			cursorPos = { 38,10 };
+			SetConsoleCursorPosition(console, cursorPos);
+			cin >> list_acc[pos].saves[selection].score.finishing_second;
+			cursorPos = { 21,3 };
+			SetConsoleCursorPosition(console, cursorPos);
+			cout << "Changed successfully, press any key to return";
+			char goback;
+			goback = _getch();
+			break;
 		}
 		case 3:
 		{
-			choice = 3;
+			return;
 			break;
 		}
-		}
 	}
-	return 1;
+	return;
 }
