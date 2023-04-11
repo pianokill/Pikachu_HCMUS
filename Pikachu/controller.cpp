@@ -253,6 +253,7 @@ void playingGame(Account acc[], int acc_pos, int acc_num, game& b, bool loaded, 
 	b.map.getPairs(b.pairs); //Get the valid pairs of the board
 	b.map.drawBoard(x, y);
 	a.drawInfo(b.map.difficulty, b.score.fin_score, acc[acc_pos].name);
+	bool music = 1;
 	while (1 && b.pairs)
 	{
 		int cmd;
@@ -353,6 +354,19 @@ void playingGame(Account acc[], int acc_pos, int acc_num, game& b, bool loaded, 
 			Beep(200, 150);
 			b.map.unhighlightChoice(b.selection.first.x, b.selection.first.y);
 			b.deselect();
+		}
+		else if (cmd == 'o')
+		{
+			if (music == 1)
+			{
+				offRoundTheme(b.map.difficulty);
+				music = 0;
+			}
+			else
+			{
+				onRoundTheme(b.map.difficulty);
+				music = 1;
+			}
 		}
 		else if (cmd == 'h')
 		{
