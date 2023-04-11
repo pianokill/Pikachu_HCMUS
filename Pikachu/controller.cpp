@@ -4,30 +4,30 @@ void onRoundTheme(int diff)
 {
 	if (diff == 1)
 	{
-		mciSendString("play \"round1.mp3\" repeat", 0, 0, 0);
+		mciSendString(L"play \"round1.mp3\" repeat", 0, 0, 0);
 	}
 	else if (diff == 2)
 	{
-		mciSendString("play \"round2.mp3\" repeat", 0, 0, 0);
+		mciSendString(L"play \"round2.mp3\" repeat", 0, 0, 0);
 	}
 	else if (diff == 3)
 	{
-		mciSendString("play \"round3.mp3\" repeat", 0, 0, 0);
+		mciSendString(L"play \"round3.mp3\" repeat", 0, 0, 0);
 	}
 }
 void offRoundTheme(int diff)
 {
 	if (diff == 1)
 	{
-		mciSendString("stop \"round1.mp3\"", 0, 0, 0);
+		mciSendString(L"stop \"round1.mp3\"", 0, 0, 0);
 	}
 	else if (diff == 2)
 	{
-		mciSendString("stop \"round2.mp3\"", 0, 0, 0);
+		mciSendString(L"stop \"round2.mp3\"", 0, 0, 0);
 	}
 	else if (diff == 3)
 	{
-		mciSendString("stop \"round3.mp3\"", 0, 0, 0);
+		mciSendString(L"stop \"round3.mp3\"", 0, 0, 0);
 	}
 }
 void controlGame(Account list_acc[], int& acc_num, finish F[], int& fin)
@@ -47,13 +47,13 @@ void controlGame(Account list_acc[], int& acc_num, finish F[], int& fin)
 	while (!exit_game)
 	{
 		Record curr_time = getTime();
-		mciSendString("play \"theme.mp3\" repeat", 0, 0, 0); //To play the default music theme of the game
+		mciSendString(L"play \"theme.mp3\" repeat", 0, 0, 0); //To play the default music theme of the game
 		system("cls");
 		blockCursor();
 		menu a;
 		a.PrintLogo();
 		char f = _getch();
-		MainMenu: // Checkpoint to go back if the players want to
+	MainMenu: // Checkpoint to go back if the players want to
 		choice = 1;
 		choice = a.getOption();
 		system("cls");
@@ -66,81 +66,81 @@ void controlGame(Account list_acc[], int& acc_num, finish F[], int& fin)
 			gametype = a.getType();
 			switch (gametype)
 			{
-				case 1: //Play new game
+			case 1: //Play new game
+			{
+				int diff;
+				diff = a.getDifficulty();
+				mciSendString(L"stop  \"theme.mp3\"", 0, 0, 0); //Turn of the music theme before playing game
+				onRoundTheme(diff); //Turn on music theme for each round
+				game b(diff); //Inititalize game struct with exact difficulty
+				b.date = curr_time; //Get the current time to the game struct
+				b.map.init(); //Creating the board
+				playingGame(list_acc, pos, acc_num, b, loaded, -1, F, fin, a); //Playing game!
+				offRoundTheme(diff); //Turn off music theme for each round after closing game
+				system("cls");
+				break;
+			}
+			case 2: //Load game
+			{
+				HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
+				COORD cursorPos = { 10,2 };
+				SetConsoleCursorPosition(console, cursorPos);
+				cout << a.savefile;
+				cursorPos = { 42,24 };
+				SetConsoleCursorPosition(console, cursorPos);
+				cout << "Choose a file or return" << endl; //Print all of the filesaves and their status 
+				int pairs = 0;
+				int valid_filesave[3];
+				for (int i = 0; i < 3; i++)
+					valid_filesave[i] = 0;
+				for (int i = 0; i < 3; i++)
 				{
-					int diff;
-					diff = a.getDifficulty();
-					mciSendString("stop  \"theme.mp3\"", 0, 0, 0); //Turn of the music theme before playing game
-					onRoundTheme(diff); //Turn on music theme for each round
-					game b(diff); //Inititalize game struct with exact difficulty
-					b.date = curr_time; //Get the current time to the game struct
-					b.map.init(); //Creating the board
-					playingGame(list_acc, pos, acc_num, b, loaded, F, fin, a); //Playing game!
-					offRoundTheme(diff); //Turn off music theme for each round after closing game
-					system("cls");
-					break;
-				}
-				case 2: //Load game
-				{
-					HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
-					COORD cursorPos = { 10,2 };
-					SetConsoleCursorPosition(console, cursorPos);
-					cout << a.savefile;
-					cursorPos = { 42,24 };
-					SetConsoleCursorPosition(console, cursorPos); 
-					cout << "Choose a file or return" << endl; //Print all of the filesaves and their status 
-					int pairs = 0;
-					int valid_filesave[3];
-					for (int i = 0; i < 3; i++)
+					if (list_acc[pos].saves[i].map.difficulty != 0)
+					{
+						list_acc[pos].saves[i].map.getPairs(pairs);
+					}
+					if (i < list_acc[pos].file_number && pairs != 0)
+					{
+						valid_filesave[i] = 1;
+						cursorPos = { 50,short(27 + 3 * i) };
+						SetConsoleCursorPosition(console, cursorPos);
+						cout << "Slot " << i + 1;
+					}
+					else
+					{
 						valid_filesave[i] = 0;
-					for (int i = 0; i < 3; i++)
-					{
-						if (list_acc[pos].saves[i].map.difficulty != 0)
-						{
-							list_acc[pos].saves[i].map.getPairs(pairs);
-						}
-						if (i < list_acc[pos].file_number && pairs != 0)
-						{
-							valid_filesave[i] = 1;
-							cursorPos = { 50,short(27 + 3 * i) };
-							SetConsoleCursorPosition(console, cursorPos);
-							cout << "Slot " << i + 1;
-						}
-						else
-						{
-							valid_filesave[i] = 0;
-							cursorPos = { 48,short(27 + 3 * i) };
-							SetConsoleCursorPosition(console, cursorPos);
-							cout << "Empty Slot";
-						}
+						cursorPos = { 48,short(27 + 3 * i) };
+						SetConsoleCursorPosition(console, cursorPos);
+						cout << "Empty Slot";
 					}
-					int selection = a.getSlot(valid_filesave);
-					if (selection == 4)
-					{
-						continue;
-						break;
-					}
-					loaded = 1; //To make sure the playinggame function understands that the playing game is loaded from the file
-					selection = selection - 1;
-					game c; //Initiallize the game struct with uninitialized board map
-					c.map.letters = list_acc[pos].saves[selection].map.letters; //Get the address of the matrix
-					c.map.difficulty = list_acc[pos].saves[selection].map.difficulty; //Get the difficulty
-					c.map.background = list_acc[pos].saves[selection].map.background;
-					c.date = curr_time; //Do not need to get the time of the filesave but get the current time
-					c.score = list_acc[pos].saves[selection].score; //Get the score of the filesave
-					system("cls");
-					mciSendString("stop  \"theme.mp3\"", 0, 0, 0); //Turn off the music theme of the game
-					onRoundTheme(list_acc[pos].saves[selection].map.difficulty); //Turn on the music theme of the round
-					playingGame(list_acc, pos, acc_num, c, loaded, F, fin, a);
-					system("cls");
-					offRoundTheme(list_acc[pos].saves[selection].map.difficulty); //Turn off the music theme of the round
-					break;
 				}
-				case 3:
+				int selection = a.getSlot(valid_filesave);
+				if (selection == 4)
 				{
 					continue;
 					break;
 				}
+				loaded = 1; //To make sure the playinggame function understands that the playing game is loaded from the file
+				selection = selection - 1;
+				game c; //Initiallize the game struct with uninitialized board map
+				c.map.letters = list_acc[pos].saves[selection].map.letters; //Get the address of the matrix
+				c.map.difficulty = list_acc[pos].saves[selection].map.difficulty; //Get the difficulty
+				c.map.background = list_acc[pos].saves[selection].map.background;
+				c.date = curr_time; //Do not need to get the time of the filesave but get the current time
+				c.score = list_acc[pos].saves[selection].score; //Get the score of the filesave
+				system("cls");
+				mciSendString(L"stop  \"theme.mp3\"", 0, 0, 0); //Turn off the music theme of the game
+				onRoundTheme(list_acc[pos].saves[selection].map.difficulty); //Turn on the music theme of the round
+				playingGame(list_acc, pos, acc_num, c, loaded, selection, F, fin, a);
+				system("cls");
+				offRoundTheme(list_acc[pos].saves[selection].map.difficulty); //Turn off the music theme of the round
+				break;
+			}
+			case 3:
+			{
+				continue;
+				break;
+			}
 			}
 			break;
 		}
@@ -197,26 +197,26 @@ void controlGame(Account list_acc[], int& acc_num, finish F[], int& fin)
 			choice = a.getCusOption();
 			switch (choice)
 			{
-				case 1:
-				{
-					Changeaccount_name(list_acc, acc_num, pos);
-					break;
-				}
-				case 2:
-				{
-					Changeaccount_password(list_acc, acc_num, pos);
-					break;
-				}
-				case 3:
-				{
-					Changeaccount_filesave(list_acc, acc_num, pos, a);
-					break;
-				}
-				case 4:
-				{
-					continue;
-					break;
-				}
+			case 1:
+			{
+				Changeaccount_name(list_acc, acc_num, pos);
+				break;
+			}
+			case 2:
+			{
+				Changeaccount_password(list_acc, acc_num, pos);
+				break;
+			}
+			case 3:
+			{
+				Changeaccount_filesave(list_acc, acc_num, pos, a);
+				break;
+			}
+			case 4:
+			{
+				continue;
+				break;
+			}
 			}
 			break;
 		}
@@ -230,7 +230,7 @@ void controlGame(Account list_acc[], int& acc_num, finish F[], int& fin)
 		}
 	}
 }
-void playingGame(Account acc[], int acc_pos, int acc_num, game& b, bool loaded, finish F[], int& fin, menu a)
+void playingGame(Account acc[], int acc_pos, int acc_num, game& b, bool loaded, int file_pos, finish F[], int& fin, menu a)
 {
 	Record curr_time;
 	curr_time = getTime(); //Get the starting game
@@ -414,7 +414,7 @@ void playingGame(Account acc[], int acc_pos, int acc_num, game& b, bool loaded, 
 					temp.map.background[i][j] = b.map.background[i][j];
 				}
 			}
-			saving_map(acc[acc_pos], temp); //Saving the temp game to the filesave
+			saving_map(acc[acc_pos], temp, file_pos); //Saving the temp game to the filesave
 			temp.map.letters = NULL; //Make the pointer NULL => do not need to deallocate this temp anymore in the end because the address is in the filesave now
 			temp.map.difficulty = 0; //Make the difficulty 0
 			Sleep(3000);

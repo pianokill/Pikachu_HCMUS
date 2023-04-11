@@ -16,7 +16,7 @@ struct Account
 };
 void printDate(Record date); //Help print date and time
 void creatingAcc(Account& temp); //Help creating account with only pass and name 
-void saving_map(Account& acc, const game& Game); //Saving the playing game to using account
+void saving_map(Account& acc, const game& Game, int file_pos); //Saving the playing game to using account
 void xor_filesave(filesave& save, int mask);
 void xor_account(Account& acc, int mask);
 bool printing_account(Account acc[], int acc_number, int mask); //Printing the list of accounts to account_log.bin

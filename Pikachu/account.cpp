@@ -48,7 +48,7 @@ void printDate(Record date) //Printing the date and time to console
 	cout << setfill('0') << setw(2) << date.month << "/";
 	cout << setfill('0') << setw(4) << date.year;
 }
-void saving_map(Account&acc, const game& Game)	 //Saving the playing Game to the using Account
+void saving_map(Account&acc, const game& Game, int file_pos)	 //Saving the playing Game to the using Account
 {
 	int pos = 0;
 	HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -92,23 +92,37 @@ void saving_map(Account&acc, const game& Game)	 //Saving the playing Game to the
 	else if (acc.file_number == 3) 
 	{	 //If the number of filesaves is maximum => Select the file saved to save
 		pos = getFilesave();
+		pos = pos - 1;
 	}
 	acc.saves[pos].date = Game.date; //Copy date of the game
 	acc.saves[pos].score = Game.score; //Copy score of the game
-	if (acc.saves[pos].map.difficulty != 0) //If the filesave exists => deallocates it first
+	if (file_pos == pos) //If the selected filesave is the loading filesave
 	{
-		int row = acc.saves[pos].map.difficulty + 5;
-		int col = acc.saves[pos].map.difficulty * 2 + 6;
-		for (int i = 0; i < row; i++)
+		int row = Game.map.difficulty + 5;
+		int col = Game.map.difficulty * 2 + 6;
+		for (int i = 0; i < row; i++) //Deallocating the board of the game => continue using the board of the file save
 		{
-			delete[] acc.saves[pos].map.letters[i];
+			delete[] Game.map.letters[i];
 		}
-		delete[] acc.saves[pos].map.letters;
-		acc.saves[pos].map.difficulty = 0;
+		delete[] Game.map.letters;
 	}
-	acc.saves[pos].map.letters = Game.map.letters; //Get the address of the matrix
-	acc.saves[pos].map.background = Game.map.background; //Get the address of the background
-	acc.saves[pos].map.difficulty = Game.map.difficulty; //Copy the difficulty
+	else
+	{
+		if (acc.saves[pos].map.difficulty != 0) //If the filesave exists => deallocates it first
+		{
+			int row = acc.saves[pos].map.difficulty + 5;
+			int col = acc.saves[pos].map.difficulty * 2 + 6;
+			for (int i = 0; i < row; i++)
+			{
+				delete[] acc.saves[pos].map.letters[i];
+			}
+			delete[] acc.saves[pos].map.letters;
+			acc.saves[pos].map.difficulty = 0;
+		}
+		acc.saves[pos].map.letters = Game.map.letters; //Get the address of the matrix
+		acc.saves[pos].map.background = Game.map.background; //Get the address of the background
+		acc.saves[pos].map.difficulty = Game.map.difficulty; //Copy the difficulty
+	}
 }
 void xor_account(Account& acc, int mask)
 {
