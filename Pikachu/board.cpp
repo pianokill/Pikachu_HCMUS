@@ -65,7 +65,7 @@ int getSize(Node* pHead, int size)
 	{
 		return size-1;
 	}
-	getSize(pHead->pNext, size + 1);
+	return getSize(pHead->pNext, size + 1);
 }
 void extractList(Node* pHead, vector<pair<int,int>>& path, int id)
 {
@@ -225,7 +225,7 @@ void board::moveUp(int& x, int& y, Point a)
 	}
 }
 // Functions to control the board's visual
-void board::printBoard(int x, int y) // x and y repressent the player's current position
+void board::drawBoard(int x, int y)
 {
 	BlockInput(TRUE); // Prevent player from doing anything first!
 	int m, n;
@@ -239,32 +239,32 @@ void board::printBoard(int x, int y) // x and y repressent the player's current 
 	for (int i = 0; i <= 8 * (n + 1) + 2; i++)
 	{
 		cout << '-';
-		Sleep(6.9);
+		Sleep(7);
 	}
 	for (int i = 0; i <= 4 * m + 4; i++)
 	{
 		cursorPos = { short(8 * n + 14),short(2 + i) };
 		SetConsoleCursorPosition(console, cursorPos);
 		cout << '|';
-		Sleep(12.69);
+		Sleep(12);
 	}
 	for (int i = 0; i <= 8 * n + 10; i++)
 	{
 		cursorPos = { short(8 * n + 13 - i),short(4 * m + 7) };
 		SetConsoleCursorPosition(console, cursorPos);
 		cout << '-';
-		Sleep(6.9);
+		Sleep(7);
 	}
 	for (int i = 0; i <= 4 * m + 4; i++)
 	{
 		cursorPos = { 2,short(4 * m + 6 - i) };
 		SetConsoleCursorPosition(console, cursorPos);
 		cout << '|';
-		Sleep(12.69);
+		Sleep(12);
 	}
-	// After the animaion, draw each cell from the board onto the screen
 	for (int i = 1; i <= m; i++)
 		for (int j = 1; j <= n; j++)
+		{
 			if (letters[i][j] != '$')
 			{
 				cout << TEXT_BLUE;
@@ -289,9 +289,20 @@ void board::printBoard(int x, int y) // x and y repressent the player's current 
 					highlightCell(i, j, NAVY);
 				else
 					highlightCell(i, j, BLACK);
-				Sleep(42.0);
+				Sleep(42);
 			}
-	BlockInput(FALSE);
+			else
+			{
+				Point to_delete = { x,y };
+				removeEdge(to_delete);
+				if (i == x && j == y)
+					highlightCell(i, j, NAVY);
+				else
+					highlightCell(i, j, BLACK);
+				Sleep(42);
+			}
+		}
+		BlockInput(FALSE);
 }
 void board::cleanBoard() // An animation to clear the board without deleting the outline (in case of shuffling the board)
 {
@@ -321,7 +332,7 @@ void board::cleanBoard() // An animation to clear the board without deleting the
 				cursorPos = { short((j - 1) * 8 + 8),short((i - 1) * 4 + 8) };
 				SetConsoleCursorPosition(console, cursorPos);
 				cout << "        ";
-				Sleep(42.0);
+				Sleep(42);
 			}
 	BlockInput(FALSE);
 }
@@ -490,41 +501,6 @@ void board::deleteCells(Point a, Point b) // Function to delete cell a and b fro
 	highlightCell(a.x, a.y, BLACK);
 	highlightCell(b.x, b.y, BLACK);
 }
-void board::redrawBoard(int x, int y)
-{
-	int m, n;
-	m = difficulty + 3;
-	n = difficulty * 2 + 4;
-	HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
-	COORD cursorPos;
-	for (int i = 1; i <= m; i++)
-		for (int j = 1; j <= n; j++)
-			if (letters[i][j] != '$')
-			{
-				cout << TEXT_BLUE;
-				cursorPos = { short((j - 1) * 8 + 8),short((i - 1) * 4 + 4) };
-				SetConsoleCursorPosition(console, cursorPos);
-				cout << " -------";
-				cursorPos = { short((j - 1) * 8 + 8),short((i - 1) * 4 + 5) };
-				SetConsoleCursorPosition(console, cursorPos);
-				cout << "|       |";
-				cursorPos = { short((j - 1) * 8 + 8),short((i - 1) * 4 + 6) };
-				SetConsoleCursorPosition(console, cursorPos);
-				cout << "|       |";
-				cursorPos = { short((j - 1) * 8 + 8),short((i - 1) * 4 + 7) };
-				SetConsoleCursorPosition(console, cursorPos);
-				cout << "|       |";
-				cursorPos = { short((j - 1) * 8 + 8),short((i - 1) * 4 + 8) };
-				SetConsoleCursorPosition(console, cursorPos);
-				cout << " -------";
-				cout << BLACK;
-				// Mark the cell where the player is with NAVY colour, and BLACK otherwise
-				if (i == x && j == y)
-					highlightCell(i, j, NAVY);
-				else
-					highlightCell(i, j, BLACK);
-			}
-}
 void board::shuffleBoard(int x, int y) // Function to shuffle the board when there's no valid move left
 {
 	int valid_box = 0;
@@ -565,7 +541,7 @@ void board::shuffleBoard(int x, int y) // Function to shuffle the board when the
 			}
 		}
 	}
-	printBoard(x, y);
+	drawBoard(x, y);
 }
 //Checking functions
 bool matching_I(char** letters, Point a, Point b)
@@ -759,7 +735,7 @@ Node* path_I(char** letters, Point a, Point b)
 	{ //Check horizontally
 		temp.x = a.x;
 		temp.y = a.y;
-		addHead(pHead, a);
+		addHead(pHead, temp);
 		if (a.y > b.y) //To the left
 		{
 			for (int i = 1; i < a.y - b.y; i++)
@@ -794,7 +770,7 @@ Node* path_I(char** letters, Point a, Point b)
 		//The list is created exactly the same as the horizontal one
 		temp.x = a.x;
 		temp.y = a.y;
-		addHead(pHead, a);
+		addHead(pHead, temp);
 		if (a.x < b.x)
 		{ //Downward
 			for (int i = 1; i < b.x - a.x; i++)
@@ -843,7 +819,7 @@ Node* path_L(char** letters, int move, Point a, Point b) {
 			valid = 1;
 			temp.x = a.x;
 			temp.y = a.y;
-			addHead(pHead, a); //Adding the point a to the list first
+			addHead(pHead, temp); //Adding the point a to the list first
 			for (int i = 1; i <= a.y - b.y; i++)
 			{
 				if (letters[a.x][a.y - i] != '$')
@@ -878,7 +854,7 @@ Node* path_L(char** letters, int move, Point a, Point b) {
 			valid = 1;
 			temp.x = a.x;
 			temp.y = a.y;
-			addHead(pHead, a); //Adding the point a to the list first
+			addHead(pHead, temp); //Adding the point a to the list first
 			for (int i = 1; i <= b.y - a.y; i++)
 			{
 				if (letters[a.x][a.y + i] != '$')
@@ -914,7 +890,7 @@ Node* path_L(char** letters, int move, Point a, Point b) {
 			valid = 1;
 			temp.x = a.x;
 			temp.y = a.y;
-			addHead(pHead, a);
+			addHead(pHead, temp);
 			for (int i = 1; i <= b.x - a.x; i++)
 			{
 				if (letters[a.x + i][a.y] != '$')
@@ -948,7 +924,7 @@ Node* path_L(char** letters, int move, Point a, Point b) {
 			valid = 1;
 			temp.x = a.x;
 			temp.y = a.y;
-			addHead(pHead, a);
+			addHead(pHead, temp);
 			for (int i = 1; i <= a.x - b.x; i++) {
 				if (letters[a.x - i][a.y] != '$') {
 					valid = 0;
@@ -987,7 +963,7 @@ Node* path_U_Z(char** letters, int row, int col, Point a, Point b)
 	{ //Check horizontally to the right
 		temp.x = a.x;
 		temp.y = a.y;
-		addHead(pHead, a); //Adding point a to the list first
+		addHead(pHead, temp); //Adding point a to the list first
 		i = 1;
 		while (a.y + i < col && letters[a.x][a.y + i] == '$')
 		{
@@ -1011,7 +987,7 @@ Node* path_U_Z(char** letters, int row, int col, Point a, Point b)
 	{ //Check horizontally to the left
 		temp.x = a.x;
 		temp.y = a.y;
-		addHead(pHead, a);
+		addHead(pHead, temp);
 		i = 1;
 		while (a.y - i >= 0 && letters[a.x][a.y - i] == '$')
 		{
@@ -1034,7 +1010,7 @@ Node* path_U_Z(char** letters, int row, int col, Point a, Point b)
 	{ //Check vertically downward
 		temp.x = a.x;
 		temp.y = a.y;
-		addHead(pHead, a);
+		addHead(pHead, temp);
 		i = 1;
 		while (a.x + i < row && letters[a.x + i][a.y] == '$')
 		{ //Continue moving downward
@@ -1057,7 +1033,7 @@ Node* path_U_Z(char** letters, int row, int col, Point a, Point b)
 	{ //Check vertically upward
 		temp.x = a.x;
 		temp.y = a.y;
-		addHead(pHead, a);
+		addHead(pHead, temp);
 		i = 1;
 		while (a.x - i >= 0 && letters[a.x - i][a.y] == '$')
 		{ //Continue moving upward
@@ -1123,7 +1099,12 @@ bool automatically_finding(char** letters, int row, int col) {
 	}
 	return 0;
 }
+
+
+
+
 //Path controlling functions
+
 void board::checkPath(pair<int, int> a, pair<int, int> b, pair<int, int> c, int id, int sze)
 {
 	cout << TEXT_GREEN;
