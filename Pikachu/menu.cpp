@@ -246,6 +246,9 @@ void menu::drawInfo(int difficulty, int score, char name[])
 	cursorPos = { 106,28 };
 	SetConsoleCursorPosition(console, cursorPos);
 	cout << "Arrow keys: Move";
+	cursorPos = { 106,29 };
+	SetConsoleCursorPosition(console, cursorPos);
+	cout << "O: Toggle music on/off";
 }
 int menu::getOption()
 {
