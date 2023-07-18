@@ -4,4 +4,5 @@ The basic algorithm is searching for valid pairs of boxes using orientation not 
 - account files include codes about managing accounts and printing or writing their informations
 - board files are main algorithms of the project.
 - controller files help control the game on keyboard.
-- game files organize
+- game files determine how the game will be played(scores, times...)
+- menu files play visual roles of the game.
